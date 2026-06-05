@@ -1,0 +1,10 @@
+{
+  "ce_id": "189",
+  "ce_name": "Vatican Museums",
+  "pre_start": "2026-04-09",
+  "post_end": "2026-05-06",
+  "run_date": "2026-05-07",
+  "eval_score": 31,
+  "eval_max": 35,
+  "root_cause": "S2C dropped −3.44pp post-Easter driven by a seasonal demand composition shift: lower-intent European tourists and Italian day-trippers in the post period converted at a meaningfully lower rate than the committed Easter-week visitors in the pre period. LY had an identical pattern (structural delta ≈ 0), confirming this is an annually recurring seasonal effect. Supply was ruled out — both limited-capacity TIDs showed zero tickets across all lead-time buckets in both periods, confirming no change in availability between windows."
+}

@@ -1,0 +1,10 @@
+{
+  "ce_id": "3593",
+  "ce_name": "Antelope Canyon",
+  "pre_start": "2026-03-22",
+  "post_end": "2026-05-20",
+  "run_date": "2026-05-21",
+  "eval_score": 32,
+  "eval_max": 35,
+  "root_cause": "Headline CVR flat (−0.08pp) masking −12.6% order shortfall (1,941→1,696). Google Ads campaign serving the kens-tours.antelope-canyon-tours.com subdomain was paused on May 7, 2026 — daily traffic collapsed from 200–260 users/day to effectively zero in two days. The subdomain carried ~11% CVR; its removal cost ~294 forgone orders. Data-derived finding matched the documented mitigation cause (Ken's Tours legal Cease & Desist) to the day. C2O independently improved on the remaining catalogue, masking the volume loss in the headline CVR."
+}

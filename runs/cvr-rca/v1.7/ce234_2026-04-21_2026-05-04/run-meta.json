@@ -1,0 +1,10 @@
+{
+  "ce_id": "234",
+  "ce_name": "Empire State Building",
+  "pre_start": "2026-04-21",
+  "post_end": "2026-05-04",
+  "run_date": "2026-05-06",
+  "eval_score": 27,
+  "eval_max": 35,
+  "root_cause": "CVR fell −2.07pp (4.65%→2.59%) because Google Ads traffic to newyorktickets.com/empire-state-building collapsed 58% (1,186→499 users), shifting the paid/organic mix from 80/20 to 51/49. Google Ads users have ~8× higher CVR than organic; the mix shift mechanically pushed blended CVR down. Product funnel was intact — Google Ads CVR held at 5.6–5.8%, S2C flat. Sharp break from April 26. A Google Ads budget reduction or campaign pause is the proximate cause."
+}

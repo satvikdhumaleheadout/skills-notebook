@@ -1,0 +1,10 @@
+{
+  "ce_id": "3593",
+  "ce_name": "Antelope Canyon",
+  "pre_start": "2025-01-01",
+  "post_end": "2026-05-27",
+  "run_date": "2026-05-29",
+  "eval_score": 28,
+  "eval_max": 35,
+  "root_cause": "YoY CVR improved +1.22pp (4.93%→6.15%, +24.8%) with +72.6% LP volume growth. Multi-causal: (1) six new vendor-specific subdomain microsites launched in 2026 absorbing 32% of fixed-segment LP traffic at 7–11% CVR (kens-tours at 11.09% CVR on 22k users); (2) CE-wide A2O +5.53pp and C2A +5.66pp on fixed segment, consistent with platform-level infrastructure fix; (3) catalogue maturation — TGID 40324 launched Jan 20, top TGIDs' review counts grew 3–5× YoY. kens-tours C&D (May 7) visible as late-window headwind. First run under v1.17 lazy-load."
+}

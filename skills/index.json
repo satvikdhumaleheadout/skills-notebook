@@ -10,7 +10,7 @@
       "longDescription": "The CVR RCA skill follows a structured L0 → L1 → L2+ investigation tree. It begins with an orientation from three simultaneous signals (mix dominance, Shapley decomposition, trend shape), runs the mandatory L1 Mix Cascade to determine routing vs conversion, then opens self-extending hypothesis branches until a specific mechanism × segment × date leaf is confirmed.",
       "hasDecisionTree": true,
       "hasEvents": true,
-      "runsPath": "runs",
+      "runsPath": "runs/cvr-rca",
       "changelogPath": "changelog/CHANGELOG.md",
       "eventsPath": "events/events-reference.html",
       "status": "active",

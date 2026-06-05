@@ -1,0 +1,10 @@
+{
+  "ce_id": "243",
+  "ce_name": "Eiffel Tower Tickets",
+  "pre_start": "2026-03-29",
+  "post_end": "2026-05-27",
+  "run_date": "2026-05-28",
+  "eval_score": 30,
+  "eval_max": 35,
+  "root_cause": "CVR declined −0.18pp (3.07%→2.89%, −0.32pp structural). S2C fell −1.45pp on MB · Paid · Google Ads (69% Shapley share), concentrated on Desktop visitors browsing dominant TGID 23604 (Eiffel Tower Guided Tour). Non-Geo Desktop S2C −3.6pp, Geo Desktop −8.9pp; all mobile cells flat. Gradual onset from ~May 14. Upstream signals (supply, pricing, catalogue) all healthy — mechanism is a Desktop select-page abandonment pattern not yet explained by available data."
+}

@@ -1,0 +1,10 @@
+{
+  "ce_id": "252",
+  "ce_name": "Louvre Museum Tickets",
+  "pre_start": "2026-03-28",
+  "post_end": "2026-05-26",
+  "run_date": "2026-05-27",
+  "eval_score": 26,
+  "eval_max": 35,
+  "root_cause": "CVR improved +0.72pp (3.46%→4.19%, +1.69pp structural). S2C and C2O lifted on dominant TGID 3909 — same/next-day availability improved (days_to_first 1→0). France domestic traffic surged +61% on seasonal spring ramp. Organic MB collapsed −35%, lifting paid share via mix. LP2S fell −3.26pp as headwind from paid-traffic dilution."
+}

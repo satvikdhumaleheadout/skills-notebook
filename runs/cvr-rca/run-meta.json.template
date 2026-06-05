@@ -1,0 +1,10 @@
+{
+  "ce_id": "252",
+  "ce_name": "Louvre Museum Tickets",
+  "pre_start": "2026-03-28",
+  "post_end": "2026-05-26",
+  "run_date": "2026-05-27",
+  "eval_score": 26,
+  "eval_max": 35,
+  "root_cause": "One-sentence summary of the root cause finding."
+}

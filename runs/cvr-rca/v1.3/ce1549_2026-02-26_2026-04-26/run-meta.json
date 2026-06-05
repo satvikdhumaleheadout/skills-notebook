@@ -1,0 +1,10 @@
+{
+  "ce_id": "1549",
+  "ce_name": "Keukenhof Tickets",
+  "pre_start": "2026-02-26",
+  "post_end": "2026-04-26",
+  "run_date": "2026-04-26",
+  "eval_score": 28,
+  "eval_max": 35,
+  "root_cause": "Progressive peak-date sellout on TGID 10118 (Keukenhof Entry Tickets) confirmed by three converging signals: availability proxy (count_days_available_30d declining 31→15), lead-time distribution collapse (30d+ bookings: 751 pre → 77 post, −90%), and experience-level S2C drop concentrated on TGID 10118."
+}

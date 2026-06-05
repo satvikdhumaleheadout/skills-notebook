@@ -1,0 +1,10 @@
+{
+  "ce_id": "6495",
+  "ce_name": "Kualoa Ranch",
+  "pre_start": "2026-03-13",
+  "post_end": "2026-05-12",
+  "run_date": "2026-05-13",
+  "eval_score": 27,
+  "eval_max": 35,
+  "root_cause": "Near-term (0–2 day) inventory depletion of the UTV Raptor Tour (TID 80074, TGID 37536) drove S2C down 5.73pp across the entire CE — TID 80074 had zero near-term tickets on 28 of 30 post-period days, creating spillover abandonment across otherwise healthy experiences. The Jurassic Zipline serves as inverse confirmation: supply improved (avg days to first available 4.0d → 0.1d) and S2C improved +4.27pp simultaneously. The structural CVR decline has been worsening for at least 90 days, with the pre period itself already degraded (pre_period_healthy = false)."
+}

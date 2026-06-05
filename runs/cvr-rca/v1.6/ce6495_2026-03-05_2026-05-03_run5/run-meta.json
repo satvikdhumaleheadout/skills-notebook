@@ -1,0 +1,10 @@
+{
+  "ce_id": "6495",
+  "ce_name": "Kualoa Ranch",
+  "pre_start": "2026-03-05",
+  "post_end": "2026-05-03",
+  "run_date": "2026-05-08",
+  "eval_score": 33,
+  "eval_max": 35,
+  "root_cause": "Spring break wind-down: US domestic S2C fell −6.73pp (15,711 pre select users) and Canadian S2C fell −10.56pp (1,053 pre users) as schools returned in early April, removing the high-intent Hawaii travel cohort. Non-spring-break markets (South Korea, Mexico) held flat or improved. BQ micro-funnel event data confirms demand-exit signatures across all 3 affected experiences: UTV Raptor (−7.2pp variant card engagement), Movie Sites (−7.5pp post-date-selection abandonment), Jungle (−8.9pp post-date-selection abandonment). Supply ruled out via post-period time-series; TGID 37530 0-2d step-down (−46%, Apr 23) is a compounding factor only. One UX flag: single session recording shows 3× 'Error Viewed' on UTV Raptor select page — P1 action for Product/Engineering to verify in frontend logs."
+}
