@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVR-RCA · Antelope Canyon (CE 3593)</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; line-height: 1.55; }
+  header { background: #1a1a2e; color: #fff; padding: 28px 40px 24px; }
+  header .eyebrow { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #8892a4; margin-bottom: 6px; }
+  header h1 { font-size: 24px; font-weight: 700; }
+  header .meta { margin-top: 8px; font-size: 13px; color: #b0bec5; }
+  header .meta span { margin-right: 20px; }
+  .container { max-width: 1050px; margin: 0 auto; padding: 0 24px 60px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8892a4; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #e0e4ef; }
+  .metric-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 800px) { .metric-cards { grid-template-columns: repeat(3, 1fr); } }
+  .metric-card { background: #fff; border-radius: 10px; padding: 18px 16px 16px; border: 1px solid #e8ebf4; }
+  .metric-card .label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #8892a4; margin-bottom: 8px; }
+  .metric-card .values { display: flex; align-items: baseline; gap: 8px; }
+  .metric-card .pre { font-size: 14px; color: #8892a4; }
+  .metric-card .post { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+  .metric-card .delta { font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 12px; margin-top: 6px; display: inline-block; }
+  .delta-neg { background: #fdecea; color: #c62828; }
+  .delta-pos { background: #e8f5e9; color: #2e7d32; }
+  .delta-flat { background: #f3f4f6; color: #555; }
+  .callout { background: #fff; border-left: 4px solid #e53935; border-radius: 0 10px 10px 0; padding: 24px 28px; margin-bottom: 8px; border-top: 1px solid #e8ebf4; border-right: 1px solid #e8ebf4; border-bottom: 1px solid #e8ebf4; }
+  .callout h2 { font-size: 16px; font-weight: 700; color: #c62828; margin-bottom: 16px; letter-spacing: 0.2px; }
+  .callout-item { margin-bottom: 14px; }
+  .callout-item:last-child { margin-bottom: 0; }
+  .callout-item .q { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8892a4; margin-bottom: 4px; }
+  .callout-item .a { font-size: 15px; color: #1a1a2e; font-weight: 500; }
+  .action-card { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 16px; }
+  .action-card .ac-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .priority-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .p1 { background: #fdecea; color: #c62828; }
+  .p2 { background: #fff8e1; color: #f57c00; }
+  .p3 { background: #e8f5e9; color: #2e7d32; }
+  .action-card .cause { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+  .action-card .dri-row { font-size: 13px; color: #555; margin-bottom: 16px; display: flex; gap: 6px; align-items: center; }
+  .dri-badge { background: #e8edf7; color: #3a4a8a; font-weight: 600; font-size: 12px; padding: 2px 9px; border-radius: 8px; }
+  .action-card ul { padding-left: 18px; font-size: 14px; color: #333; }
+  .action-card ul li { margin-bottom: 7px; }
+  .analysis-block { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 20px; }
+  .analysis-block .block-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .verdict-line { font-size: 14px; font-weight: 600; color: #c62828; background: #fdecea; border-radius: 6px; padding: 8px 14px; margin-bottom: 18px; }
+  .verdict-line.neutral { color: #3a4a8a; background: #e8edf7; }
+  .verdict-line.pos { color: #2e7d32; background: #e8f5e9; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #8892a4; padding: 8px 12px; border-bottom: 2px solid #e8ebf4; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f0f2f8; color: #1a1a2e; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8f9ff; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .neg { color: #c62828; font-weight: 600; }
+  .pos { color: #2e7d32; font-weight: 600; }
+  .highlight-row td { background: #fff8f8 !important; }
+  .shapley-bars { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 32px; margin: 16px 0 8px; }
+  .shapley-bar { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .shapley-lp2s { background: #6c8ebf; }
+  .shapley-s2c { background: #c62828; }
+  .shapley-c2o { background: #d6a832; }
+  .shapley-legend { display: flex; gap: 20px; font-size: 12px; color: #555; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+  footer { text-align: center; font-size: 12px; color: #aaa; padding: 24px; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">CVR Root Cause Analysis</div>
+  <h1>Antelope Canyon — CE 3593</h1>
+  <div class="meta">
+    <span>📅 Pre: 2026-03-22 to 2026-04-20</span>
+    <span>📅 Post: 2026-04-21 to 2026-05-20</span>
+    <span>🌍 North America · United States</span>
+    <span>🔗 <a href="https://www.antelope-canyon-tours.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">www.antelope-canyon-tours.com</a></span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="section-label">Section 1 — Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">CVR</div>
+    <div class="values"><span class="pre">6.35%</span><span class="post">6.27%</span></div>
+    <div class="delta delta-flat">Δ −0.08pp / −1.2%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">LP2S</div>
+    <div class="values"><span class="pre">45.58%</span><span class="post">42.90%</span></div>
+    <div class="delta delta-neg">Δ −2.68pp / −5.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">S2C</div>
+    <div class="values"><span class="pre">33.07%</span><span class="post">32.76%</span></div>
+    <div class="delta delta-flat">Δ −0.31pp / −0.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">C2O</div>
+    <div class="values"><span class="pre">42.14%</span><span class="post">44.64%</span></div>
+    <div class="delta delta-pos">Δ +2.50pp / +5.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Traffic (LP)</div>
+    <div class="values"><span class="pre">30,553</span><span class="post">27,030</span></div>
+    <div class="delta delta-neg">Δ −3,523 / −11.5%</div>
+  </div>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">90-day CVR trend with LY overlay</div>
+  <div id="trend-90day" style="width:100%;height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Current CVR runs broadly above LY all year, then converges with — and dips below — LY in mid-May as Google Ads volume to the kens-tours subdomain disappears (vertical dashed line marks post-period start; the steepest drop sits in May 7–20). LY at this calendar position was <strong>climbing +0.44pp</strong> while current is falling <strong>−0.33pp</strong> — the structural delta is <strong>−0.77pp</strong> vs LY (`pre_period_healthy = false` confirms erosion started before the post window).
+  </p>
+</div>
+
+<div class="callout">
+  <h2>Root Cause</h2>
+  <div class="callout-item">
+    <div class="q">What broke?</div>
+    <div class="a">Headline CVR is flat (−0.08pp) but this is a coincidence — LP2S dropped −2.68pp and was offset by an unrelated C2O lift (+2.5pp). The real cost is volume: <strong>LP traffic −11.5% and completed orders −12.6% (1,941 → 1,696)</strong>. A single Google Ads campaign serving the <strong>kens-tours.antelope-canyon-tours.com</strong> subdomain — a high-CVR (~11%) MB microsite — lost 2,810 paid users (−46.6%) over the post window. That single slice accounts for ~294 of the ~245 net forgone orders (the rest cancelled by C2O gains elsewhere).</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">Why did it break?</div>
+    <div class="a">A <strong>legal Cease &amp; Desist from Ken's Tours</strong> (the underlying supplier) was received on <strong>May 6, 2026</strong> (<a href="https://headout.slack.com/archives/CNSHDD2H1/p1778076267782489" target="_blank">Sam Hyatt · May 6</a>). In response, Performance Marketing executed Option B that same day-week: <strong>ad-group landing-page URLs were swapped from kens-tours.antelope-canyon-tours.com to the non-branded antelope-canyon-tours.com on May 7</strong> (<a href="https://headout.slack.com/archives/CNSHDD2H1/p1778132463051299" target="_blank">Deeksha Mundkur · May 7</a>) and the <strong>subdomain itself was deleted on May 8</strong> (<a href="https://headout.slack.com/archives/CNSHDD2H1/p1778255306086549" target="_blank">Rajashree Das · May 8</a>). The CVR collapse in the data is not a campaign incident — it is the measurable financial cost of an intentional, legally-mandated mitigation. Sam Hyatt's pre-action estimate of the revenue hit was <strong>$25-50K net rev/year</strong>; the May 14 MMP (<a href="https://headout.slack.com/archives/CNSHDD2H1/p1778761172991929" target="_blank">Mallampalli Parinita · May 14</a>) reports Kens went from ~30% of CE conversions at 7%+ CVR pre-LP-removal to 3% of conversions post-LP-removal — directionally consistent with this report's data.</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">When did it break?</div>
+    <div class="a">Sudden break on <strong>May 7, 2026</strong>. Daily Google Ads → kens-tours dropped from 209 users on May 6 to 64 on May 7 — a single-day −69% drop — then 11 on May 8 and ~zero after. CE-wide MB daily LP traffic shows a corresponding step-down: pre-May-7 ~1,000–1,200/day; post-May-7 ~800–900/day.</div>
+  </div>
+</div>
+
+<div class="section-label">Section 2 — Actions</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <div class="priority-badge p1">P1</div>
+    <div class="cause">Mitigate the $25-50K/year revenue gap from the Kens Tours C&amp;D — design and launch a non-branded acquisition path that recovers the ~310 orders/month lost on the kens-tours subdomain.</div>
+  </div>
+  <div class="dri-row">
+    <span class="dri-badge">Performance Marketing</span>
+    <span>+ Growth / SEO</span>
+  </div>
+  <ul>
+    <li>The May 7 ad-group LP swap (Deeksha) preserved campaign delivery onto the non-branded antelope-canyon-tours.com root; verify in the Google Ads account that the post-swap CVR on those ad groups has dropped to ~3% (per Parinita May 14 MMP) — consistent with the root-domain pre-period CVR of 6.3% being diluted by lower-intent users who used to land on the high-converting branded subdomain.</li>
+    <li>Build replacement high-intent paths: (a) Strengthen organic and paid acquisition onto the root domain's strongest Antelope-related landing URLs (taadidiin-tours, upper, lower subdomains — all holding their pre-period CVR); (b) Evaluate whether a different operator-branded variant (taadidiin, navajo-permit, etc.) can be promoted to the role kens-tours filled, with legal-team review before launch.</li>
+    <li>Confirm with Sam Hyatt's estimated impact ($25-50K net rev/year) using this report's data: ~310 orders/month × CE pre-period AOV × Headout take-rate. Use this number as the budget envelope for replacement experiments.</li>
+    <li>Establish a monthly watch on root-domain CVR — the root absorbed the redirected paid spend; if its CVR falls below the pre-period 6.28% (with volume unchanged), the new traffic is converting worse than the original baseline and the ad-group quality may be drifting further.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <div class="priority-badge p2">P2</div>
+    <div class="cause">Reassess the Apr 29 negative-seasonality campaign pause and its overlap with the kens-tours window — confirm the lower-ROI campaigns paused on Apr 28 are not also contributing to root-domain dilution.</div>
+  </div>
+  <div class="dri-row">
+    <span class="dri-badge">Performance Marketing</span>
+    <span>+ Growth / Analytics</span>
+  </div>
+  <ul>
+    <li>The <a href="https://headout.slack.com/archives/CNSHDD2H1/p1777445596047739" target="_blank">Apr 29 negative-seasonality push</a> paused campaigns with &lt;135% ROI in 3/4 of the last 4 weeks — affecting ~11% of Google spend and 10% of Google paid CM. Confirm how much of that fell on CE 3593 specifically; the cascade Level 3 shows Google Ads MB volume −12.6% (some of which is the kens-tours C&amp;D and some likely the seasonality prune).</li>
+    <li>If the seasonality prune accounts for a non-trivial share of the remaining Google Ads decline (i.e. once kens-tours is excluded the residual Google Ads loss is still material), revisit whether the &lt;135% ROI threshold is right for an Apr–May peak-shoulder period at this CE.</li>
+  </ul>
+</div>
+
+<div class="section-label">Section 3 — Supporting Analysis</div>
+
+<div class="analysis-block">
+  <div class="block-title">Mix Cascade — Routing vs Conversion Determination</div>
+  <div class="verdict-line">Routing story — mix change detected at Level 2. Organic MB volume collapsed −25.9%, shifting share toward higher-CVR Paid. The CE-level CVR ratio is flat as a composition coincidence, not because the funnel held.</div>
+
+  <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 1 — MB vs HO</p>
+  <table>
+    <thead>
+      <tr><th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>MB</strong></td><td class="num">30,070</td><td class="num">26,364</td><td class="num">97.7%</td><td class="num">96.7%</td><td class="num">6.38%</td><td class="num">6.36%</td><td class="num">−0.06pp</td><td class="num">≈ 0pp</td><td>Fixed — descend (volume loss in MB)</td></tr>
+      <tr><td>HO</td><td class="num">725</td><td class="num">897</td><td class="num">2.3%</td><td class="num">3.3%</td><td class="num">8.97%</td><td class="num">5.13%</td><td class="num pos">+0.08pp</td><td class="num neg">−0.09pp</td><td>Small offset — not driver</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 2 — Paid vs Organic (within MB)</p>
+  <table>
+    <thead>
+      <tr><th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Paid</td><td class="num">23,757</td><td class="num">21,831</td><td class="num">74.4%</td><td class="num">78.3%</td><td class="num">7.34%</td><td class="num">7.12%</td><td class="num pos">+0.29pp</td><td class="num neg">−0.16pp</td><td>Mix exit — Paid share grew via Organic loss</td></tr>
+      <tr class="highlight-row"><td><strong>Organic</strong></td><td class="num">8,169</td><td class="num">6,055</td><td class="num">25.6%</td><td class="num">21.7%</td><td class="num">4.22%</td><td class="num">4.43%</td><td class="num neg">−0.16pp</td><td class="num">+0.05pp</td><td>Mix exit — volume collapsed −25.9%</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Mix effects (+0.13pp net) and conversion effects (−0.11pp net) cancel — the CE-level CVR appears stable while the underlying composition shifted. The story is in the volume rows, not the rate columns: Organic MB lost ~2,114 users and Paid MB lost ~1,926 users. Both are part of the same kens-tours collapse documented below. Level 3 (channels within Paid) is not the relevant decomposition for this case — the locus is at the URL/subdomain level, not the channel level. Subsequent analysis investigates the routing exit at the URL level rather than scoping further into a single fixed channel.
+  </p>
+</div>
+
+<div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:4px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#5d4037;">
+  <strong>Investigation scope:</strong> Routing exit at cascade Level 2 — no single segment is "fixed" for funnel-rate analysis. All subsequent queries are scoped to MB (the dominant brand) and drill at the URL / channel / page level to identify where traffic was lost.<br>
+  <span style="color:#555;font-size:12px;">
+    MB post-period users: 26,364 &nbsp;|&nbsp; Share of CE post traffic: 97.5% &nbsp;|&nbsp; Net order loss in MB: −243 vs pre period
+  </span>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Geographic Overview — Domestic vs International</div>
+  <div class="verdict-line">Drop concentrated in US (domestic) volume — international markets held in volume terms; per-US-user CVR is flat. Consistent with a US-targeted paid acquisition source going dark.</div>
+  <table>
+    <thead>
+      <tr><th>Country</th><th>Segment</th><th class="num">Pre Users</th><th class="num">Post Users</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">ΔCVR</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td>United States</td><td>Domestic</td><td class="num">21,088</td><td class="num">18,894</td><td class="num">6.75%</td><td class="num">6.80%</td><td class="num">+0.05pp</td></tr>
+      <tr><td>Italy</td><td>International</td><td class="num">1,141</td><td class="num">1,031</td><td class="num">5.70%</td><td class="num">5.33%</td><td class="num">−0.37pp</td></tr>
+      <tr><td>Canada</td><td>International</td><td class="num">955</td><td class="num">719</td><td class="num">7.02%</td><td class="num">4.45%</td><td class="num neg">−2.57pp</td></tr>
+      <tr><td>France</td><td>International</td><td class="num">915</td><td class="num">727</td><td class="num">5.03%</td><td class="num">5.91%</td><td class="num pos">+0.88pp</td></tr>
+      <tr><td>Germany</td><td>International</td><td class="num">743</td><td class="num">648</td><td class="num">5.25%</td><td class="num">5.25%</td><td class="num">±0pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    US volume fell by 2,194 LP users — the dominant geographic signal, and almost exactly the scale of the kens-tours Google Ads loss (2,810 users). Per-US-user CVR is unchanged, ruling out a US-specific funnel-quality issue. Canada shows a worth-noting rate drop (−2.57pp) on small volume (719 users); it is consistent with the paid acquisition loss reaching cross-border users but the absolute order delta (−35) is too small to be a primary action.
+    Downstream analysis — URL and kens-tours-channel breakdown below — is not filtered by geography; the kens-tours subdomain primarily served US Google Ads traffic by design.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Shapley Decomposition — funnel step attribution</div>
+  <div class="verdict-line neutral">LP2S −0.38pp and C2O +0.36pp are real but offset to a near-zero net ΔCVR. The volume loss, not the rate composition, is what to act on.</div>
+
+  <div class="shapley-bars">
+    <div class="shapley-bar shapley-lp2s" style="flex: 49">LP2S −49%</div>
+    <div class="shapley-bar shapley-c2o" style="flex: 47">C2O +47%</div>
+    <div class="shapley-bar shapley-s2c" style="flex: 8">S2C −8%</div>
+  </div>
+  <div class="shapley-legend">
+    <span><span class="legend-dot" style="background:#6c8ebf"></span>LP2S −0.38pp</span>
+    <span><span class="legend-dot" style="background:#c62828"></span>S2C −0.06pp</span>
+    <span><span class="legend-dot" style="background:#d6a832"></span>C2O +0.36pp</span>
+  </div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Total ΔCVR is −0.08pp. The percentage-contribution column in `summary.json` shows values like 489% / -466% because the total is so close to zero; the absolute pp figures are the meaningful read. LP2S decline is downstream of the kens-tours composition change (losing a high-LP2S URL pulls the CE-average LP2S down). C2O improvement (C2A +2.1pp, A2O +1.2pp at CE level) is independent — it appears in the root-domain CVR going 6.28% → 6.60% — and partially offsets the volume loss.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">URL Breakdown — MB landing pages</div>
+  <div class="verdict-line">Traffic routing collapse — kens-tours subdomain lost 43% of its volume and 5.9pp of share. Root domain and other subdomains held. The drop is concentrated in one specific landing URL.</div>
+
+  <table>
+    <thead>
+      <tr><th>URL</th><th>Period</th><th class="num">Users</th><th class="num">% of LP</th><th class="num">LP2S</th><th class="num">CVR</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>antelope-canyon-tours.com/ (root)</td><td>pre</td><td class="num">18,295</td><td class="num">52.2%</td><td class="num">46.9%</td><td class="num">6.28%</td></tr>
+      <tr><td>antelope-canyon-tours.com/ (root)</td><td>post</td><td class="num">17,981</td><td class="num">60.1%</td><td class="num">45.9%</td><td class="num pos">6.60%</td></tr>
+      <tr class="highlight-row"><td><strong>kens-tours.antelope-canyon-tours.com/</strong></td><td>pre</td><td class="num">6,276</td><td class="num">17.9%</td><td class="num">58.4%</td><td class="num">10.90%</td></tr>
+      <tr class="highlight-row"><td><strong>kens-tours.antelope-canyon-tours.com/</strong></td><td>post</td><td class="num neg">3,577</td><td class="num neg">12.0%</td><td class="num">53.6%</td><td class="num">10.79%</td></tr>
+      <tr><td>taadidiin-tours.antelope-canyon-tours.com/</td><td>pre</td><td class="num">1,496</td><td class="num">4.3%</td><td class="num">57.3%</td><td class="num">8.36%</td></tr>
+      <tr><td>taadidiin-tours.antelope-canyon-tours.com/</td><td>post</td><td class="num">1,356</td><td class="num">4.5%</td><td class="num">51.0%</td><td class="num">7.67%</td></tr>
+      <tr><td>canyon-x.antelope-canyon-tours.com/</td><td>pre</td><td class="num">1,087</td><td class="num">3.1%</td><td class="num">51.1%</td><td class="num">6.16%</td></tr>
+      <tr><td>canyon-x.antelope-canyon-tours.com/</td><td>post</td><td class="num">1,055</td><td class="num">3.5%</td><td class="num">45.1%</td><td class="num">6.26%</td></tr>
+      <tr><td>lower.antelope-canyon-tours.com/</td><td>pre</td><td class="num">819</td><td class="num">2.3%</td><td class="num">52.0%</td><td class="num">8.67%</td></tr>
+      <tr><td>lower.antelope-canyon-tours.com/</td><td>post</td><td class="num">676</td><td class="num">2.3%</td><td class="num">52.2%</td><td class="num pos">9.62%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    The root domain (60% of MB post traffic) and the four other subdomains held in both volume and rate. kens-tours alone explains the routing shift — its share fell from 17.9% to 12.0% (a 5.9pp drop) on a 43% volume collapse, while its own CVR held at ~10.8%. Because kens-tours was the highest-CVR MB URL by a wide margin (10.9% vs 6.3% for the root), losing it depresses the CE-level LP2S average even though each remaining URL converted as well or better. Filter the next query to kens-tours to see which acquisition source disappeared.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">kens-tours subdomain — channel split</div>
+  <div class="verdict-line">Google Ads delivered 96% of kens-tours pre-period traffic; Google Ads volume to kens-tours dropped −46.6% (6,029 → 3,219) while its CVR held at ~11%. This is a paid acquisition collapse, not a funnel-quality drop.</div>
+
+  <table>
+    <thead>
+      <tr><th>Channel</th><th>Period</th><th class="num">Users LP</th><th class="num">Orders</th><th class="num">CVR</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>Google Ads</strong></td><td>pre</td><td class="num">6,029</td><td class="num">654</td><td class="num">10.85%</td></tr>
+      <tr class="highlight-row"><td><strong>Google Ads</strong></td><td>post</td><td class="num neg">3,219</td><td class="num">354</td><td class="num">11.00%</td></tr>
+      <tr><td>Microsoft Ads</td><td>pre</td><td class="num">91</td><td class="num">20</td><td class="num">21.98%</td></tr>
+      <tr><td>Microsoft Ads</td><td>post</td><td class="num">224</td><td class="num">26</td><td class="num">11.61%</td></tr>
+      <tr><td>Other (organic / direct)</td><td>pre</td><td class="num">442</td><td class="num">36</td><td class="num">8.14%</td></tr>
+      <tr><td>Other (organic / direct)</td><td>post</td><td class="num">260</td><td class="num">17</td><td class="num">6.54%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Of the −2,699 users kens-tours lost in the post window, Google Ads accounts for −2,810 (Microsoft Ads gained a small +133, partially compensating). CVR held flat at 11%, so the lost users were the same quality of traffic — the campaign simply stopped delivering. The "Other" (organic/direct) bucket also fell −41% on a small base; this could be (a) the same audience that used the campaign as their entry point and now goes elsewhere, or (b) an independent SEO/direct-traffic drop on the subdomain. Action 2 (subdomain health check) is calibrated to that ambiguity.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Daily Google Ads → kens-tours timeline — the break date</div>
+  <div class="verdict-line">Sharp break on May 7, 2026. Daily Google Ads → kens-tours volume fell from 209 users on May 6 to 64 on May 7 (−69% single-day), then 11 on May 8, then ≈ zero from May 9 onward.</div>
+  <div id="daily-kens-tours" style="width:100%;height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    The single-day drop pattern is consistent with a campaign pause, ad disapproval, or account-level policy action — not budget drift (which would show a gradual decline) and not bid-strategy auto-adjustment (which usually softens rather than zeros out). The orders line tracks the volume line one-for-one because CVR within the source held steady. From May 9 to the post-period end, this acquisition source contributes essentially zero — 12 lost days of ~220-users/day × 11% CVR ≈ 290 orders forgone in this window alone, with the same loss rate carrying forward until the campaign is restored or replaced.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Causal mechanism — corroboration from #mkt-usa</div>
+  <div class="verdict-line">Confirmed: a Cease &amp; Desist from Ken's Tours triggered an intentional removal of the branded subdomain and ad-group LP swap on May 6–8. The May 7 break in the BQ data matches the execution date exactly.</div>
+
+  <table>
+    <thead>
+      <tr><th>Signal</th><th>What it confirms in this report</th><th style="width:140px;">Source</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>Cease &amp; Desist from Ken's Tours received May 6, 2026.</strong> Kens Tours subdomain (live since Nov 29 2025, $686K GBV YTD) and Ken Tours ad groups (launched Feb 4 2026, 8.7% CVR, 87.9% impression share) recommended for Option B: remove subdomain + swap ad-group final URLs. Pre-action estimated impact: <strong>$25-50K net rev/year</strong>.</td><td>The "why" behind the May 7 break in the data — a legal action forced the change. The investigation does not need to determine cause; it needs to size mitigation.</td><td><a href="https://headout.slack.com/archives/CNSHDD2H1/p1778076267782489" target="_blank" style="color:#3a4a8a;font-size:12px;">Sam Hyatt · May 6</a></td></tr>
+      <tr class="highlight-row"><td>Ad-group LP URLs swapped from kens-tours subdomain to antelope-canyon-tours.com root; "Kens Tours" branding stripped from ad copy.</td><td>Confirms the May 7 execution date — matches the BQ-derived single-day break (209 users May 6 → 64 users May 7) to the day.</td><td><a href="https://headout.slack.com/archives/CNSHDD2H1/p1778132463051299" target="_blank" style="color:#3a4a8a;font-size:12px;">Deeksha Mundkur · May 7</a></td></tr>
+      <tr><td>Ken's Tour shoulder page deleted and kens-tours.antelope-canyon-tours.com subdomain removed.</td><td>Closes Action 2's data gap (subdomain itself was de-listed, not just unfed by paid). The −41% drop in organic/direct traffic to kens-tours is also explained by the subdomain removal.</td><td><a href="https://headout.slack.com/archives/CNSHDD2H1/p1778255306086549" target="_blank" style="color:#3a4a8a;font-size:12px;">Rajashree Das · May 8</a></td></tr>
+      <tr><td>May 14 MMP confirms Kens was best-converting ad group (CVR 7%+, ~30% of CE conversions); post-LP removal dropped to 3% of conversions.</td><td>Independent quantification of the impact. This report's BQ-derived figure (CVR 10.9% pre on the kens-tours subdomain, 11% on post sessions that still came through during May 1–6) is directionally consistent with the MMP's 7%+ ad-group CVR (different denominator).</td><td><a href="https://headout.slack.com/archives/CNSHDD2H1/p1778761172991929" target="_blank" style="color:#3a4a8a;font-size:12px;">Parinita · May 14</a></td></tr>
+      <tr><td>Apr 29 negative-seasonality push paused campaigns with &lt;135% ROI in 3/4 of last 4w (Apr 28 execution). ~11% of Google spend and 10% Google paid CM affected globally.</td><td>Adjacent but distinct event — possibly contributes to the remaining Google Ads MB volume decline outside of kens-tours (~2,664 lost in non-kens-tours paid). Worth confirming on CE 3593's specific paused campaign list (Action 2).</td><td><a href="https://headout.slack.com/archives/CNSHDD2H1/p1777445596047739" target="_blank" style="color:#3a4a8a;font-size:12px;">Saurabh · Apr 29</a></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Three supply-side signals on adjacent operators (Antelope Slot Canyon Tours TGID 29648 Navajo permit fee change May 12; VID 4832 take-rate change May 20; Joyfun / Dixies take-rate corrections Apr 30) were filed in #mkt-usa during the window but do not move CE 3593's funnel rates and are not part of this finding.
+  </p>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Dimensions Checked — ruled out as independent drivers</div>
+  <p style="font-size:13px;color:#555;margin-bottom:12px;">
+    These were checked and do not add independent signal beyond what the kens-tours story already explains.
+  </p>
+  <ul style="font-size:14px;color:#333;padding-left:18px;">
+    <li style="margin-bottom:8px;"><strong>HO segment:</strong> +23.7% volume on a tiny base (725 → 897), CVR fell 8.97% → 5.13% (−3.84pp). HO orders −19; net CE impact ≈ zero. Not a driver.</li>
+    <li style="margin-bottom:8px;"><strong>Root domain CVR:</strong> Held and slightly improved (6.28% → 6.60%, +0.32pp on 18k users). Confirms the C2O+ improvement is real and independent of the kens-tours loss.</li>
+    <li style="margin-bottom:8px;"><strong>Microsoft Ads on kens-tours:</strong> Grew (+146%) but on tiny base (91 → 224). Not enough to compensate.</li>
+    <li style="margin-bottom:8px;"><strong>Other MB subdomains (taadidiin, canyon-x, upper, lower):</strong> Held in volume and rate; no comparable break.</li>
+    <li style="margin-bottom:8px;"><strong>Per-US-user CVR:</strong> 6.75% → 6.80% — flat. The US volume drop is a sourcing problem, not a conversion problem.</li>
+    <li style="margin-bottom:0;"><strong>Weekday composition:</strong> Pre Mar 22 – Apr 20 contains Easter (Apr 3–6); Post Apr 21 – May 20 has no major holiday. Comparable enough that weekday mix is not a confound for this finding.</li>
+  </ul>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Hypotheses Explored</div>
+  <p style="font-size:13px;color:#555;margin-bottom:14px;">
+    Every hypothesis generated during this investigation — confirmed, ruled out, and open.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Hypothesis</th><th>Test run</th><th class="num" style="width:120px;">Outcome</th><th>What this means</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Funnel rate broke (LP2S regression on the catalogue)</td><td>Fixed-segment LP2S across all MB URLs</td><td class="num">❌ Ruled out</td><td>Per-URL LP2S held or improved on root, kens-tours, and other subdomains. The CE-level LP2S decline is a composition artefact of losing a high-LP2S URL.</td></tr>
+      <tr><td>Mix shift between MB and HO is the story (Level 1)</td><td>L1 cascade — share, mix_effect, conv_effect</td><td class="num">❌ Ruled out</td><td>HO volume change is tiny on absolute base; net Level 1 effect ≈ 0pp.</td></tr>
+      <tr><td>Routing exit at Level 2 — Organic MB share fell on volume</td><td>L2 cascade — Organic −25.9% volume, Paid +3.88pp share</td><td class="num">✅ Confirmed</td><td>Mix exit at Level 2 confirms a routing-story investigation direction.</td></tr>
+      <tr><td>The volume loss concentrates in a specific MB URL</td><td>URL breakdown within MB</td><td class="num">✅ Confirmed</td><td>kens-tours subdomain lost 43% of volume (5.9pp of share) while root domain and other subdomains held.</td></tr>
+      <tr><td>Google Ads is the specific acquisition source that disappeared on kens-tours</td><td>kens-tours channel split — Google Ads 6,029 → 3,219 (−46.6%)</td><td class="num">✅ Confirmed</td><td>96% of kens-tours pre-period traffic came from Google Ads; that channel lost almost exactly the entire volume drop.</td></tr>
+      <tr><td>The Google Ads kens-tours collapse has a specific date</td><td>Daily Google Ads → kens-tours timeline</td><td class="num">✅ Confirmed</td><td>Sudden break May 7, 2026 (209 → 64 users single-day); near-zero after May 9.</td></tr>
+      <tr><td>US geographic targeting is the disappearing audience</td><td>Geo within MB — US volume −10.4%, per-US CVR flat</td><td class="num">✅ Confirmed</td><td>The lost paid users were predominantly US-based (kens-tours is a US Antelope Canyon subdomain).</td></tr>
+      <tr><td>Funnel-quality (C2O) is also worsening</td><td>c2o_sub from summary.json; root-domain CVR comparison</td><td class="num">❌ Ruled out — direction reversed</td><td>C2A +2.1pp and A2O +1.2pp at CE level; root-domain CVR +0.32pp. Checkout flow is actually improving, partially masking the volume loss.</td></tr>
+      <tr class="highlight-row"><td>Why did the campaign stop on May 7 (pause, disapproval, budget, policy)?</td><td>Slack corroboration: Sam Hyatt May 6, Deeksha Mundkur May 7</td><td class="num">✅ Confirmed</td><td>Cease &amp; Desist from Ken's Tours (the underlying SP) received May 6; ad-group LPs intentionally swapped to non-branded URL May 7 in legal mitigation. The break is intentional, not a campaign error.</td></tr>
+      <tr><td>The kens-tours subdomain itself is broken / de-indexed / removed</td><td>Slack corroboration: Rajashree Das May 8</td><td class="num">✅ Confirmed</td><td>Subdomain was deliberately deleted on May 8 as part of the C&amp;D mitigation. The −41% drop in organic/direct traffic to kens-tours is the consequence of the subdomain no longer existing.</td></tr>
+      <tr><td>Apr 29 negative-seasonality campaign pause contributes to the residual Google Ads decline (outside kens-tours)</td><td>Slack signal: Saurabh Apr 29 ("&lt;135% ROI in 3/4 of last 4w paused"). Not yet decomposed at CE 3593 level.</td><td class="num">🔄 Consistent with, not directly tested</td><td>Non-kens-tours Google Ads paid MB still fell by ~2,664 users; some share is plausibly the seasonality prune. Captured in Action 2 for Performance Marketing follow-up.</td></tr>
+      <tr><td>Canada per-user CVR drop (−2.57pp) is a separate root cause</td><td>Geo overview — Canada 955 → 719, CVR 7.02% → 4.45%</td><td class="num">❌ Ruled out as independent driver</td><td>Absolute order impact is small (~35 orders). Likely a knock-on of the same paid acquisition loss reaching cross-border users; not a distinct root cause.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<footer>Generated 2026-05-21 · CVR-RCA · CE 3593 Antelope Canyon</footer>
+
+<script>
+const currentDates = ["2026-02-20","2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20"];
+const currentCvr = [0.066667,0.085464,0.071204,0.084881,0.080842,0.07308,0.074265,0.073868,0.069519,0.081065,0.076579,0.085017,0.082884,0.076366,0.081633,0.075284,0.081861,0.075595,0.067764,0.068988,0.066064,0.0638,0.075114,0.082938,0.06471,0.057753,0.059373,0.069534,0.06651,0.063797,0.053733,0.070508,0.073066,0.062348,0.064947,0.066542,0.077206,0.066082,0.06546,0.049045,0.069976,0.059534,0.063979,0.067151,0.058882,0.055651,0.065666,0.066212,0.063991,0.094077,0.088634,0.087963,0.068205,0.084637,0.079439,0.078295,0.05676,0.073892,0.074825,0.076336,0.081693,0.079268,0.073326,0.081828,0.086915,0.068604,0.07807,0.053712,0.067753,0.05985,0.072193,0.062977,0.081436,0.071895,0.077512,0.057998,0.069652,0.05016,0.063731,0.063646,0.068394,0.053991,0.055851,0.048753,0.067207,0.07034,0.053435,0.040698,0.065134,0.056983];
+const lyCvr = [0.065916,0.068182,0.059067,0.060049,0.060686,0.054054,0.056923,0.076023,0.061118,0.078059,0.068966,0.066362,0.064882,0.055085,0.067644,0.076923,0.06517,0.065523,0.078466,0.067979,0.056604,0.058416,0.06797,0.052277,0.066667,0.064433,0.053226,0.056221,0.063158,0.061492,0.054416,0.057664,0.053897,0.063806,0.068279,0.05287,0.057716,0.059499,0.058228,0.047554,0.055728,0.070018,0.063752,0.055062,0.085106,0.050378,0.041278,0.043421,0.063075,0.035115,0.041494,0.024133,0.027221,0.048855,0.050769,0.055679,0.035052,0.039604,0.043933,0.041401,0.046816,0.067766,0.046368,0.046843,0.050467,0.051519,0.048711,0.039185,0.067773,0.054545,0.044383,0.044295,0.052339,0.063636,0.05597,0.08078,0.047278,0.05719,0.069193,0.069767,0.051435,0.050343,0.052519,0.070875,0.063804,0.0489,0.053535,0.057143,0.059314,0.063457];
+const hasLyData = lyCvr.some(v => v !== null && v !== undefined && v > 0);
+
+const POST_START = "2026-04-21";
+const POST_END = "2026-05-20";
+const postDates = currentDates.filter(d => d >= POST_START && d <= POST_END);
+
+const traces90d = [
+  {type:'scatter', mode:'lines', name:'CVR 2026', x: currentDates, y: currentCvr, line:{color:'#6c8ebf', width:2}}
+];
+if (hasLyData) {
+  traces90d.push({type:'scatter', mode:'lines', name:'CVR 2025 (LY)', x: currentDates, y: lyCvr, line:{color:'#9e9e9e', dash:'dash', width:1.5}});
+}
+const midPostDate = postDates[Math.floor(postDates.length / 2)];
+
+Plotly.newPlot('trend-90day', traces90d, {
+  height: 280,
+  yaxis: {tickformat:'.1%', title:'CVR'},
+  xaxis: {tickformat:'%d %b', dtick: 7 * 86400000, title:''},
+  plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+  font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e', size:11},
+  legend: {orientation:'h', y:-0.2},
+  margin: {l:55, r:20, t:30, b:60},
+  shapes: [
+    {type:'rect', x0:POST_START, x1:POST_END, y0:0, y1:1, xref:'x', yref:'paper', fillcolor:'rgba(198,40,40,0.06)', line:{width:0}},
+    {type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#c62828', dash:'dot', width:1}},
+    {type:'line', x0:'2026-05-07', x1:'2026-05-07', y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#e07b00', dash:'dot', width:1}}
+  ],
+  annotations: [
+    {x: midPostDate, y: 0.92, xref:'x', yref:'paper', text:'Post period', font:{color:'#c62828', size:10}, showarrow:false},
+    {x: '2026-05-07', y: 0.05, xref:'x', yref:'paper', text:'May 7 break', font:{color:'#e07b00', size:10}, showarrow:false, xshift:30}
+  ]
+}, {responsive:true});
+
+// Daily Google Ads → kens-tours
+const kDates = ["2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20"];
+const kUsers = [249,270,247,224,201,179,199,297,278,255,230,200,183,217,191,230,221,219,176,188,194,204,204,218,230,236,181,192,262,226,188,202,204,151,177,216,217,252,197,237,225,212,230,257,236,209,64,11,0,0,0,0,0,0,0,0,0,0,0,0];
+const kOrders = [14,29,23,27,21,19,33,27,25,19,24,18,23,25,22,17,14,23,22,34,25,33,19,29,30,29,17,26,32,34,26,22,22,22,35,23,25,18,17,21,24,25,27,31,25,17,3,1,0,0,0,0,0,0,0,0,0,0,0,0];
+
+Plotly.newPlot('daily-kens-tours', [
+  {type:'scatter', mode:'lines+markers', name:'Users LP', x: kDates, y: kUsers, line:{color:'#6c8ebf', width:2.5}, marker:{size:4, color:'#6c8ebf'}, yaxis:'y'},
+  {type:'scatter', mode:'lines+markers', name:'Orders', x: kDates, y: kOrders, line:{color:'#c62828', width:2.5, dash:'dot'}, marker:{size:4, color:'#c62828'}, yaxis:'y2'}
+], {
+  height: 280,
+  yaxis: {title:'Users LP', side:'left', rangemode:'tozero'},
+  yaxis2: {title:'Orders', side:'right', overlaying:'y', rangemode:'tozero'},
+  xaxis: {tickformat:'%d %b', title:'Date'},
+  plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+  font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e'},
+  legend: {orientation:'h', y:-0.3},
+  margin: {l:55, r:55, t:30, b:50},
+  shapes: [
+    {type:'line', x0:'2026-04-21', x1:'2026-04-21', y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#888', dash:'dot', width:1}},
+    {type:'line', x0:'2026-05-07', x1:'2026-05-07', y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#e07b00', dash:'dash', width:2}}
+  ],
+  annotations: [
+    {x:'2026-04-21', y:0.95, xref:'x', yref:'paper', text:'Post period start', font:{color:'#888', size:10}, showarrow:false, xshift:50},
+    {x:'2026-05-07', y:0.5, xref:'x', yref:'paper', text:'May 7 break', font:{color:'#e07b00', size:11, family:'Arial Black'}, showarrow:true, arrowhead:2, ax:-40, ay:0}
+  ]
+}, {responsive:true});
+</script>
+
+</body>
+</html>

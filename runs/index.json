@@ -1,0 +1,52 @@
+{
+  "versions": [
+    {
+      "version": "v1.3",
+      "version_date": "2026-04-28",
+      "version_summary": "Investigation tree model + unified run folder",
+      "manifest": "runs/v1.3/manifest.json"
+    },
+    {
+      "version": "v1.5",
+      "version_date": "2026-05-04",
+      "version_summary": "Evaluator redesign (failure mode tags) + findings synthesis gate (Step 2b)",
+      "manifest": "runs/v1.5/manifest.json"
+    },
+    {
+      "version": "v1.6",
+      "version_date": "2026-05-04",
+      "version_summary": "Query fix (COUNT DISTINCT), Geo/Non-Geo dimension, routing exit investigation, events.md reference",
+      "manifest": "runs/v1.6/manifest.json"
+    },
+    {
+      "version": "v1.7",
+      "version_date": "2026-05-06",
+      "version_summary": "Inventory analysis overhaul — TID-level queries, 3-step path, Path A/B, supply gate, lost_checkouts_delta locus logic",
+      "manifest": "runs/v1.7/manifest.json"
+    },
+    {
+      "version": "v1.9",
+      "version_date": "2026-05-20",
+      "version_summary": "URL breakdown query, S2C secondary-driver scoping, Section 3 ordering, action card quality gates",
+      "manifest": "runs/v1.9/manifest.json"
+    },
+    {
+      "version": "v1.12",
+      "version_date": "2026-05-22",
+      "version_summary": "Bidirectional RCA support, four-pattern Slack reconciliation, link-to-table styling, jargon preservation",
+      "manifest": "runs/v1.12/manifest.json"
+    },
+    {
+      "version": "v1.14",
+      "version_date": "2026-05-23",
+      "version_summary": "Tabbed report framework — perf-audit as second tab, cross-tab citations, scalable tab spec",
+      "manifest": "runs/v1.14/manifest.json"
+    },
+    {
+      "version": "v1.17",
+      "version_date": "2026-05-29",
+      "version_summary": "Lazy-load references by phase — context.md+hypothesis.md at Step 2; actions.md+report_structure.md at Step 3",
+      "manifest": "runs/v1.17/manifest.json"
+    }
+  ]
+}

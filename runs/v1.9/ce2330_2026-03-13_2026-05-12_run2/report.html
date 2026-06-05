@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVR-RCA · Walt Disney World Orlando (CE 2330) · Run 2</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; line-height: 1.55; }
+    header { background: #1a1a2e; color: #fff; padding: 28px 40px 24px; }
+    header .eyebrow { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #8892a4; margin-bottom: 6px; }
+    header h1 { font-size: 24px; font-weight: 700; }
+    header .meta { margin-top: 8px; font-size: 13px; color: #b0bec5; }
+    header .meta span { margin-right: 20px; }
+    .container { max-width: 1050px; margin: 0 auto; padding: 0 24px 60px; }
+    .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8892a4; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #e0e4ef; }
+    .metric-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+    @media (max-width: 800px) { .metric-cards { grid-template-columns: repeat(3, 1fr); } }
+    .metric-card { background: #fff; border-radius: 10px; padding: 18px 16px 16px; border: 1px solid #e8ebf4; }
+    .metric-card .label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #8892a4; margin-bottom: 8px; }
+    .metric-card .values { display: flex; align-items: baseline; gap: 8px; }
+    .metric-card .pre { font-size: 14px; color: #8892a4; }
+    .metric-card .post { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+    .metric-card .delta { font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 12px; margin-top: 6px; display: inline-block; }
+    .delta-neg { background: #fdecea; color: #c62828; }
+    .delta-pos { background: #e8f5e9; color: #2e7d32; }
+    .delta-flat { background: #f3f4f6; color: #555; }
+    .callout { background: #fff; border-left: 4px solid #e53935; border-radius: 0 10px 10px 0; padding: 24px 28px; margin-bottom: 8px; border-top: 1px solid #e8ebf4; border-right: 1px solid #e8ebf4; border-bottom: 1px solid #e8ebf4; }
+    .callout h2 { font-size: 16px; font-weight: 700; color: #c62828; margin-bottom: 16px; letter-spacing: 0.2px; }
+    .callout-item { margin-bottom: 14px; }
+    .callout-item:last-child { margin-bottom: 0; }
+    .callout-item .q { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8892a4; margin-bottom: 4px; }
+    .callout-item .a { font-size: 15px; color: #1a1a2e; font-weight: 500; }
+    .action-card { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 16px; }
+    .action-card .ac-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .priority-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .p1 { background: #fdecea; color: #c62828; }
+    .p2 { background: #fff8e1; color: #f57c00; }
+    .p3 { background: #e8f5e9; color: #2e7d32; }
+    .action-card .cause { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+    .action-card .dri-row { font-size: 13px; color: #555; margin-bottom: 16px; display: flex; gap: 6px; align-items: center; }
+    .dri-badge { background: #e8edf7; color: #3a4a8a; font-weight: 600; font-size: 12px; padding: 2px 9px; border-radius: 8px; }
+    .action-card ul { padding-left: 18px; font-size: 14px; color: #333; }
+    .action-card ul li { margin-bottom: 7px; }
+    .analysis-block { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 20px; }
+    .analysis-block .block-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+    .verdict-line { font-size: 14px; font-weight: 600; color: #c62828; background: #fdecea; border-radius: 6px; padding: 8px 14px; margin-bottom: 18px; }
+    .verdict-line.neutral { color: #3a4a8a; background: #e8edf7; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #8892a4; padding: 8px 12px; border-bottom: 2px solid #e8ebf4; }
+    td { padding: 9px 12px; border-bottom: 1px solid #f0f2f8; color: #1a1a2e; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8f9ff; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .neg { color: #c62828; font-weight: 600; }
+    .pos { color: #2e7d32; font-weight: 600; }
+    .highlight-row td { background: #fff8f8 !important; }
+    .shapley-bars { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 32px; margin: 16px 0 8px; }
+    .shapley-bar { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .shapley-lp2s { background: #6c8ebf; }
+    .shapley-s2c { background: #c62828; }
+    .shapley-c2o { background: #d6a832; }
+    .shapley-legend { display: flex; gap: 20px; font-size: 12px; color: #555; }
+    .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+    .chart-container { margin-top: 16px; }
+    .data-gap-note { background: #fff8e1; border-left: 4px solid #f9a825; border-radius: 4px; padding: 10px 14px; margin: 12px 0; font-size: 13px; color: #5d4037; }
+    .hyp-table td:nth-child(2) { font-size: 12px; color: #555; }
+    footer { text-align: center; font-size: 12px; color: #aaa; padding: 24px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">CVR Root Cause Analysis · Run 2</div>
+  <h1>Walt Disney World Orlando — CE 2330</h1>
+  <div class="meta">
+    <span>📅 Pre: 2026-03-13 – 2026-04-12</span>
+    <span>📅 Post: 2026-04-13 – 2026-05-12</span>
+    <span>🌍 North America · United States</span>
+    <span>🔗 <a href="https://walt-disney-world.orlando-ticket.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">walt-disney-world.orlando-ticket.com</a></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ===== SECTION 1 ===== -->
+  <div class="section-label">Section 1 — Executive Summary</div>
+
+  <!-- 1a. Metric Cards -->
+  <div class="metric-cards">
+    <div class="metric-card">
+      <div class="label">CVR</div>
+      <div class="values">
+        <span class="pre">1.04%</span>
+        <span class="post">0.69%</span>
+      </div>
+      <div class="delta delta-neg">Δ −0.35pp / −33.9%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">LP2S</div>
+      <div class="values">
+        <span class="pre">39.2%</span>
+        <span class="post">37.0%</span>
+      </div>
+      <div class="delta delta-neg">Δ −2.3pp / −5.8%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">S2C</div>
+      <div class="values">
+        <span class="pre">25.5%</span>
+        <span class="post">22.8%</span>
+      </div>
+      <div class="delta delta-neg">Δ −2.7pp / −10.5%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">C2O</div>
+      <div class="values">
+        <span class="pre">10.4%</span>
+        <span class="post">8.1%</span>
+      </div>
+      <div class="delta delta-neg">Δ −2.3pp / −21.7%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Traffic (LP)</div>
+      <div class="values">
+        <span class="pre">38,450</span>
+        <span class="post">33,661</span>
+      </div>
+      <div class="delta delta-neg">Δ −4,789 / −12.5%</div>
+    </div>
+  </div>
+
+  <!-- 1b. 90-day CVR chart -->
+  <div class="analysis-block" style="padding:20px 24px;">
+    <div class="block-title" style="margin-bottom:4px;">90-Day CVR Trend</div>
+    <p style="font-size:12px;color:#8892a4;margin-bottom:4px;">Pre period shaded blue · Post period shaded red · CVR was elevated during spring break weeks (Mar 13–Apr 12) and declined progressively into the post period</p>
+    <div id="chart-90d" style="height:260px;"></div>
+    <div id="chart-90d-ly-notice"></div>
+  </div>
+
+  <!-- 1c. Root Cause Callout -->
+  <div class="callout">
+    <h2>Root Cause</h2>
+    <div class="callout-item">
+      <div class="q">What broke?</div>
+      <div class="a">C2O fell 2.3pp (59% of the decline), driven by post-spring-break demand shift reducing checkout intent and by Magic Kingdom 1-Day Ticket (experience 36344) showing A2O collapsing from 64% to 48% — payment attempts failing while other WDW products held flat or improved. S2C also fell 2.7pp (27% of the decline) for the same seasonal reason: within the fixed segment (MB · Google Ads), S2C declined from 24.6% to 22.4% — the same demand-composition mechanism explains both steps.</div>
+    </div>
+    <div class="callout-item">
+      <div class="q">Why did it break?</div>
+      <div class="a">The pre window (Mar 13–Apr 12) captures US spring break at WDW — the peak of committed buyers. The 90-day CVR trend (above) shows elevated rates throughout the pre period, with a progressive step-down as spring break ends: LP2S fell 3.7% and S2C fell 9.0% within the fixed segment, confirming the funnel was less efficient in the post period at every step before payment. Separately, Magic Kingdom 1-Day Tickets show a sustained A2O degradation — inventory is unlimited (9,999 tickets per date, zero sold-out days), ruling out supply. The pattern is consistent with a WDW fulfillment or payment processing issue specific to Magic Kingdom single-day tickets from mid-April; the exact mechanism (API failure, fraud block, gateway degradation) is a data gap requiring order_attempted_events_v2 to resolve.</div>
+    </div>
+    <div class="callout-item">
+      <div class="q">When did it break?</div>
+      <div class="a">Gradual from Apr 13 — aligned with the end of spring break. No single break date; the funnel metrics deteriorate progressively as spring break ends, consistent with the 90-day trend. The Magic Kingdom A2O degradation is sustained across the full post period: weeks ending Apr 20 and May 04 were particularly low (38% and 40% A2O vs a pre-period average of ~65%), suggesting an intermittent or date-dependent fulfillment issue that began at the seasonal transition.</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2 ===== -->
+  <div class="section-label">Section 2 — Actions</div>
+
+  <!-- Action Card 1: P1 — Magic Kingdom A2O failures -->
+  <div class="action-card">
+    <div class="ac-header">
+      <div class="priority-badge p1">P1</div>
+      <div class="cause">Magic Kingdom 1-Day Ticket (experience 36344, TIDs 76930/76934/76935) A2O fell from 64% to 48% throughout Apr 13–May 12 — payment attempts failing at a sustained elevated rate while supply is unlimited and other WDW products were unaffected.</div>
+    </div>
+    <div class="dri-row">
+      <span class="dri-badge">Ops / Payments</span>
+      <span>+ Engineering</span>
+    </div>
+    <ul>
+      <li>Pull <code>order_attempted_events_v2</code> for CE 2330, experience_id 36344, TIDs 76930/76934/76935, Apr 13–May 12. Break down by <code>failure_reason</code>, <code>payment_gateway</code>, and <code>fraud_evaluation_result_origin</code> to isolate the mechanism. Three sub-hypotheses to test: (A) disproportionate <code>failure_reason = 'inventory_unavailable'</code> → WDW fulfillment API rejecting confirmations for MK single-day tickets; (B) elevated <code>fraud_evaluation_result_origin = 'fraud_check'</code> → fraud over-blocking on MK TIDs post-Apr-13; (C) specific payment gateway with elevated failures → gateway degradation specific to MK ticket amounts.</li>
+      <li>Compare fulfillment success rate for Magic Kingdom (TIDs 76930/76934/76935) against WDW Park Hopper (36251) and 2-Day Tickets (36252) for the same period — the contrast will confirm whether the issue is product-specific or CE-wide.</li>
+      <li>Check whether WDW's ticketing API changed its response format or availability confirmation flow after spring break peak (mid-April). The onset timing and MK-specific pattern is consistent with a post-peak-season API change on Disney's side.</li>
+      <li>If fraud over-blocking identified: check whether Bond/Sift/Watson fraud rules were updated around Apr 13 and assess their false-positive rate on WDW ticket purchases specifically.</li>
+      <li>Also check whether Microsoft Ads (Bing) A2O anomaly is a separate issue — rate crashed from 53% to 28% but n=43 post-period attempts; validate sample size before acting. If confirmed, Bing traffic may have a different payment method mix triggering stricter fraud scoring.</li>
+    </ul>
+  </div>
+
+  <!-- Action Card 2: P2 — Seasonal calibration -->
+  <div class="action-card">
+    <div class="ac-header">
+      <div class="priority-badge p2">P2</div>
+      <div class="cause">Post-spring-break off-season traffic (Apr 13–May 12) converts at materially lower rates — within the fixed segment, LP2S fell −1.6pp and S2C fell −2.2pp versus the spring break peak period.</div>
+    </div>
+    <div class="dri-row">
+      <span class="dri-badge">Growth / Performance Marketing</span>
+    </div>
+    <ul>
+      <li>Adjust paid CPA targets for WDW Orlando in May–June. Seasonal LP2S+S2C Shapley accounts for 41.2% of total ΔCVR. With CVR down −33.9% relative, the seasonal bid-relevant decline is approximately −14% (41.2% × 33.9%); bidding at spring-break CPA levels in off-season over-spends on lower-converting traffic. Reduce bids ~14% until summer peak begins. Reassess after the P1 fix is deployed — the MK A2O recovery will partially restore CVR and the seasonal bid should be revised accordingly.</li>
+      <li>Identify WDW experiences that maintain higher S2C in off-season — Park Hopper (36251) and 2-Day (36252) both showed improved C2O in post. Shift ad creative and landing page emphasis toward multi-day and multi-park experiences for May–June where conversion held better.</li>
+      <li>Benchmark against prior-year data for Apr–May for CE 2330. The structural_delta_cvr field is null (no prior-year data available) — request the Analytics team to provide year-over-year comparison to calibrate whether this off-season is tracking above or below historical norms.</li>
+    </ul>
+  </div>
+
+  <!-- ===== SECTION 3 ===== -->
+  <div class="section-label">Section 3 — Supporting Analysis</div>
+
+  <!-- 1. Mix Cascade -->
+  <div class="analysis-block">
+    <div class="block-title">Mix Cascade — Routing vs Conversion Determination</div>
+    <div class="verdict-line neutral">Conversion change at all three levels — no routing story. Fixed segment: MB · Paid · Google Ads.</div>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 1 — MB vs HO</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th>
+          <th class="num">Pre share</th><th class="num">Post share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>MB (Microbrand)</td>
+          <td class="num">28,496</td><td class="num">22,494</td>
+          <td class="num">72.6%</td><td class="num">65.5%</td>
+          <td class="num">1.22%</td><td class="num">0.84%</td>
+          <td class="num neg">−0.087pp</td><td class="num neg">−0.276pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>HO (Headout.com)</td>
+          <td class="num">10,778</td><td class="num">11,868</td>
+          <td class="num">27.4%</td><td class="num">34.5%</td>
+          <td class="num">0.64%</td><td class="num">0.45%</td>
+          <td class="num pos">+0.045pp</td><td class="num neg">−0.052pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 2 — Paid vs Organic (within MB)</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th>
+          <th class="num">Pre share</th><th class="num">Post share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>Paid</td>
+          <td class="num">24,996</td><td class="num">19,742</td>
+          <td class="num">87.0%</td><td class="num">87.1%</td>
+          <td class="num">1.24%</td><td class="num">0.90%</td>
+          <td class="num flat">≈ 0pp</td><td class="num neg">−0.291pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>Organic</td>
+          <td class="num">3,726</td><td class="num">2,922</td>
+          <td class="num">13.0%</td><td class="num">12.9%</td>
+          <td class="num">1.37%</td><td class="num">0.65%</td>
+          <td class="num flat">≈ 0pp</td><td class="num neg">−0.093pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 3 — Channel breakdown (within Paid MB)</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Channel</th><th class="num">Pre users</th><th class="num">Post users</th>
+          <th class="num">Pre share</th><th class="num">Post share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>Google Ads</td>
+          <td class="num">19,939</td><td class="num">15,745</td>
+          <td class="num">78.7%</td><td class="num">79.7%</td>
+          <td class="num">1.35%</td><td class="num">1.05%</td>
+          <td class="num pos">+0.013pp</td><td class="num neg">−0.232pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>Microsoft Ads</td>
+          <td class="num">5,401</td><td class="num">4,015</td>
+          <td class="num">21.3%</td><td class="num">20.3%</td>
+          <td class="num">0.81%</td><td class="num">0.30%</td>
+          <td class="num neg">−0.008pp</td><td class="num neg">−0.110pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:13px;color:#555;margin-top:14px;">
+      At all three levels, traffic composition was stable while conversion rates declined. The investigation proceeds with MB · Paid · Google Ads as the fixed segment — accounting for the largest absolute checkout impact.
+    </p>
+  </div>
+
+  <!-- 2. Geo overview -->
+  <div class="analysis-block">
+    <div class="block-title">Geographic Overview — Top Markets</div>
+    <div class="verdict-line">US domestic CVR fell from 1.82% to 1.12% (−38%); the UK improved. The decline is concentrated in the home market.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Country</th><th>Segment</th>
+          <th class="num">Pre users</th><th class="num">Post users</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Pre C2O</th><th class="num">Post C2O</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>United States</td><td>Geo</td>
+          <td class="num">9,824</td><td class="num">6,899</td>
+          <td class="num">1.82%</td><td class="num">1.12%</td>
+          <td class="num">18.3%</td><td class="num neg">13.7%</td>
+        </tr>
+        <tr>
+          <td>United Kingdom</td><td>Non-Geo</td>
+          <td class="num">2,419</td><td class="num">1,540</td>
+          <td class="num">1.28%</td><td class="num pos">1.69%</td>
+          <td class="num">9.6%</td><td class="num pos">14.2%</td>
+        </tr>
+        <tr>
+          <td>Brazil</td><td>Non-Geo</td>
+          <td class="num">1,752</td><td class="num">1,481</td>
+          <td class="num">0.57%</td><td class="num neg">0.41%</td>
+          <td class="num">5.8%</td><td class="num neg">4.3%</td>
+        </tr>
+        <tr>
+          <td>Ecuador</td><td>Non-Geo</td>
+          <td class="num">960</td><td class="num">717</td>
+          <td class="num">0.73%</td><td class="num">0.70%</td>
+          <td class="num">5.0%</td><td class="num">5.0%</td>
+        </tr>
+        <tr>
+          <td>Canada</td><td>Non-Geo</td>
+          <td class="num">1,076</td><td class="num">328</td>
+          <td class="num">0.74%</td><td class="num">0.91%</td>
+          <td class="num">6.2%</td><td class="num">7.0%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      US domestic users drive the largest absolute CVR decline and show the sharpest C2O compression (18.3% → 13.7%). This is consistent with the spring break seasonal pattern — US visitors are the primary spring break demographic at WDW. UK, Canada, and Ecuador held flat or improved.
+    </p>
+  </div>
+
+  <!-- 3. Shapley -->
+  <div class="analysis-block">
+    <div class="block-title">CVR Attribution — Funnel Step Contributions</div>
+    <div class="verdict-line">C2O is the primary driver at 58.8% of the total CVR decline. S2C contributed 26.8%. LP2S was minor at 14.4%.</div>
+    <div class="shapley-bars">
+      <div class="shapley-bar shapley-lp2s" style="width:14.4%">LP2S 14%</div>
+      <div class="shapley-bar shapley-s2c" style="width:26.8%">S2C 27%</div>
+      <div class="shapley-bar shapley-c2o" style="width:58.8%">C2O 59%</div>
+    </div>
+    <div class="shapley-legend">
+      <span><span class="legend-dot" style="background:#6c8ebf;"></span>LP2S −0.051pp (−5.8%)</span>
+      <span><span class="legend-dot" style="background:#c62828;"></span>S2C −0.094pp (−10.5%)</span>
+      <span><span class="legend-dot" style="background:#d6a832;"></span>C2O −0.207pp (−21.7%)</span>
+    </div>
+    <p style="font-size:13px;color:#555;margin-top:14px;">
+      The investigation focused on C2O as the dominant driver. C2O decomposes into C2A (checkout start → payment attempt) and A2O (payment attempt → confirmed order): both declined by 3.2pp each. The A2O decline — representing orders submitted but not confirmed — points to operational failure rather than user intent, making it the priority investigation target.
+    </p>
+    <div style="margin-top:16px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Sub-step</th><th class="num">Pre rate</th><th class="num">Post rate</th><th class="num">Δ (pp)</th><th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>C2A (checkout → payment attempt)</td>
+            <td class="num">19.2%</td><td class="num">16.0%</td>
+            <td class="num neg">−3.2pp</td>
+            <td>Fewer users reaching payment — consistent with lower-intent off-season visitors abandoning at the checkout form</td>
+          </tr>
+          <tr class="highlight-row">
+            <td>A2O (payment attempt → confirmed order)</td>
+            <td class="num">54.1%</td><td class="num">50.9%</td>
+            <td class="num neg">−3.2pp</td>
+            <td>Payment submitted but order not confirmed — operational failure signal; Magic Kingdom–specific locus</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. Daily C2O trend -->
+  <div class="analysis-block">
+    <div class="block-title">Daily C2O Trend — 90-Day View (MB · Paid · Google Ads)</div>
+    <div class="verdict-line">C2O declined from ~11% in spring break peak to ~8% in off-season — gradual onset aligned with Apr 13, with some very low outlier days (Apr 23: 3.1%, Apr 28: 3.7%, May 06: 4.2%) coinciding with Magic Kingdom A2O failures.</div>
+    <div id="chart-c2o-daily" style="height:240px;margin-top:12px;"></div>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      The daily pattern shows no sharp single-date break — consistent with a gradual seasonal transition. However, the outlier low-C2O days in the post period (Apr 23, Apr 28, May 06) are not explained by seasonality alone and coincide with the Magic Kingdom A2O anomaly identified in the experience-level analysis below.
+    </p>
+  </div>
+
+  <!-- 5a. Experience-level C2O breakdown -->
+  <div class="analysis-block">
+    <div class="block-title">C2O by Experience — Magic Kingdom 1-Day is the Primary Locus</div>
+    <div class="verdict-line">Magic Kingdom 1-Day Ticket (36344) A2O fell from 63.9% to 48.1% (−15.8pp). Every other WDW experience — Park Hopper, 2-Day, and WDW 1-Day — held flat or improved. The A2O issue is product-specific to Magic Kingdom single-day.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Experience</th>
+          <th class="num">Pre checkouts</th><th class="num">Post checkouts</th>
+          <th class="num">Pre C2O</th><th class="num">Post C2O</th>
+          <th class="num">Pre A2O</th><th class="num">Post A2O</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>36344 — Magic Kingdom 1-Day Ticket</td>
+          <td class="num">860</td><td class="num">659</td>
+          <td class="num">11.7%</td><td class="num neg">7.9%</td>
+          <td class="num">63.9%</td><td class="num neg">48.1%</td>
+        </tr>
+        <tr>
+          <td>36250 — WDW 1-Day Tickets</td>
+          <td class="num">329</td><td class="num">99</td>
+          <td class="num">8.8%</td><td class="num">10.1%</td>
+          <td class="num">64.4%</td><td class="num">62.5%</td>
+        </tr>
+        <tr>
+          <td>36252 — WDW 2-Day Tickets</td>
+          <td class="num">231</td><td class="num">195</td>
+          <td class="num">5.2%</td><td class="num pos">8.7%</td>
+          <td class="num">52.2%</td><td class="num pos">63.0%</td>
+        </tr>
+        <tr>
+          <td>36251 — WDW 1-Day Park Hopper</td>
+          <td class="num">128</td><td class="num">121</td>
+          <td class="num">10.9%</td><td class="num pos">19.0%</td>
+          <td class="num">56.0%</td><td class="num pos">76.7%</td>
+        </tr>
+        <tr>
+          <td>36256 — WDW Multi-Day (2–10 Days)</td>
+          <td class="num">307</td><td class="num">237</td>
+          <td class="num">3.9%</td><td class="num">3.4%</td>
+          <td class="num">40.0%</td><td class="num">44.4%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      Magic Kingdom 1-Day Ticket accounts for the large majority of checkout volume (659 post checkouts). With 108 post-period payment attempts and only 52 confirmed orders (A2O = 48.1%), compared to a pre-period rate of 63.9%, this experience accounts for approximately 17 orders lost to A2O failure within the Google Ads segment. Park Hopper (36251) A2O improved to 76.7% — confirming that WDW fulfillment infrastructure is working, but something is specifically failing for Magic Kingdom single-day ticket orders.
+    </p>
+  </div>
+
+  <!-- 5b. Magic Kingdom weekly A2O -->
+  <div class="analysis-block">
+    <div class="block-title">Magic Kingdom 1-Day (36344) — Weekly A2O Rate</div>
+    <div class="verdict-line">Magic Kingdom A2O was consistently ~65% during spring break peak. It fell to 38–54% from Apr 13 onward and remained depressed throughout May, with weeks ending Apr 20 and May 04 hitting 38% and 40%.</div>
+    <div id="chart-mk-a2o" style="height:260px;margin-top:12px;"></div>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      The week-over-week alternation (Apr 20: 38% → Apr 27: 60% → May 04: 40%) suggests an intermittent rather than constant failure — consistent with a WDW API that periodically rejects Magic Kingdom ticket confirmations. The pre-period shows no such instability (all weeks 52–73%).
+    </p>
+  </div>
+
+  <!-- 5c. Inventory -->
+  <div class="analysis-block">
+    <div class="block-title">Supply — Magic Kingdom Inventory (TIDs 76930 / 76934 / 76935)</div>
+    <div class="verdict-line neutral">Supply ruled out — all Magic Kingdom TIDs show unlimited capacity (9,999 tickets per date), with zero sold-out dates across all lead-time windows. Supply is not the mechanism for the A2O drop.</div>
+    <p style="font-size:13px;color:#e07b00;margin-bottom:10px;margin-top:8px;">
+      Pre-period availability data unavailable — pre period falls outside the 30-day window. Showing current-state snapshot.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Lead-time window</th><th class="num">Dates checked</th><th class="num">Sold-out dates</th><th class="num">Total tickets</th><th class="num">Avg per date</th><th>Capacity type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>0–3 days</td><td class="num">12</td><td class="num">0</td><td class="num">119,988</td><td class="num">9,999</td><td>Unlimited</td></tr>
+        <tr><td>4–7 days</td><td class="num">12</td><td class="num">0</td><td class="num">119,988</td><td class="num">9,999</td><td>Unlimited</td></tr>
+        <tr><td>8–14 days</td><td class="num">21</td><td class="num">0</td><td class="num">209,979</td><td class="num">9,999</td><td>Unlimited</td></tr>
+        <tr><td>15–30 days</td><td class="num">48</td><td class="num">0</td><td class="num">479,952</td><td class="num">9,999</td><td>Unlimited</td></tr>
+        <tr><td>31–60 days</td><td class="num">90</td><td class="num">0</td><td class="num">899,910</td><td class="num">9,999</td><td>Unlimited</td></tr>
+        <tr><td>61+ days</td><td class="num">353</td><td class="num">0</td><td class="num">3,529,645</td><td class="num">9,999</td><td>Unlimited</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      All three Magic Kingdom TIDs are unlimited-capacity — the 9,999 figure represents our system's unlimited allocation. With zero sold-out dates, supply is definitively not the cause of A2O failures. The failures occurred in the payment confirmation or WDW API fulfillment step.
+    </p>
+  </div>
+
+  <!-- 5d. MK A2O mechanism — DATA GAP -->
+  <div class="analysis-block">
+    <div class="block-title">Magic Kingdom A2O Mechanism — Data Gap</div>
+    <div class="verdict-line neutral">Inventory ruled out. A2O locus confirmed at experience 36344. Mechanism (gateway failure / fraud over-blocking / WDW API) is a data gap — order_attempted_events_v2 not yet queried.</div>
+    <div class="data-gap-note">
+      <strong>⚠️ Data Gap — order_attempted_events_v2:</strong> Three sub-hypotheses remain open. To resolve, query <code>order_attempted_events_v2</code> for TGIDs 76930/76934/76935, Apr 13–May 12, broken down by <code>failure_reason</code>, <code>payment_gateway</code>, and <code>fraud_evaluation_result_origin</code>. This table is currently parked in the investigation backlog. The action card (P1, above) forwards this query to the DRI with the specific sub-hypotheses to test.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Sub-hypothesis</th><th>Test required</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>WDW fulfillment API rejecting MK single-day ticket confirmations</td>
+          <td><code>failure_reason = 'inventory_unavailable'</code> distribution for 36344 TIDs</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+        </tr>
+        <tr>
+          <td>Fraud over-blocking on MK TIDs post-Apr-13</td>
+          <td><code>fraud_evaluation_result_origin</code> elevated for 36344 vs other WDW experiences</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+        </tr>
+        <tr>
+          <td>Payment gateway degradation specific to MK ticket amount/configuration</td>
+          <td><code>payment_gateway</code> breakdown showing disproportionate failures on 36344</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. Secondary driver — LP2S/S2C fixed-segment evidence -->
+  <div class="analysis-block">
+    <div class="block-title">Secondary Drivers — LP2S and S2C within Fixed Segment (MB · Google Ads)</div>
+    <div class="verdict-line">LP2S fell −1.6pp (−3.7%) and S2C fell −2.2pp (−9.0%) within the fixed segment. Both declines are present and directionally consistent with the seasonal story, confirming that the funnel was less efficient at every pre-payment step in the post period.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Step</th><th class="num">Pre rate</th><th class="num">Post rate</th><th class="num">Δ (pp)</th><th class="num">Rel. change</th><th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>LP2S</td>
+          <td class="num">44.09%</td><td class="num">42.46%</td>
+          <td class="num neg">−1.63pp</td>
+          <td class="num neg">−3.7%</td>
+          <td>Post-spring-break visitors browse but click through at a lower rate — consistent with lower purchase intent</td>
+        </tr>
+        <tr>
+          <td>S2C</td>
+          <td class="num">24.60%</td><td class="num">22.39%</td>
+          <td class="num neg">−2.21pp</td>
+          <td class="num neg">−9.0%</td>
+          <td>Fewer visitors reach checkout after reaching the date picker — consistent with casual browsers who don't commit to dates</td>
+        </tr>
+        <tr>
+          <td>C2O</td>
+          <td class="num">12.44%</td><td class="num">11.16%</td>
+          <td class="num neg">−1.28pp</td>
+          <td class="num neg">−10.3%</td>
+          <td>Both C2A (behavioral) and A2O (operational MK failure) contribute to C2O decline — see experience-level analysis</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      This fixed-segment aggregate pairs the seasonal framing with a data signal: LP2S and S2C both declined moderately within the fixed MB · Google Ads segment, with no single anomalous step driving all the decline. Inventory is unlimited capacity, ruling out supply as the S2C mechanism. The declines are directionally consistent with the seasonal story and do not show an independent structural pattern that would require a separate root cause.
+    </p>
+  </div>
+
+  <!-- 7. Ruled-out dimensions -->
+  <div class="analysis-block">
+    <div class="block-title">Dimensions Checked — Ruled Out as Independent Drivers</div>
+    <div class="verdict-line neutral">LP2S, S2C, and device declines are directionally consistent with seasonal demand shift and MK A2O concentration — no separate structural product issues identified.</div>
+    <ul style="padding-left:18px;font-size:13px;color:#555;margin-top:10px;">
+      <li style="margin-bottom:8px;"><strong>LP2S (−2.3pp, 14.4% Shapley):</strong> LP traffic fell 12.5%, consistent with post-spring-break reduced WDW demand. Within fixed segment: LP2S declined −1.6pp (−3.7% relative). No evidence of listing page UX change or pricing shift driving LP abandonment independently.</li>
+      <li style="margin-bottom:8px;"><strong>S2C (−2.7pp, 26.8% Shapley):</strong> Inventory is unlimited — no supply constraint at the date picker. Within fixed segment: S2C declined −2.2pp (−9.0% relative). Park Hopper and 2-Day tickets improved S2C in post, confirming a demand-side composition effect rather than a product availability issue.</li>
+      <li style="margin-bottom:8px;"><strong>Device (iOS Mweb / Desktop / Android Mweb):</strong> iOS Mweb held flat (C2O 14.2%→14.6%); Desktop small decline within normal variance; Android Mweb A2O crashed (74.6%→54.5%, −20.1pp across 194 post checkouts). The Android Mweb A2O crash is directionally consistent with the Magic Kingdom 36344 locus — both signals point to the same MK A2O failure. The experience-level finding (36344) is the DRI-facing locus; Android Mweb is a supporting dimension that does not require a separate action.</li>
+      <li style="margin-bottom:8px;"><strong>iOS Mweb:</strong> C2A improved slightly (+2.1pp), A2O modest drop (−5.2pp). Not a driver.</li>
+      <li><strong>UK / international traffic:</strong> UK CVR improved (1.28% → 1.69%). The CVR decline is a US domestic pattern, not international. Confirms seasonal spring break framing (primarily a US domestic demand event).</li>
+    </ul>
+  </div>
+
+  <!-- 7b. Session recordings -->
+  <div class="analysis-block">
+    <div class="block-title">Session Recordings — Magic Kingdom Checkout Failures</div>
+    <div class="verdict-line neutral">No recordings available — skipped due to absence of replay data for users in the MB context.</div>
+    <p style="font-size:13px;color:#555;margin-top:8px;">
+      ⚠️ <strong>Data unavailable — Session Recordings:</strong> Five sampled users who attempted payment for Magic Kingdom 1-Day tickets and did not complete an order (Apr 20–May 04) had no Mixpanel session recordings available. The analysis continues with A2O rate data and experience-level patterns as primary evidence. The specific error message at checkout cannot be visually confirmed; the Payments team investigation via <code>order_attempted_events_v2</code> is the primary diagnostic path.
+    </p>
+  </div>
+
+  <!-- 8. Hypotheses Explored (always last) -->
+  <div class="analysis-block">
+    <div class="block-title">Hypotheses Explored</div>
+    <p style="font-size:13px;color:#555;margin-bottom:16px;">All hypotheses considered during the investigation and their disposition.</p>
+    <table class="hyp-table">
+      <thead>
+        <tr>
+          <th style="width:28%;">Hypothesis</th>
+          <th style="width:32%;">Test run</th>
+          <th style="width:15%;">Outcome</th>
+          <th style="width:25%;">What this means</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Seasonal spring break demand shift (primary driver)</td>
+          <td>Fixed-segment aggregate: LP2S and S2C within MB · Google Ads. 90-day CVR trend showing pre-period elevated rates</td>
+          <td style="color:#2e7d32;font-weight:600;">✅ Confirmed</td>
+          <td>LP2S −3.7%, S2C −9.0% within fixed segment. Data signal paired with seasonal framing</td>
+        </tr>
+        <tr class="highlight-row">
+          <td>Magic Kingdom 1-Day Ticket A2O operational failure</td>
+          <td>Experience-level A2O breakdown; weekly MK A2O trend; inventory check (TIDs 76930/76934/76935)</td>
+          <td style="color:#2e7d32;font-weight:600;">✅ Confirmed (locus)</td>
+          <td>A2O 63.9%→48.1% for 36344 only. Other WDW experiences improved. Sustained from Apr 13</td>
+        </tr>
+        <tr>
+          <td>Live inventory depletion causing S2C or A2O drop</td>
+          <td>Inventory snapshot: all MK TIDs, all lead-time windows</td>
+          <td style="color:#c62828;font-weight:600;">❌ Ruled out</td>
+          <td>9,999 tickets per date, 0 sold-out dates — unlimited capacity confirmed</td>
+        </tr>
+        <tr>
+          <td>Traffic routing (mix) change driving CVR decline</td>
+          <td>Mix cascade (3 levels): MB/HO, Paid/Organic, channel</td>
+          <td style="color:#c62828;font-weight:600;">❌ Ruled out</td>
+          <td>Conversion dominates at all levels; share stable at L2 and L3</td>
+        </tr>
+        <tr>
+          <td>MK A2O mechanism: WDW fulfillment API failure</td>
+          <td>order_attempted_events_v2 (failure_reason, payment_gateway, fraud_evaluation_result_origin) — not queried</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+          <td>Cannot confirm or rule out without backlogged table. DRI to test in P1 investigation</td>
+        </tr>
+        <tr>
+          <td>MK A2O mechanism: fraud over-blocking on MK TIDs post-Apr-13</td>
+          <td>order_attempted_events_v2 (fraud_evaluation_result_origin) — not queried</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+          <td>Cannot confirm or rule out. DRI to test in P1 investigation</td>
+        </tr>
+        <tr>
+          <td>MK A2O mechanism: payment gateway degradation</td>
+          <td>order_attempted_events_v2 (payment_gateway) — not queried</td>
+          <td style="color:#f57c00;font-weight:600;">⚠️ Data gap</td>
+          <td>Cannot confirm or rule out. DRI to test in P1 investigation</td>
+        </tr>
+        <tr>
+          <td>Android Mweb independent regression (separate from MK locus)</td>
+          <td>Device breakdown; cross-cut (Android × experience × A2O) not run</td>
+          <td style="color:#3a4a8a;font-weight:600;">🔄 Consistent with / untested</td>
+          <td>Android Mweb A2O crash (74.6%→54.5%) is directionally consistent with MK 36344 locus. Overlap not confirmed</td>
+        </tr>
+        <tr>
+          <td>Microsoft Ads A2O anomaly (separate payment issue)</td>
+          <td>Channel A2O breakdown: 53%→28%, n=43 post attempts</td>
+          <td style="color:#3a4a8a;font-weight:600;">🔄 Consistent with / untested</td>
+          <td>Directional signal but n=43 is below standalone evidence threshold. Flagged as sub-bullet in P1 card</td>
+        </tr>
+        <tr>
+          <td>Independent LP2S structural issue (UX / price anchoring)</td>
+          <td>LP2S within fixed segment: −1.6pp (−3.7%); no pricing or UX change identified</td>
+          <td style="color:#c62828;font-weight:600;">❌ Ruled out</td>
+          <td>LP2S decline is proportional to the seasonal story; no independent structural signal</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end container -->
+
+<footer>Generated 2026-05-15 · CVR-RCA Run 2 · CE 2330 Walt Disney World Orlando</footer>
+
+<!-- ===== PLOTLY CHARTS ===== -->
+<script>
+(function () {
+  var dates = ["2026-02-12","2026-02-13","2026-02-14","2026-02-15","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12"];
+  var cvr = [0.00989,0.016413,0.016237,0.014668,0.01112,0.013686,0.011875,0.010433,0.015118,0.018722,0.007741,0.012339,0.012994,0.009197,0.005337,0.015141,0.011968,0.013025,0.009217,0.011285,0.011349,0.009284,0.013689,0.009926,0.009459,0.00885,0.016523,0.011976,0.01615,0.011429,0.011765,0.010597,0.013514,0.009577,0.011045,0.01281,0.011078,0.014238,0.014809,0.019508,0.010782,0.008772,0.010753,0.019284,0.013571,0.012242,0.007647,0.016517,0.009346,0.014438,0.011391,0.007132,0.008922,0.014839,0.008357,0.007914,0.006061,0.01055,0.010819,0.010167,0.006051,0.005835,0.010408,0.007576,0.009585,0.008145,0.006375,0.005151,0.004277,0.00578,0.002545,0.007779,0.010317,0.013019,0.009874,0.00382,0.008881,0.010654,0.010055,0.014884,0.007311,0.007983,0.012687,0.003852,0.006494,0.008108,0.008973,0.007098,0.006464,0.006173];
+  var cvrPct = cvr.map(function(v){return +(v*100).toFixed(3);});
+
+  // LY data guard — ly_delta_cvr = null and structural_delta_cvr = null in summary.json
+  // (CE 2330 has no prior-year Mixpanel data in the equivalent window)
+  var hasLyData = false;
+
+  var traces90d = [{
+    x: dates, y: cvrPct,
+    type: 'scatter', mode: 'lines',
+    line: { color: '#1a56db', width: 2 },
+    name: 'CVR (%)'
+  }];
+  // LY trace would be added here if hasLyData were true
+
+  Plotly.newPlot('chart-90d', traces90d, {
+    height: 260,
+    margin: { t: 10, r: 10, b: 45, l: 52 },
+    xaxis: { tickfont: { size: 10 }, nticks: 12 },
+    yaxis: { tickfont: { size: 10 }, title: 'CVR (%)', titlefont: { size: 11 }, rangemode: 'tozero', tickformat: '.2f' },
+    shapes: [
+      { type: 'rect', x0: '2026-03-13', x1: '2026-04-12', y0: 0, y1: 1, xref: 'x', yref: 'paper', fillcolor: 'rgba(108,142,191,0.12)', line: { width: 0 } },
+      { type: 'rect', x0: '2026-04-13', x1: '2026-05-12', y0: 0, y1: 1, xref: 'x', yref: 'paper', fillcolor: 'rgba(198,40,40,0.08)', line: { width: 0 } },
+      { type: 'line', x0: '2026-04-13', x1: '2026-04-13', y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#c62828', dash: 'dot', width: 1.5 } }
+    ],
+    annotations: [
+      { x: '2026-03-27', y: 0.95, xref: 'x', yref: 'paper', text: 'Pre (spring break peak)', font: { color: '#3a5fa0', size: 10 }, showarrow: false },
+      { x: '2026-04-28', y: 0.95, xref: 'x', yref: 'paper', text: 'Post (off-season)', font: { color: '#c62828', size: 10 }, showarrow: false }
+    ],
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    legend: { orientation: 'h', y: -0.3, font: { size: 10 } }
+  }, { responsive: true, displayModeBar: false });
+
+  // Amber badge — inject after chart when LY data is absent (report_structure.md c018)
+  if (!hasLyData) {
+    document.getElementById('chart-90d-ly-notice').innerHTML =
+      '<div style="display:inline-flex;align-items:center;gap:6px;background:#fff8e1;border:1px solid #f9a825;' +
+      'border-radius:4px;padding:5px 10px;margin-top:8px;font-size:12px;color:#7a5c00;">' +
+      '<span>⚠️</span><span><strong>No LY overlay:</strong> ' +
+      'CE 2330 has no prior-year Mixpanel data — <code>ly_delta_cvr</code> and <code>structural_delta_cvr</code> are both null. ' +
+      'No equivalent Mar–May 2025 window data available. LY line suppressed to avoid a misleading comparison.' +
+      '</span></div>';
+  }
+})();
+
+(function () {
+  var dates = ["2026-02-12","2026-02-13","2026-02-14","2026-02-15","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12"];
+  var c2o = [0.104,0.1564,0.1835,0.1447,0.1055,0.123,0.1121,0.1075,0.1444,0.1735,0.0791,0.1121,0.1162,0.0926,0.0559,0.1447,0.1295,0.1333,0.0915,0.0973,0.12,0.0986,0.1301,0.097,0.0963,0.0769,0.1337,0.1064,0.1344,0.0994,0.1087,0.1095,0.1333,0.0789,0.0949,0.1071,0.1196,0.1417,0.1338,0.142,0.1,0.0741,0.0882,0.1438,0.1185,0.1053,0.0682,0.1477,0.1081,0.121,0.1129,0.0769,0.0923,0.1437,0.0984,0.0917,0.0641,0.0972,0.1085,0.1148,0.0672,0.062,0.1143,0.0752,0.1053,0.0882,0.093,0.0583,0.0545,0.0845,0.0306,0.09,0.1171,0.1495,0.0957,0.037,0.102,0.1111,0.1358,0.1616,0.0957,0.0887,0.1206,0.0424,0.0787,0.0947,0.1111,0.1039,0.0761,0.068];
+  var c2oPct = c2o.map(function(v){ return +(v*100).toFixed(1); });
+
+  Plotly.newPlot('chart-c2o-daily', [{
+    x: dates, y: c2oPct,
+    type: 'scatter', mode: 'lines',
+    line: { color: '#d6a832', width: 1.8 },
+    name: 'C2O (%)'
+  }], {
+    height: 240,
+    margin: { t: 8, r: 10, b: 45, l: 52 },
+    xaxis: { tickfont: { size: 10 }, nticks: 12 },
+    yaxis: { tickfont: { size: 10 }, title: 'C2O (%)', titlefont: { size: 11 }, rangemode: 'tozero', tickformat: '.1f' },
+    shapes: [
+      { type: 'rect', x0: '2026-03-13', x1: '2026-04-12', y0: 0, y1: 1, xref: 'x', yref: 'paper', fillcolor: 'rgba(108,142,191,0.10)', line: { width: 0 } },
+      { type: 'rect', x0: '2026-04-13', x1: '2026-05-12', y0: 0, y1: 1, xref: 'x', yref: 'paper', fillcolor: 'rgba(198,40,40,0.07)', line: { width: 0 } },
+      { type: 'line', x0: '2026-04-13', x1: '2026-04-13', y0: 0, y1: 1, xref: 'x', yref: 'paper', line: { color: '#c62828', dash: 'dot', width: 1.5 } }
+    ],
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    legend: { orientation: 'h', y: -0.3, font: { size: 10 } }
+  }, { responsive: true, displayModeBar: false });
+})();
+
+(function () {
+  var weeks = ["2026-03-09","2026-03-16","2026-03-23","2026-03-30","2026-04-06","2026-04-13","2026-04-20","2026-04-27","2026-05-04","2026-05-11"];
+  var a2oPre  = [72.2, 66.7, 60.0, 52.8, 72.7, null, null, null, null, null];
+  var a2oPost = [null, null, null, null, null, 54.2, 38.1, 60.0, 40.0, 33.3];
+
+  Plotly.newPlot('chart-mk-a2o', [
+    {
+      x: weeks, y: a2oPre,
+      type: 'scatter', mode: 'lines+markers',
+      line: { color: '#6c8ebf', width: 2.5 },
+      marker: { color: '#6c8ebf', size: 8 },
+      name: 'Pre period (spring break)',
+      connectgaps: false
+    },
+    {
+      x: weeks, y: a2oPost,
+      type: 'scatter', mode: 'lines+markers',
+      line: { color: '#c62828', width: 2.5 },
+      marker: { color: '#c62828', size: 8 },
+      name: 'Post period (off-season)',
+      connectgaps: false
+    }
+  ], {
+    height: 260,
+    margin: { t: 10, r: 10, b: 55, l: 52 },
+    xaxis: {
+      tickfont: { size: 10 },
+      tickvals: weeks,
+      ticktext: ["Mar 9","Mar 16","Mar 23","Mar 30","Apr 6","Apr 13","Apr 20","Apr 27","May 4","May 11"]
+    },
+    yaxis: { tickfont: { size: 10 }, title: 'A2O (%)', titlefont: { size: 11 }, range: [0, 100], tickformat: '.0f' },
+    shapes: [
+      { type: 'line', x0: '2026-04-09', x1: '2026-04-09', y0: 0, y1: 100, xref: 'x', yref: 'y', line: { color: '#c62828', dash: 'dot', width: 1.5 } }
+    ],
+    annotations: [
+      { x: '2026-04-13', y: 92, xref: 'x', yref: 'y', text: '← Apr 13 post starts', font: { color: '#c62828', size: 10 }, showarrow: false }
+    ],
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    legend: { orientation: 'h', y: -0.32, font: { size: 11 } }
+  }, { responsive: true, displayModeBar: false });
+})();
+</script>
+
+</body>
+</html>

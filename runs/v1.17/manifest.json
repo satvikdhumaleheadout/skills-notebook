@@ -1,0 +1,53 @@
+{
+  "version": "v1.17",
+  "runs": [
+    {
+      "id": "ce252_2026-03-28_2026-05-26",
+      "ce_id": "252",
+      "ce_name": "Louvre Museum Tickets",
+      "pre_start": "2026-03-28",
+      "post_end": "2026-05-26",
+      "run_date": "2026-05-27",
+      "eval_score": 26,
+      "eval_max": 35,
+      "root_cause": "CVR improved +0.72pp (3.46%→4.19%, +1.69pp structural). S2C and C2O lifted on dominant TGID 3909 — same/next-day availability improved (days_to_first 1→0). France domestic traffic surged +61% on seasonal spring ramp. Organic MB collapsed −35%, lifting paid share via mix. LP2S fell −3.26pp as headwind from paid-traffic dilution.",
+      "files": {
+        "report": "runs/v1.17/ce252_2026-03-28_2026-05-26/report.html",
+        "transcript": "runs/v1.17/ce252_2026-03-28_2026-05-26/transcript.md",
+        "evaluation": "runs/v1.17/ce252_2026-03-28_2026-05-26/evaluation.md"
+      }
+    },
+    {
+      "id": "ce243_2026-03-29_2026-05-27",
+      "ce_id": "243",
+      "ce_name": "Eiffel Tower Tickets",
+      "pre_start": "2026-03-29",
+      "post_end": "2026-05-27",
+      "run_date": "2026-05-28",
+      "eval_score": 30,
+      "eval_max": 35,
+      "root_cause": "CVR declined −0.18pp (3.07%→2.89%, −0.32pp structural). S2C fell −1.45pp on MB · Paid · Google Ads (69% Shapley share), concentrated on Desktop visitors browsing dominant TGID 23604 (Eiffel Tower Guided Tour). Non-Geo Desktop S2C −3.6pp, Geo Desktop −8.9pp; all mobile cells flat. Gradual onset from ~May 14. Upstream signals (supply, pricing, catalogue) all healthy — mechanism is a Desktop select-page abandonment pattern not yet explained by available data.",
+      "files": {
+        "report": "runs/v1.17/ce243_2026-03-29_2026-05-27/report.html",
+        "transcript": "runs/v1.17/ce243_2026-03-29_2026-05-27/transcript.md",
+        "evaluation": "runs/v1.17/ce243_2026-03-29_2026-05-27/evaluation.md"
+      }
+    },
+    {
+      "id": "ce3593_2025-01-01_2026-05-27",
+      "ce_id": "3593",
+      "ce_name": "Antelope Canyon",
+      "pre_start": "2025-01-01",
+      "post_end": "2026-05-27",
+      "run_date": "2026-05-29",
+      "eval_score": 28,
+      "eval_max": 35,
+      "root_cause": "YoY CVR improved +1.22pp (4.93%→6.15%, +24.8%) with +72.6% LP volume growth. Multi-causal: (1) six new vendor-specific subdomain microsites launched in 2026 absorbing 32% of fixed-segment LP traffic at 7–11% CVR (kens-tours at 11.09% CVR on 22k users); (2) CE-wide A2O +5.53pp and C2A +5.66pp on fixed segment, consistent with platform-level infrastructure fix; (3) catalogue maturation — TGID 40324 launched Jan 20, top TGIDs' review counts grew 3–5× YoY. kens-tours C&D (May 7) visible as late-window headwind. First run under v1.17 lazy-load.",
+      "files": {
+        "report": "runs/v1.17/ce3593_2025-01-01_2026-05-27/report.html",
+        "transcript": "runs/v1.17/ce3593_2025-01-01_2026-05-27/transcript.md",
+        "evaluation": "runs/v1.17/ce3593_2025-01-01_2026-05-27/evaluation.md"
+      }
+    }
+  ]
+}

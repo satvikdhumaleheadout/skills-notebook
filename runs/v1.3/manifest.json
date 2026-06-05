@@ -1,0 +1,69 @@
+{
+  "version": "v1.3",
+  "runs": [
+    {
+      "id": "ce1549_2026-02-26_2026-04-26",
+      "ce_id": "1549",
+      "ce_name": "Keukenhof Tickets",
+      "pre_start": "2026-02-26",
+      "post_end": "2026-04-26",
+      "run_date": "2026-04-26",
+      "eval_score": 28,
+      "eval_max": 35,
+      "root_cause": "Progressive peak-date sellout on TGID 10118 (Keukenhof Entry Tickets) confirmed by three converging signals: availability proxy (count_days_available_30d declining 31→15), lead-time distribution collapse (30d+ bookings: 751 pre → 77 post, −90%), and experience-level S2C drop concentrated on TGID 10118.",
+      "files": {
+        "report": "runs/v1.3/ce1549_2026-02-26_2026-04-26/report.html",
+        "transcript": "runs/v1.3/ce1549_2026-02-26_2026-04-26/transcript.md",
+        "evaluation": "runs/v1.3/ce1549_2026-02-26_2026-04-26/evaluation.md"
+      }
+    },
+    {
+      "id": "ce189_2026-02-26_2026-04-26",
+      "ce_id": "189",
+      "ce_name": "Vatican Museums",
+      "pre_start": "2026-02-26",
+      "post_end": "2026-04-26",
+      "run_date": "2026-04-26",
+      "eval_score": 26,
+      "eval_max": 35,
+      "root_cause": "Peak-season pricing increases (+3–8%) on key Vatican experiences drove LP2S decline, compounded by spring break traffic surge exceeding fixed timed-entry supply, reducing available booking dates and depressing S2C.",
+      "files": {
+        "report": "runs/v1.3/ce189_2026-02-26_2026-04-26/report.html",
+        "transcript": "runs/v1.3/ce189_2026-02-26_2026-04-26/transcript.md",
+        "evaluation": "runs/v1.3/ce189_2026-02-26_2026-04-26/evaluation.md"
+      }
+    },
+    {
+      "id": "ce6495_2026-02-28_2026-04-28",
+      "ce_id": "6495",
+      "ce_name": "Kualoa Ranch",
+      "pre_start": "2026-02-28",
+      "post_end": "2026-04-28",
+      "run_date": "2026-04-28",
+      "eval_score": 25,
+      "eval_max": 35,
+      "root_cause": "Progressive near-term inventory depletion through April spring break/Easter season drove S2C from 32.7% to 26.3%. S2C was 99.2% of Shapley; availability proxy and lead-time bucket query confirmed supply as mechanism.",
+      "files": {
+        "report": "runs/v1.3/ce6495_2026-02-28_2026-04-28/report.html",
+        "transcript": "runs/v1.3/ce6495_2026-02-28_2026-04-28/transcript.md",
+        "evaluation": "runs/v1.3/ce6495_2026-02-28_2026-04-28/evaluation.md"
+      }
+    },
+    {
+      "id": "ce6495_2026-02-28_2026-04-28_run2",
+      "ce_id": "6495",
+      "ce_name": "Kualoa Ranch",
+      "pre_start": "2026-02-28",
+      "post_end": "2026-04-28",
+      "run_date": "2026-04-29",
+      "eval_score": null,
+      "eval_max": 35,
+      "root_cause": "Post-spring-break demand-quality collapse drove S2C from 32.7% to 26.3% across all Kualoa Ranch experiences. Secondary: All-Inclusive Package (37863) delisted from ~Apr 15, eliminating a second revenue stream for the final 14 days of the post period.",
+      "files": {
+        "report": "runs/v1.3/ce6495_2026-02-28_2026-04-28_run2/report.html",
+        "transcript": "runs/v1.3/ce6495_2026-02-28_2026-04-28_run2/transcript.md",
+        "evaluation": null
+      }
+    }
+  ]
+}

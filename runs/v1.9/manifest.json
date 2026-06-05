@@ -1,0 +1,53 @@
+{
+  "version": "v1.9",
+  "runs": [
+    {
+      "id": "ce189_2026-04-09_2026-05-06",
+      "ce_id": "189",
+      "ce_name": "Vatican Museums",
+      "pre_start": "2026-04-09",
+      "post_end": "2026-05-06",
+      "run_date": "2026-05-07",
+      "eval_score": 31,
+      "eval_max": 35,
+      "root_cause": "S2C dropped −3.44pp post-Easter driven by a seasonal demand composition shift: lower-intent European tourists and Italian day-trippers in the post period converted at a meaningfully lower rate than the committed Easter-week visitors in the pre period. LY had an identical pattern (structural delta ≈ 0), confirming this is an annually recurring seasonal effect. Supply was ruled out — both limited-capacity TIDs showed zero tickets across all lead-time buckets in both periods, confirming no change in availability between windows.",
+      "files": {
+        "report": "runs/v1.9/ce189_2026-04-09_2026-05-06/report.html",
+        "transcript": "runs/v1.9/ce189_2026-04-09_2026-05-06/transcript.md",
+        "evaluation": "runs/v1.9/ce189_2026-04-09_2026-05-06/evaluation_v2.md"
+      }
+    },
+    {
+      "id": "ce2330_2026-03-13_2026-05-12_run2",
+      "ce_id": "2330",
+      "ce_name": "Walt Disney World Orlando",
+      "pre_start": "2026-03-13",
+      "post_end": "2026-05-12",
+      "run_date": "2026-05-18",
+      "eval_score": 28,
+      "eval_max": 35,
+      "root_cause": "CVR fell −34% primarily due to a seasonal demand shift: the pre window captured US spring break peak at WDW while the post window is off-season, with lower-intent visitors driving LP2S and S2C declines within the fixed segment (MB · Google Ads). A secondary distinct issue — elevated A2O failure rates for Magic Kingdom 1-Day Ticket (experience 36344, TIDs 76930/76934/76935) — contributed an estimated 17 lost orders in the post period; the specific mechanism (WDW API failure, fraud over-blocking, or payment gateway) is a DATA GAP pending order_attempted_events_v2 access. Inventory is unlimited capacity, ruling out any supply-side explanation.",
+      "files": {
+        "report": "runs/v1.9/ce2330_2026-03-13_2026-05-12_run2/report.html",
+        "transcript": "runs/v1.9/ce2330_2026-03-13_2026-05-12_run2/transcript.md",
+        "evaluation": "runs/v1.9/ce2330_2026-03-13_2026-05-12_run2/evaluation.md"
+      }
+    },
+    {
+      "id": "ce6495_2026-03-13_2026-05-12",
+      "ce_id": "6495",
+      "ce_name": "Kualoa Ranch",
+      "pre_start": "2026-03-13",
+      "post_end": "2026-05-12",
+      "run_date": "2026-05-13",
+      "eval_score": 27,
+      "eval_max": 35,
+      "root_cause": "Near-term (0–2 day) inventory depletion of the UTV Raptor Tour (TID 80074, TGID 37536) drove S2C down 5.73pp across the entire CE — TID 80074 had zero near-term tickets on 28 of 30 post-period days, creating spillover abandonment across otherwise healthy experiences. The Jurassic Zipline serves as inverse confirmation: supply improved (avg days to first available 4.0d → 0.1d) and S2C improved +4.27pp simultaneously. The structural CVR decline has been worsening for at least 90 days, with the pre period itself already degraded (pre_period_healthy = false).",
+      "files": {
+        "report": "runs/v1.9/ce6495_2026-03-13_2026-05-12/report.html",
+        "transcript": "runs/v1.9/ce6495_2026-03-13_2026-05-12/transcript.md",
+        "evaluation": "runs/v1.9/ce6495_2026-03-13_2026-05-12/evaluation.md"
+      }
+    }
+  ]
+}

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CVR-RCA · CE 243 Eiffel Tower Tickets</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f5f6fa; color:#1a1a2e; line-height:1.55; }
+  header { background:#1a1a2e; color:#fff; padding:28px 40px 24px; }
+  header .eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; margin-bottom:6px; }
+  header h1 { font-size:24px; font-weight:700; }
+  header .meta { margin-top:8px; font-size:13px; color:#b0bec5; }
+  header .meta span { margin-right:20px; }
+  /* v1.20: dashboards row — pill-button links to external CE-scoped dashboards (Omni, Sentra) */
+  header .dashboards { margin-top:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  header .dash-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; margin-right:4px; }
+  header .dash-link { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); color:#c8cfe0; text-decoration:none; padding:4px 12px; border-radius:14px; font-size:12px; font-weight:600; transition:background 0.15s, color 0.15s; }
+  header .dash-link:hover { background:rgba(255,255,255,0.16); color:#fff; }
+  .container { max-width:1050px; margin:0 auto; padding:0 24px 60px; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin:40px 0 16px; padding-bottom:8px; border-bottom:1px solid #e0e4ef; }
+  .metric-cards { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:24px; }
+  @media (max-width:800px) { .metric-cards { grid-template-columns:repeat(3, 1fr); } }
+  .metric-card { background:#fff; border-radius:10px; padding:18px 16px 16px; border:1px solid #e8ebf4; }
+  .metric-card .label { font-size:11px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:#8892a4; margin-bottom:8px; }
+  .metric-card .values { display:flex; align-items:baseline; gap:8px; }
+  .metric-card .pre { font-size:14px; color:#8892a4; }
+  .metric-card .post { font-size:22px; font-weight:700; color:#1a1a2e; }
+  .metric-card .delta { font-size:12px; font-weight:600; padding:2px 7px; border-radius:12px; margin-top:6px; display:inline-block; }
+  .delta-neg { background:#fdecea; color:#c62828; }
+  .delta-pos { background:#e8f5e9; color:#2e7d32; }
+  .delta-flat { background:#f3f4f6; color:#555; }
+  .callout { background:#fff; border-left:4px solid #e53935; border-radius:0 10px 10px 0; padding:24px 28px; margin-bottom:8px; border-top:1px solid #e8ebf4; border-right:1px solid #e8ebf4; border-bottom:1px solid #e8ebf4; }
+  .callout h2 { font-size:16px; font-weight:700; color:#c62828; margin-bottom:16px; letter-spacing:0.2px; }
+  .callout-item { margin-bottom:14px; }
+  .callout-item:last-child { margin-bottom:0; }
+  .callout-item .q { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#8892a4; margin-bottom:4px; }
+  .callout-item .a { font-size:15px; color:#1a1a2e; font-weight:500; }
+  .action-card { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:16px; }
+  .action-card .ac-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:16px; }
+  .priority-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .p1 { background:#fdecea; color:#c62828; }
+  .p2 { background:#fff8e1; color:#f57c00; }
+  .p3 { background:#e8f5e9; color:#2e7d32; }
+  .action-card .cause { font-size:15px; font-weight:600; color:#1a1a2e; }
+  .action-card .dri-row { font-size:13px; color:#555; margin-bottom:16px; display:flex; gap:6px; align-items:center; }
+  .dri-badge { background:#e8edf7; color:#3a4a8a; font-weight:600; font-size:12px; padding:2px 9px; border-radius:8px; }
+  .action-card ul { padding-left:18px; font-size:14px; color:#333; }
+  .action-card ul li { margin-bottom:7px; }
+  .analysis-block { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:20px; }
+  .analysis-block .block-title { font-size:14px; font-weight:700; color:#1a1a2e; margin-bottom:6px; }
+  .verdict-line { font-size:14px; font-weight:600; color:#c62828; background:#fdecea; border-radius:6px; padding:8px 14px; margin-bottom:18px; }
+  .verdict-line.neutral { color:#3a4a8a; background:#e8edf7; }
+  .verdict-line.pos { color:#2e7d32; background:#e8f5e9; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:0.7px; text-transform:uppercase; color:#8892a4; padding:8px 12px; border-bottom:2px solid #e8ebf4; }
+  td { padding:9px 12px; border-bottom:1px solid #f0f2f8; color:#1a1a2e; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8f9ff; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .neg { color:#c62828; font-weight:600; }
+  .pos { color:#2e7d32; font-weight:600; }
+  .highlight-row td { background:#fff8f8 !important; }
+  .shapley-bars { display:flex; gap:0; border-radius:8px; overflow:hidden; height:32px; margin:16px 0 8px; }
+  .shapley-bar { display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+  .shapley-lp2s { background:#a4a0b7; }
+  .shapley-s2c  { background:#c62828; }
+  .shapley-c2o  { background:#e57373; }
+  .shapley-legend { display:flex; gap:20px; font-size:12px; color:#555; }
+  .legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; }
+  .fixed-segment-banner { background:#e8edf7; border-left:4px solid #3a4a8a; border-radius:0 8px 8px 0; padding:12px 16px; margin-bottom:18px; font-size:13px; color:#1a1a2e; }
+  .fixed-segment-banner strong { color:#3a4a8a; }
+  .chart-container { margin-top:16px; }
+  footer { text-align:center; font-size:12px; color:#aaa; padding:24px; margin-top:20px; }
+  html { scroll-behavior:smooth; }
+  .ref-link { color:#3a4a8a; text-decoration:none; font-size:12px; font-weight:700; margin-left:3px; }
+  .ref-link:hover { color:#c62828; }
+  .analysis-block:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; }
+  .md-content:target, .md-content *:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; border-radius: 4px; }
+
+  /* Tab framework — bar outside .container so it stretches full viewport width */
+  .tab-bar { display:flex; gap:4px; position:sticky; top:0; z-index:50; background:#1a1a2e; padding:0 40px; border-bottom:1px solid #2a2a44; }
+  .tab-button { font-family:inherit; font-size:13px; font-weight:600; color:#8892a4; background:transparent; border:none; padding:14px 22px; cursor:pointer; border-bottom:3px solid transparent; transition:color 0.15s, border-color 0.15s; }
+  .tab-button:hover { color:#c8cfe0; }
+  .tab-button.active { color:#fff; border-bottom-color:#4a7eff; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+
+  /* Markdown-sourced tab content (perf-audit) */
+  .md-content { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:28px 32px; margin:20px 0; line-height:1.7; }
+  .md-content h1 { font-size:22px; font-weight:800; margin:24px 0 12px; color:#1a1a2e; }
+  .md-content h2 { font-size:18px; font-weight:700; margin:28px 0 10px; color:#1a1a2e; border-bottom:1px solid #e8ebf4; padding-bottom:6px; }
+  .md-content h3 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#2a2a44; }
+  .md-content p { margin:8px 0; }
+  .md-content ul, .md-content ol { margin:8px 0 12px 24px; }
+  .md-content li { margin:4px 0; }
+  .md-content code { font-family:'SF Mono',Menlo,monospace; font-size:12px; background:#f5f6fa; padding:2px 6px; border-radius:4px; color:#c62828; }
+  .md-content a { color:#3a4a8a; text-decoration:none; border-bottom:1px solid rgba(58,74,138,0.3); }
+  .md-content a:hover { border-bottom-color:#3a4a8a; }
+  .md-content hr { border:none; border-top:1px solid #e8ebf4; margin:24px 0; }
+  .md-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; margin:12px 0 16px; font-size:13px; }
+  .md-table th { background:#f5f6fa; color:#8892a4; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; border-bottom:2px solid #e0e4ef; padding:10px 12px; text-align:left; }
+  .md-table td { border-bottom:1px solid #f0f1f5; padding:10px 12px; }
+  .md-table tr:last-child td { border-bottom:none; }
+  .md-table tr:hover td { background:#fafbfd; }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">CVR Root-Cause Analysis · CVR Declined</div>
+  <h1>Eiffel Tower Tickets — CE 243</h1>
+  <div class="meta">
+    <span>📅 Pre: 29 Mar – 27 Apr 2026</span>
+    <span>📅 Post: 28 Apr – 27 May 2026</span>
+    <span>🌍 France · Collection</span>
+    <span>🔗 <a href="https://eiffel-tower.paristickets.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">eiffel-tower.paristickets.com</a></span>
+  </div>
+  <div class="dashboards">
+    <span class="dash-label">DASHBOARDS</span>
+    <a href="https://headout.omniapp.co/dashboards/5368ab53?f--iv8lWOuS=%7B%22values%22%3A%5B%22243%22%5D%7D&f--uvd3KWWJ=%7B%22left_side%22%3A%2230+complete+days+ago%22%2C%22right_side%22%3A%2230+days%22%7D" target="_blank" class="dash-link">Omni ↗</a>
+    <a href="https://sentra-analytics.headout.com/analysis/243" target="_blank" class="dash-link">Sentra ↗</a>
+  </div>
+</header>
+
+<div class="tab-bar" role="tablist">
+  <button class="tab-button active" data-tab="cvr-rca" role="tab" aria-selected="true">CVR RCA</button>
+  <button class="tab-button" data-tab="perfaudit" role="tab" aria-selected="false">Paid Performance Audit</button>
+</div>
+
+<div class="container">
+
+<div class="tab-pane active" id="tab-cvr-rca" role="tabpanel">
+
+<!-- ======================= SECTION 1 ======================= -->
+<div class="section-label">1 · Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">CVR</div>
+    <div class="values"><span class="pre">3.07%</span><span class="post">2.89%</span></div>
+    <div class="delta delta-neg">Δ −0.18pp / −5.8%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">LP2S</div>
+    <div class="values"><span class="pre">40.7%</span><span class="post">40.1%</span></div>
+    <div class="delta delta-flat">Δ −0.5pp / −1.3%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">S2C</div>
+    <div class="values"><span class="pre">24.7%</span><span class="post">23.7%</span></div>
+    <div class="delta delta-neg">Δ −1.0pp / −4.0%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">C2O</div>
+    <div class="values"><span class="pre">30.5%</span><span class="post">30.3%</span></div>
+    <div class="delta delta-flat">Δ −0.2pp / −0.5%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Traffic (LP users)</div>
+    <div class="values"><span class="pre">100.8k</span><span class="post">86.9k</span></div>
+    <div class="delta delta-neg">Δ −13.9k / −13.8%</div>
+  </div>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">90-day CVR Trend — Current vs Last Year</div>
+  <div id="chart-90d" style="height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:10px;">Current-year CVR trended into the post window roughly flat with the pre-window baseline, then weakened gradually from mid-May onward. LY rose +0.14pp over the same calendar window — so the structural delta after stripping seasonality is <strong>−0.32pp</strong>, larger than the headline −0.18pp suggests. Pre window starts 29 Mar.</p>
+</div>
+
+<div class="callout">
+  <h2>Root Cause</h2>
+  <div class="callout-item">
+    <div class="q">What broke?</div>
+    <div class="a">S2C fell from 24.7% to 23.7% at CE level (−1.0pp absolute; 69% of total Shapley delta — the only significant funnel-step driver). The leak is concentrated on <strong>Desktop visitors browsing the dominant TGID 23604</strong> (Eiffel Tower Guided Tour by Elevator: Reserved Summit or 2nd Floor) <a class="ref-link" href="#block-cross-cut">↗</a> — Non-Geo Desktop S2C fell from 29.1% → 25.5% (−3.6pp on 4,130 post selects); Geo Desktop fell 24.9% → 16.0% (−8.9pp on 375 post selects). All four mobile cells (iOS × Geo, iOS × Non-Geo, Android × Geo, Android × Non-Geo) held flat on the same TGID <a class="ref-link" href="#block-device">↗</a>. LP2S and C2O on the fixed segment essentially held — this is squarely an S2C story.</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">Why did it break?</div>
+    <div class="a">Last year over the same late-March-to-late-May window CVR rose 0.14pp; we fell 0.18pp despite that seasonal tailwind, so <strong>the underlying decline vs the seasonal baseline is −0.32pp</strong> — a real structural drop, not a calendar artefact. The mechanism is <em>not</em> upstream: every upstream signal checks out as healthy or improving. <strong>Supply is abundant</strong> on TGID 23604's three active TIDs (~946 0-2d tickets/day, ~16,652 14-30d) <a class="ref-link" href="#block-availability">↗</a>. <strong>Price actually fell −8.8%</strong> on TGID 23604 (median $41.12 → $37.52) <a class="ref-link" href="#block-pricing">↗</a> — a tailwind, not a headwind. <strong>No catalogue change</strong> in window. <strong>Paid Google Ads is HEALTHY</strong> per perf-audit (per perf-audit <a class="ref-link" href="#perfaudit-executive-summary">↗</a>) — SIS +3.3pp, CPC flat, no campaign issues. What remains is <strong>Desktop-specific friction on TGID 23604's select page</strong>: TGID 23604 has 3 active variants — 2nd floor + guided, summit + guided, summit + cruise combo — that desktop displays simultaneously while mobile collapses or sequences. Either a select-page UX/variant-rendering regression visible to desktop only, or competitive comparison-shopping behaviour unique to desktop multi-tab users (the defensive price drop is consistent with the latter). Session recordings on Desktop visitors to TGID 23604 in late May are required to localize.</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">When did it break?</div>
+    <div class="a">Gradual. Daily S2C on the fixed segment held the pre-window 22–28% range through April and early May, then weakened into the 20–22% band from approximately <strong>May 14 onward</strong> <a class="ref-link" href="#block-daily-trend">↗</a>. No sharp deploy break on a single day. Late-May LP2S also softened on the same days (40–43% vs the 45–51% earlier post-window readings) — same-mechanism candidate, smaller magnitude.</div>
+  </div>
+</div>
+
+<!-- ======================= SECTION 2 ======================= -->
+<div class="section-label">2 · Actions</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p1">P1</span>
+    <div class="cause">Pull Desktop session recordings on TGID 23604's select page in mid-to-late May to localize the on-page friction (variant rendering, date-picker behaviour, comparison-shopping pattern) — the cross-cut narrowed the leak to this URL/device, but the on-page mechanism cannot be identified from numbers alone. <a class="ref-link" href="#block-cross-cut">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Product / UX — Microsite team + Analytics</span></div>
+  <ul>
+    <li>Pull 15 session recordings from Desktop visitors (both Geo France and Non-Geo) who landed on TGID 23604's select page between May 14–27 and abandoned without proceeding to checkout. Compare against 5 control recordings from late April (pre-break) on the same locus. Mixpanel filter: <code>device_type = 'Desktop'</code> AND <code>channel_name = 'Google Ads'</code> AND <code>is_microbrand_page = TRUE</code> AND <code>experience_id = '23604'</code> AND <code>has_select_page_viewed = TRUE</code> AND <code>has_checkout_started = FALSE</code>.</li>
+    <li>Audit the variant display layout on TGID 23604's select page on Desktop — three TIDs (46405 2nd floor + guided, 46406 summit + guided, 46443 summit + cruise combo) display simultaneously on desktop. Flag any layout, sort, or callout change deployed in early-to-mid May.</li>
+    <li>Cross-reference with the late-May LP2S softening on the listing page — same-mechanism candidate; the listing change and the select-page change may share an upstream root.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2</span>
+    <div class="cause">Pull competitive intel for the Eiffel Tower Guided Summit Access SKU in late May — the −8.8% defensive price drop on TGID 23604 is consistent with the desktop comparison-shopping hypothesis. Desktop multi-tab users can see a competitor offer alongside the Headout listing in a way mobile single-tab users cannot. <a class="ref-link" href="#block-pricing">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>BDM / Growth — France market lead</span></div>
+  <ul>
+    <li>Pull GYG and Viator listing prices, ratings, and "available next 7 days" status for the equivalent Eiffel Tower guided summit + 2nd-floor SKUs for the May 1–27 window. If a competitor's price dropped, a new product launched, or a "best price" badge surfaced, document the gap.</li>
+    <li>Trigger the competitive intel skill for a structured per-TGID Headout vs GYG/Klook/Viator comparison on TGID 23604 specifically — desktop comparison shoppers are the affected audience.</li>
+    <li>If a competitor advantage is confirmed, evaluate further price adjustment, content/ratings refresh, or unique-value-prop badge to re-anchor desktop conversion. If no competitor advantage is found, the desktop-friction hypothesis (P1) is the primary story.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p3">P3</span>
+    <div class="cause">Lock the line on supply — TGID 23604 inventory is healthy through the post window (~946 0-2d tickets/day across 3 TIDs) and price is favorable. Protect this state so the supply-side doesn't become a new headwind on top of the page-side leak. <a class="ref-link" href="#block-availability">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Ops / BDM — Eiffel Tower supply partners</span></div>
+  <ul>
+    <li>Confirm with the SP that 0–2d and 3–7d inventory commitments hold through the summer peak (June–August) for all three TIDs of TGID 23604 (46405, 46406, 46443).</li>
+    <li>Set up an alert on the <code>inventory_availability</code> 0–2d bucket for TGID 23604 — trigger if combined daily ticket count across TIDs 46405 + 46406 + 46443 falls below ~400 for any rolling 7-day window.</li>
+  </ul>
+</div>
+
+<!-- ======================= SECTION 3 ======================= -->
+<div class="section-label">3 · Supporting Analysis</div>
+
+<div class="analysis-block" id="block-mix-cascade">
+  <div class="block-title">Mix Cascade — Routing vs Conversion at Three Levels</div>
+  <div class="verdict-line neutral">Conversion change at every level; mix essentially zero. <strong>Fixed segment: MB · Paid · Google Ads.</strong> Within the fixed segment, only S2C moved negatively (−1.45pp); LP2S held, C2O slightly improved.</div>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:8px 0 4px;">Level 1 — MB vs HO</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>MB (primary)</td><td class="num">96.38%</td><td class="num">95.92%</td><td class="num">3.09%</td><td class="num neg">2.87%</td><td class="num">−0.01pp</td><td class="num neg">−0.21pp</td><td>Conversion</td></tr>
+      <tr><td>HO</td><td class="num">3.62%</td><td class="num">4.08%</td><td class="num">6.84%</td><td class="num">6.49%</td><td class="num">+0.03pp</td><td class="num">−0.01pp</td><td>Mix (small)</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 2 — Paid vs Organic within MB</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Paid (fixed)</td><td class="num">72.75%</td><td class="num">73.59%</td><td class="num">3.25%</td><td class="num neg">3.13%</td><td class="num">+0.03pp</td><td class="num neg">−0.09pp</td><td>Conversion</td></tr>
+      <tr><td>Organic</td><td class="num">27.25%</td><td class="num">26.41%</td><td class="num">2.41%</td><td class="num">2.29%</td><td class="num">−0.02pp</td><td class="num">−0.03pp</td><td>Both small</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 3 — Channel within Paid MB</p>
+  <table>
+    <thead><tr><th>Channel</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Google Ads (fixed)</td><td class="num">78,795</td><td class="num">69,579</td><td class="num">3.39%</td><td class="num neg">3.31%</td><td class="num">46.16% → 46.31%</td><td class="num neg">23.70% → 22.25%</td><td class="num pos">30.99% → 32.10%</td></tr>
+      <tr><td>Microsoft Ads</td><td class="num">17,454</td><td class="num">15,841</td><td class="num">2.65%</td><td class="num">2.41%</td><td class="num">31.18% → 33.76%</td><td class="num">28.64% → 27.66%</td><td class="num neg">29.63% → 25.76%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fixed-segment-banner">
+    <strong>Fixed segment for all subsequent analysis:</strong> <code>is_microbrand_page = TRUE</code> AND <code>channel_name = 'Google Ads'</code>. Google Ads carries 82% of Paid MB volume on flat share — conversion-driven, −0.08pp CVR. Within this segment LP2S held +0.15pp, C2O improved +1.11pp, and S2C declined −1.45pp. <strong>S2C is the only negative funnel step on the fixed segment.</strong>
+  </div>
+</div>
+
+<div class="analysis-block" id="block-geo">
+  <div class="block-title">Geo Overview — Domestic France vs Non-Geo (Google Ads · MB)</div>
+  <div class="verdict-line neutral">The S2C decline is concentrated in Non-Geo (international) visitors. Geo France held S2C and actually improved CVR (+0.34pp). Domestic users are not the story.</div>
+  <table>
+    <thead><tr><th>Group</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td>Geo (France)</td><td>pre</td><td class="num">12,878</td><td class="num">44.7%</td><td class="num">20.1%</td><td class="num">34.5%</td><td class="num">3.10%</td></tr>
+      <tr><td>Geo (France)</td><td>post</td><td class="num">11,565</td><td class="num">44.4%</td><td class="num">19.9%</td><td class="num pos">38.9%</td><td class="num pos">3.44%</td></tr>
+      <tr class="highlight-row"><td>Non-Geo</td><td>pre</td><td class="num">66,431</td><td class="num">46.5%</td><td class="num">24.4%</td><td class="num">30.6%</td><td class="num">3.47%</td></tr>
+      <tr class="highlight-row"><td>Non-Geo</td><td>post</td><td class="num">58,525</td><td class="num">46.7%</td><td class="num neg">22.8%</td><td class="num">31.3%</td><td class="num">3.33%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Non-Geo visitors (international tourism traffic to the Paris Eiffel Tower CE) make up 84% of fixed-segment LP volume and carry the S2C decline. Geo France held flat on S2C and improved on both C2O and CVR. International visitors — likely planning trips weeks in advance — are the affected audience.</p>
+</div>
+
+<div class="analysis-block" id="block-shapley">
+  <div class="block-title">Shapley Decomposition — S2C Carries the Decline</div>
+  <div class="verdict-line">S2C is the only significant funnel-step driver (69% of total Shapley delta). LP2S and C2O are below the 10% threshold for independent investigation.</div>
+  <div class="shapley-bars">
+    <div class="shapley-bar shapley-lp2s" style="width:22%;">LP2S −0.04pp</div>
+    <div class="shapley-bar shapley-s2c" style="width:69%;">S2C −0.12pp</div>
+    <div class="shapley-bar shapley-c2o" style="width:9%;">C2O −0.01pp</div>
+  </div>
+  <div class="shapley-legend"><span><span class="legend-dot" style="background:#a4a0b7;"></span>LP2S (22%)</span><span><span class="legend-dot" style="background:#c62828;"></span>S2C (69%, primary)</span><span><span class="legend-dot" style="background:#e57373;"></span>C2O (8%, below threshold)</span></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Within C2O, C2A 37.30% → 36.85% (−0.45pp) and A2O 81.75% → 82.32% (+0.57pp) — both sub-steps essentially flat. C2O is genuinely closed as no-mechanism. LP2S contribution is real but small; late-May LP2S softness on the fixed segment is a same-mechanism candidate alongside S2C, not an independent driver.</p>
+</div>
+
+<div class="analysis-block" id="block-daily-trend">
+  <div class="block-title">Daily Trend — S2C / LP2S / C2O (CE-level)</div>
+  <div class="verdict-line">Gradual S2C decline from approximately May 14 onward — no sharp deploy break. Late-May LP2S softens on the same days; C2O essentially flat throughout.</div>
+  <div id="chart-daily" style="height:300px;"></div>
+</div>
+
+<div class="analysis-block" id="block-experience">
+  <div class="block-title">Experience-level Breakdown — TGID 23604 Carries the Loss</div>
+  <div class="verdict-line">TGID 23604 (Eiffel Tower Guided Tour by Elevator: Reserved Summit or 2nd Floor) — 54% of fixed-segment select-page volume — is the only top experience whose S2C declined materially. TGIDs 39257, 23621, 9005, and 3909 all improved or held within noise on S2C.</div>
+  <table>
+    <thead><tr><th>TGID</th><th>Name</th><th class="num">Pre selects</th><th class="num">Pre checkouts</th><th class="num">Post selects</th><th class="num">Post checkouts</th><th class="num">S2C</th><th class="num">Δ S2C</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>TGID 23604</td><td>Eiffel Tower Guided Reserved Summit or 2nd Floor</td><td class="num">21,131</td><td class="num">3,330</td><td class="num">18,856</td><td class="num">2,721</td><td class="num">15.8% → 14.4%</td><td class="num neg">−1.33pp</td><td style="font-size:12px;color:#666;">carries the loss</td></tr>
+      <tr><td>TGID 39257</td><td>Eiffel Tower Dedicated Reserved Summit Access</td><td class="num">2,124</td><td class="num">320</td><td class="num">4,857</td><td class="num">802</td><td class="num">15.1% → 16.5%</td><td class="num pos">+1.44pp</td><td style="font-size:12px;color:#666;">S2C improved, volume grew</td></tr>
+      <tr><td>TGID 23621</td><td>Combo: Eiffel Tower Guided + Seine Cruise</td><td class="num">4,845</td><td class="num">925</td><td class="num">3,663</td><td class="num">741</td><td class="num">19.1% → 20.2%</td><td class="num pos">+1.13pp</td><td style="font-size:12px;color:#666;">S2C improved</td></tr>
+      <tr><td>TGID 9005</td><td>Eiffel Tower Guided Climb by Stairs</td><td class="num">3,136</td><td class="num">798</td><td class="num">1,432</td><td class="num">387</td><td class="num">25.4% → 27.0%</td><td class="num pos">+1.58pp</td><td style="font-size:12px;color:#666;">S2C improved</td></tr>
+      <tr><td>TGID 10209</td><td>(name not resolved)</td><td class="num">2,147</td><td class="num">538</td><td class="num">2,287</td><td class="num">486</td><td class="num">25.1% → 21.3%</td><td class="num neg">−3.81pp</td><td style="font-size:12px;color:#666;">small absolute volume</td></tr>
+      <tr><td>TGID 3909</td><td>Louvre Museum Reserved Access (cross-CE referral)</td><td class="num">2,269</td><td class="num">621</td><td class="num">1,647</td><td class="num">510</td><td class="num">27.4% → 31.0%</td><td class="num pos">+3.60pp</td><td style="font-size:12px;color:#666;">improved, small</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">TGID 23604's S2C decline accounts for ~251 lost checkouts attributable to rate alone (post selects × Δrate). All other top TGIDs are tailwinds or noise. <strong>No new TGID launched in the post window</strong> — a few small TGIDs (50–700 select rows) dropped out in early April but their volume is negligible vs TGID 23604's 19k post selects. Pattern 11 (catalogue change) ruled out.</p>
+</div>
+
+<div class="analysis-block" id="block-cross-cut">
+  <div class="block-title">Cross-cut — Desktop × TGID 23604 (the leaf)</div>
+  <div class="verdict-line">The S2C decline on TGID 23604 is entirely on Desktop. Both Geo and Non-Geo Desktop dropped substantially; all four mobile cells were flat. This is not a mobile UX regression — it is a Desktop-specific select-page issue on the dominant Eiffel Tower guided product.</div>
+  <table>
+    <thead><tr><th>Geo</th><th>Device</th><th class="num">Pre selects</th><th class="num">Pre checkouts</th><th class="num">Pre S2C</th><th class="num">Post selects</th><th class="num">Post checkouts</th><th class="num">Post S2C</th><th class="num">Δ S2C</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Non-Geo</td><td>Desktop</td><td class="num">4,794</td><td class="num">1,393</td><td class="num">29.1%</td><td class="num">4,130</td><td class="num">1,053</td><td class="num neg">25.5%</td><td class="num neg">−3.6pp</td></tr>
+      <tr class="highlight-row"><td>Geo</td><td>Desktop</td><td class="num">490</td><td class="num">122</td><td class="num">24.9%</td><td class="num">375</td><td class="num">60</td><td class="num neg">16.0%</td><td class="num neg">−8.9pp</td></tr>
+      <tr><td>Non-Geo</td><td>iOS Mweb</td><td class="num">7,151</td><td class="num">858</td><td class="num">12.0%</td><td class="num">6,812</td><td class="num">785</td><td class="num">11.5%</td><td class="num">−0.5pp</td></tr>
+      <tr><td>Non-Geo</td><td>Android Mweb</td><td class="num">5,886</td><td class="num">650</td><td class="num">11.0%</td><td class="num">4,956</td><td class="num">538</td><td class="num">10.9%</td><td class="num">−0.2pp</td></tr>
+      <tr><td>Geo</td><td>iOS Mweb</td><td class="num">1,615</td><td class="num">179</td><td class="num">11.1%</td><td class="num">1,595</td><td class="num">188</td><td class="num pos">11.8%</td><td class="num pos">+0.7pp</td></tr>
+      <tr><td>Geo</td><td>Android Mweb</td><td class="num">1,198</td><td class="num">132</td><td class="num">11.0%</td><td class="num">1,007</td><td class="num">113</td><td class="num">11.2%</td><td class="num">+0.2pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">The Non-Geo Desktop cell carries ~149 of the ~251 lost checkouts attributable to TGID 23604's rate decline (60% of the TGID-level loss). Geo Desktop adds another ~33 (small volume, biggest pp drop). Mobile is untouched in either geo. Desktop visitors are the affected audience; the next investigation step is session recordings on this exact locus.</p>
+</div>
+
+<div class="analysis-block" id="block-device">
+  <div class="block-title">Device Breakdown — Desktop Carries the Drop (Google Ads · MB)</div>
+  <div class="verdict-line">S2C declined on Desktop (−3.0pp) and Android (−1.8pp); iOS held flat. Desktop's higher base S2C (36% vs 18–20% on mobile) makes the −3pp move the largest absolute per user.</div>
+  <table>
+    <thead><tr><th>Device</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td>iOS Mweb</td><td>pre</td><td class="num">35,297</td><td class="num">43.4%</td><td class="num">18.6%</td><td class="num">35.1%</td><td class="num">2.83%</td></tr>
+      <tr><td>iOS Mweb</td><td>post</td><td class="num">32,609</td><td class="num">44.2%</td><td class="num">18.8%</td><td class="num pos">37.8%</td><td class="num pos">3.13%</td></tr>
+      <tr><td>Android Mweb</td><td>pre</td><td class="num">22,333</td><td class="num">50.0%</td><td class="num">19.8%</td><td class="num">30.7%</td><td class="num">3.04%</td></tr>
+      <tr><td>Android Mweb</td><td>post</td><td class="num">19,060</td><td class="num">49.4%</td><td class="num neg">18.0%</td><td class="num">32.0%</td><td class="num">2.84%</td></tr>
+      <tr class="highlight-row"><td>Desktop</td><td>pre</td><td class="num">20,710</td><td class="num">46.6%</td><td class="num">36.3%</td><td class="num">27.8%</td><td class="num">4.70%</td></tr>
+      <tr class="highlight-row"><td>Desktop</td><td>post</td><td class="num">17,524</td><td class="num">46.8%</td><td class="num neg">33.3%</td><td class="num">26.4%</td><td class="num neg">4.12%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">CE-wide CVR on Desktop fell −0.58pp, the deepest device-level decline. Mobile cohorts saw smaller moves; iOS actually improved on CVR (+0.30pp) despite a slight volume loss. Combined with the cross-cut above, the Desktop concentration points specifically to Desktop × TGID 23604 as the URL/device locus, not a CE-wide desktop regression.</p>
+</div>
+
+<div class="analysis-block" id="block-language">
+  <div class="block-title">Language Breakdown — English / French / Italian Concentration</div>
+  <div class="verdict-line">S2C declined in English (−1.8pp), French (−3.3pp), and Italian (−4.1pp); German, Spanish, and Dutch held flat. Three of the six largest language cohorts share the decline.</div>
+  <table>
+    <thead><tr><th>Language</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre S2C</th><th class="num">Post S2C</th><th class="num">Δ S2C</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>English</td><td class="num">33,378</td><td class="num">32,944</td><td class="num">27.29%</td><td class="num neg">25.47%</td><td class="num neg">−1.82pp</td></tr>
+      <tr><td>German</td><td class="num">13,250</td><td class="num">8,689</td><td class="num">21.85%</td><td class="num">21.40%</td><td class="num">−0.45pp</td></tr>
+      <tr class="highlight-row"><td>French</td><td class="num">10,928</td><td class="num">8,614</td><td class="num">21.38%</td><td class="num neg">18.06%</td><td class="num neg">−3.32pp</td></tr>
+      <tr><td>Spanish</td><td class="num">8,750</td><td class="num">7,347</td><td class="num">21.63%</td><td class="num">20.48%</td><td class="num">−1.15pp</td></tr>
+      <tr class="highlight-row"><td>Italian</td><td class="num">4,865</td><td class="num">4,648</td><td class="num">25.17%</td><td class="num neg">21.09%</td><td class="num neg">−4.08pp</td></tr>
+      <tr><td>Dutch</td><td class="num">3,921</td><td class="num">3,189</td><td class="num">19.93%</td><td class="num">19.19%</td><td class="num">−0.74pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">English, French, and Italian are the top inbound-tourism source languages for Paris. The decline being broad across three of six languages — but absent in three others — is not a single-language localization issue. It is consistent with the Desktop × TGID 23604 hypothesis, since desktop comparison shoppers and forward-planning international tourists overlap most with these three cohorts. German, Spanish, and Dutch tourists may book through different patterns (more last-minute, less comparison shopping) that the desktop-specific friction doesn't catch.</p>
+</div>
+
+<div class="analysis-block" id="block-availability">
+  <div class="block-title">Availability — TGID 23604 Supply is Healthy (Path A · post-only)</div>
+  <div class="verdict-line neutral">Supply ruled out. TGID 23604 has ~946 0-2d tickets/day, ~3,145 in 3-7d, ~5,011 in 8-13d, and ~16,652 in 14-30d across its three active TIDs. Abundant near-term and forward inventory throughout the post window.</div>
+
+  <p style="font-size:13px;color:#e07b00;background:#fff8e1;border-left:4px solid #f9a825;padding:10px 14px;margin-bottom:14px;border-radius:0 4px 4px 0;"><strong>Path A — pre-period inventory unavailable:</strong> the <code>inventory_availability</code> table only retains the trailing ~30 days, so the pre window (29 Mar – 27 Apr) is no longer queryable. Showing post-period medians only.</p>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:8px 0 6px;">Post-period median daily inventory per TID (limited-capacity, total tickets remaining)</p>
+  <table>
+    <thead><tr><th>TGID · TID</th><th>Tour name</th><th class="num">Median 0–2d</th><th class="num">Median 3–7d</th><th class="num">Median 8–13d</th><th class="num">Median 14–30d</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>TGID 23604 · TID 46405</td><td>2nd floor + guided</td><td class="num pos">290</td><td class="num pos">978</td><td class="num pos">1,559</td><td class="num pos">5,615</td></tr>
+      <tr class="highlight-row"><td>TGID 23604 · TID 46406</td><td>summit + guided</td><td class="num pos">483</td><td class="num pos">1,383</td><td class="num pos">2,199</td><td class="num pos">6,693</td></tr>
+      <tr class="highlight-row"><td>TGID 23604 · TID 46443</td><td>summit + cruise combo</td><td class="num pos">173</td><td class="num pos">784</td><td class="num pos">1,253</td><td class="num pos">4,344</td></tr>
+      <tr><td>TGID 39257 · TID 46406 ¹</td><td>summit + guided (shared)</td><td class="num">483</td><td class="num">1,383</td><td class="num">2,199</td><td class="num">6,693</td></tr>
+      <tr><td>TGID 23621 · TID 46442</td><td>2nd floor + cruise combo</td><td class="num">371</td><td class="num">1,077</td><td class="num">1,464</td><td class="num">4,790</td></tr>
+      <tr><td>TGID 23621 · TID 46443 ¹</td><td>summit + cruise combo (shared)</td><td class="num">173</td><td class="num">784</td><td class="num">1,253</td><td class="num">4,344</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:#777;margin-top:8px;font-style:italic;">¹ TIDs 46406 and 46443 are shared across TGIDs (the combo TGIDs reuse them). Inventory is one physical pool.</p>
+
+  <p style="font-size:13px;color:#555;margin-top:12px;">All three active TIDs of TGID 23604 show abundant supply across every lead-time bucket. The 14-30d bucket alone holds ~16,652 tickets/day median — international travelers booking 2–4 weeks ahead see a full calendar. <strong>Supply is not the S2C decline mechanism.</strong> Pre-period state is informed by <code>days_to_first_available_date</code> from <code>product_rankings_features</code> running 0 on top TGIDs in both periods — directionally consistent with the abundant near-term supply observed above.</p>
+</div>
+
+<div class="analysis-block" id="block-pricing">
+  <div class="block-title">Pricing — TGID 23604 Median Price Actually Fell</div>
+  <div class="verdict-line neutral">Price ruled out as a cause of the decline. TGID 23604's median listed price fell from $41.12 → $37.52 (−8.8%). The price move was a small tailwind, not a headwind — and the timing is consistent with a defensive response to competitive pressure (see P2 action card).</div>
+  <table>
+    <thead><tr><th>TGID</th><th>Period</th><th class="num">Median price (USD)</th><th class="num">Avg rating</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>23604 — Eiffel Tower Guided Reserved Summit or 2nd Floor</td><td>pre</td><td class="num">$41.12</td><td class="num">4.20</td></tr>
+      <tr class="highlight-row"><td>23604 — Eiffel Tower Guided Reserved Summit or 2nd Floor</td><td>post</td><td class="num pos">$37.52 (−8.8%)</td><td class="num">4.20</td></tr>
+      <tr><td>23621 — Combo: Eiffel Tower Guided + Seine Cruise</td><td>pre</td><td class="num">$54.75</td><td class="num">3.96</td></tr>
+      <tr><td>23621 — Combo: Eiffel Tower Guided + Seine Cruise</td><td>post</td><td class="num">$51.72 (−5.5%)</td><td class="num">3.96</td></tr>
+      <tr><td>39257 — Eiffel Tower Dedicated Summit Access</td><td>pre</td><td class="num">$57.36</td><td class="num">4.20</td></tr>
+      <tr><td>39257 — Eiffel Tower Dedicated Summit Access</td><td>post</td><td class="num">$57.46</td><td class="num">4.22</td></tr>
+      <tr><td>9005 — Eiffel Tower Guided Climb by Stairs</td><td>pre</td><td class="num">$40.97</td><td class="num">4.10</td></tr>
+      <tr><td>9005 — Eiffel Tower Guided Climb by Stairs</td><td>post</td><td class="num">$40.92</td><td class="num">4.10</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">If Headout dropped TGID 23604's price 8.8% in response to competitive pressure (GYG / Viator / direct-booking), this is consistent with the desktop comparison-shopping hypothesis — desktop users can see a competitor offer alongside the Headout listing in a way mobile single-tab users cannot. The P2 action card asks BDM/Growth to confirm or rule this out via competitive intel.</p>
+</div>
+
+<div class="analysis-block" id="block-market-context">
+  <div class="block-title">Market Context — Paid Performance Audit Corroboration</div>
+  <div class="verdict-line neutral">Independent corroboration: Paid Google Ads is HEALTHY and IMPROVED. This rules out an upstream paid-quality-degradation explanation for the S2C decline — the residual is page-side, on Desktop × TGID 23604 specifically.</div>
+  <table>
+    <thead><tr><th>Signal</th><th>What it tells us about this report</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Paid Google Ads verdict: HEALTHY · traffic quality IMPROVED</td>
+        <td>Direct corroboration. SIS 18.4% → 21.7% (+3.3pp), CPC flat, paid CVR slightly up. Google is bidding more aggressively, not pulling back — Pattern A signal that paid acquisition is not the cause of the cascade-fix landing on Paid · Google Ads.</td>
+        <td><a href="#perfaudit-traffic-quality-pre-vs-post" class="ref-link">perf-audit §2 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Campaign status: all 7 language campaigns active, no tROAS suppression, budget-lost IS 0.06% (no exhaustion)</td>
+        <td>Rules out a campaign-pause or budget-throttle routing story. The cascade fixed on Paid mechanically (Paid is 70% of CE volume), not because Paid changed.</td>
+        <td><a href="#perfaudit-campaign-status-audit" class="ref-link">perf-audit §4 ↗</a></td>
+      </tr>
+      <tr>
+        <td>CM1-ROI attribution lag (data-engineering artifact)</td>
+        <td>Out-of-scope for this RCA but worth flagging separately: any dashboard or audit using CM1-ROI for last-4-week decisions is being misled by an unfinished cost-allocation backfill. Real revenue-based ROI is stable at ~8x.</td>
+        <td><a href="#perfaudit-cpc-3-lens-diagnostic" class="ref-link">perf-audit §5 ↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background:#f3f4f6;border-left:4px solid #8892a4;border-radius:0 6px 6px 0;padding:10px 14px;margin-top:16px;font-size:13px;color:#444;">
+    <strong>Slack context not included in this run.</strong> The Slack MCP returned permission-denied for all three search paths (public, public+private, channel reads) — no Slack signals could be retrieved. To enrich this report with the Slack lens, re-run with the Claude Code context extension and request a Slack pass on this CE.
+  </div>
+</div>
+
+<div class="analysis-block" id="block-ruled-out">
+  <div class="block-title">Dimensions Checked — Ruled Out as Independent Drivers</div>
+  <p style="font-size:13px;color:#555;margin-bottom:10px;">These cuts were run but did not surface an independent mechanism beyond what the cross-cut already explains.</p>
+  <ul style="padding-left:18px;font-size:13px;color:#444;">
+    <li><strong>iOS Mweb S2C × TGID 23604:</strong> held flat in both Geo and Non-Geo (+0.7pp and −0.5pp). The S2C decline is not a mobile UX regression.</li>
+    <li><strong>Android Mweb S2C × TGID 23604:</strong> held flat (Non-Geo 11.0% → 10.9%, Geo 11.0% → 11.2%). Android's overall −1.85pp CE-level decline is a smaller, broader cohort-quality story, not a TGID-specific one.</li>
+    <li><strong>LP2S:</strong> Shapley contribution −0.04pp (22%, below threshold). Late-May LP2S softness (40–43% range May 23–27) corresponds to the S2C decline timing — same-mechanism candidate; not investigated as an independent driver.</li>
+    <li><strong>C2O:</strong> Shapley contribution −0.01pp (8%, below threshold). Within the fixed segment C2O actually rose +1.11pp (30.99% → 32.10%); C2A and A2O sub-steps both essentially flat. No independent mechanism.</li>
+    <li><strong>Catalogue change (Pattern 11):</strong> no high-volume TGID launched in the post window; several small TGIDs (50–700 select rows) dropped out in early April but their volume is negligible vs TGID 23604's ~19k post selects.</li>
+    <li><strong>Microsoft Ads:</strong> 18% of Paid MB; CVR fell 2.65% → 2.41% (small absolute, similar pattern to Google Ads). Not a separate root cause.</li>
+    <li><strong>HO (headout.com) brand:</strong> only 4% of total LP volume; small mix tailwind +0.03pp dominated by MB's conversion-driven −0.21pp.</li>
+  </ul>
+</div>
+
+<div class="analysis-block" id="block-hypotheses">
+  <div class="block-title">Hypotheses Explored</div>
+  <table>
+    <thead><tr><th>Hypothesis</th><th>Status</th><th>Test run</th></tr></thead>
+    <tbody>
+      <tr><td>S2C drop concentrates on Desktop × TGID 23604 (the leaf)</td><td class="neg">CONFIRMED</td><td>Cross-cut Geo × Device × TGID 23604 on fixed segment <a class="ref-link" href="#block-cross-cut">↗</a></td></tr>
+      <tr><td>TGID 23604 carries the absolute checkout loss</td><td class="neg">CONFIRMED</td><td>Experience-level S2C breakdown on fixed segment <a class="ref-link" href="#block-experience">↗</a></td></tr>
+      <tr><td>Decline concentrates in Non-Geo (international) audience</td><td class="neg">CONFIRMED</td><td>Geo cut on fixed segment <a class="ref-link" href="#block-geo">↗</a></td></tr>
+      <tr><td>Decline concentrates in English / French / Italian language cohorts</td><td class="neg">CONFIRMED</td><td>Language cut on fixed segment <a class="ref-link" href="#block-language">↗</a></td></tr>
+      <tr><td>Supply scarcity (Pattern 3.4 / Pattern 4) caused the S2C drop</td><td class="pos">RULED OUT</td><td><code>inventory_availability</code> Path A medians abundant across all 4 buckets on TGID 23604 <a class="ref-link" href="#block-availability">↗</a></td></tr>
+      <tr><td>Price shock at variant level caused the S2C drop</td><td class="pos">RULED OUT</td><td>Median price on TGID 23604 fell −8.8% — tailwind, not headwind <a class="ref-link" href="#block-pricing">↗</a></td></tr>
+      <tr><td>Paid traffic-quality dilution caused the S2C drop</td><td class="pos">RULED OUT</td><td>Per perf-audit, paid quality IMPROVED — SIS +3.3pp, CPC flat, no campaign issues <a class="ref-link" href="#perfaudit-traffic-quality-pre-vs-post">↗</a></td></tr>
+      <tr><td>Mobile UX regression (Pattern 3.2 / 8)</td><td class="pos">RULED OUT</td><td>All four mobile cells held flat in the cross-cut <a class="ref-link" href="#block-cross-cut">↗</a></td></tr>
+      <tr><td>Catalogue change (Pattern 11) — TGID launch / disablement</td><td class="pos">RULED OUT</td><td>No high-volume TGID launched in window; small TGIDs dropped out are immaterial <a class="ref-link" href="#block-experience">↗</a></td></tr>
+      <tr><td>Sharp deploy event on a specific date</td><td class="pos">RULED OUT</td><td>Daily trend shows gradual decline from ~May 14, no single-day inflection <a class="ref-link" href="#block-daily-trend">↗</a></td></tr>
+      <tr><td>Slack-reported operational events explain the residual</td><td>DATA GAP</td><td>Slack MCP returned permission-denied; no signals retrieved. Re-run with context extension to enrich.</td></tr>
+      <tr><td>Desktop-specific select-page UX regression on TGID 23604 (primary on-page mechanism candidate)</td><td>OPEN</td><td>Data narrowed to URL/device locus; requires session recordings to confirm. P1 action card.</td></tr>
+      <tr><td>Competitive comparison-shopping advantage visible to Desktop only (alternative on-page mechanism)</td><td>OPEN</td><td>Consistent with the −8.8% defensive price drop; requires competitive intel pull. P2 action card.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /tab-pane cvr-rca -->
+
+<div class="tab-pane" id="tab-perfaudit" role="tabpanel">
+<div class="md-content">
+
+<h1 id="perfaudit-overview">Paid Performance Audit — Eiffel Tower Tickets (CE 243)</h1>
+<p><strong>Market:</strong> France<br>
+<strong>Pre window (P4W):</strong> 2026-03-29 — 2026-04-27<br>
+<strong>Post window (L4W):</strong> 2026-04-28 — 2026-05-27<br>
+<strong>Trigger:</strong> CVR-RCA cascade fixed on Paid · Google Ads · MB</p>
+
+<hr>
+
+<h2 id="perfaudit-executive-summary">1. Executive Summary</h2>
+<p><strong>Status: HEALTHY (paid channel)</strong></p>
+<p>Paid Google Ads delivered a stable-to-improving post-period for CE 243: SIS improved meaningfully (+3.3pp), CPC held flat, paid CVR slightly up on the Google Ads click side. All 12+ language campaigns are active and spending; no tROAS self-suppression, no budget exhaustion (budget-lost IS = 0.06% in post — budget is not the constraint). None of the classic paid-suppression signatures fire. <strong>The CVR-RCA cascade lands on Paid · Google Ads · MB mechanically because Paid is 70% of CE 243 sessions</strong>, but the actual S2C drop is page-side (select-page experience on the dominant TGID 23604) and not originated by paid acquisition.</p>
+
+<hr>
+
+<h2 id="perfaudit-traffic-quality-pre-vs-post">2. Traffic Quality (Pre vs Post)</h2>
+<p><strong>SIS / Reach Trend:</strong> 18.4% → 21.7% (+3.3pp, +18% rel). Real improvement in impression share — the campaign is winning more auctions, not fewer.</p>
+<p><strong>CPC Trend:</strong> $0.925 → $0.915 (−1.1%). Flat. Google is not bidding higher to maintain volume.</p>
+<p><strong>Paid CVR Trend:</strong> Google Ads click-CVR slightly up (2.38% → 2.46%). Mixpanel paid LP-CVR slightly down (3.51% → 3.25%) — in line with overall CE softness, not a paid-quality issue.</p>
+<p><strong>Assessment: IMPROVED.</strong> Paid traffic quality is not the cause of the CVR cascade.</p>
+
+<hr>
+
+<h2 id="perfaudit-campaign-status-audit">3. Campaign Status Audit</h2>
+<p><strong>Active campaigns in Post period:</strong> 12+ language campaigns (EN, DE, ES, FR, IT, NL, PL, DA, PT, RU, SV, NO + Madame Brasserie variants). All ENABLED and spending in L4W.</p>
+<p><strong>tROAS self-suppression check:</strong> NOT OBSERVED. Individual campaign targets 143–160% (within Pro+ standard); revenue-based ROI steady at ~8x.</p>
+<p><strong>Budget exhaustion check:</strong> NO. Budget-lost IS = 0.06% in post — budget is not the constraint.</p>
+
+<hr>
+
+<h2 id="perfaudit-cpc-3-lens-diagnostic">5. CPC 3-Lens Diagnostic</h2>
+<ol>
+  <li><strong>Quality traffic?</strong> CVR up alongside CPC flat — Google is buying same-quality (or slightly better) clicks at the same price. Justified.</li>
+  <li><strong>AOV structural?</strong> AOV stable in post. No price-mix shift.</li>
+  <li><strong>Competition?</strong> No auction-insights CSV pulled; SIS improved which is inconsistent with competitor incursion. No evidence of competitive pressure in post window.</li>
+</ol>
+<p>Verdict: CPC is efficiency-positive, not competitive pressure.</p>
+<p><strong>Notable side-finding (data-engineering artifact):</strong> The Google Ads <code>sum_conversion_value_calculated_contribution_margin</code> field shows a severe attribution lag — weekly CM1-ROI decays from 1.46x (Mar 23) → 0.04x (May 18) while revenue-based ROI stays at 8x throughout. This is a data-engineering artifact (cost/CM allocation hasn't caught up to recent bookings), not a real efficiency collapse — but any dashboard or audit using CM1-ROI for last-4-week decisions on CE 243 (or likely other CEs) is being misled. Worth flagging to Data Eng beyond this RCA.</p>
+
+<hr>
+
+<h2 id="perfaudit-mobile-conversion-path-connection-to-trigger">6. Conversion-Path Connection to Trigger</h2>
+<p>The CVR-RCA cascade fixed on <strong>Paid · Google Ads · MB</strong>. Two key observations:</p>
+<ol>
+  <li><strong>Aggregate paid CVR rose Post on the click side</strong>, so the MB-specific CVR weakness — if real — is a sub-segment effect not visible in the audit's blended view. The funnel would need to be split by device to localize it.</li>
+  <li><strong>No paid-acquisition cause is visible.</strong> Spend mix, campaign config, bid strategy, and traffic quality are all stable or improving. If the MB CVR leak is real, the root cause is downstream of acquisition (LP / select-page / checkout), not in Google Ads campaign setup.</li>
+</ol>
+<p>This is the key handoff to the parent RCA: <strong>paid traffic is not degraded; investigate the conversion path itself.</strong> The CVR-RCA tab confirms exactly this — the leak is on Desktop × TGID 23604's select page.</p>
+
+<hr>
+
+<h2 id="perfaudit-red-flags">7. Red Flags</h2>
+<ul>
+  <li><strong>LOW:</strong> CM1-ROI attribution lag (data-engineering artifact, not a real metric issue).</li>
+  <li>No CRITICAL or HIGH paid flags.</li>
+</ul>
+
+<hr>
+
+<h2 id="perfaudit-recommended-actions">8. Recommended Actions</h2>
+<ol>
+  <li>Flag the CM1-ROI attribution lag to Data Eng — any dashboard or audit using last-4-week CM1-ROI is being misled until the cost-allocation backfill catches up.</li>
+  <li>Continue current paid Google Ads strategy on CE 243 — no campaign-level intervention warranted.</li>
+  <li>Hand off to CVR-RCA for the page-side investigation (see CVR RCA tab).</li>
+</ol>
+
+<hr>
+
+<h2 id="perfaudit-conclusion">9. Conclusion for CVR-RCA Cascade</h2>
+<p>The paid channel is <strong>not</strong> the cause of the Pre→Post CVR cascade for CE 243. Paid acquisition delivered improved SIS (+3.3pp), flat CPC, and improved click-CVR. If the cascade-fix landed on Paid · Google Ads · MB, the residual signal is almost certainly a <strong>page-side issue downstream of the ad click</strong> (select-page on TGID 23604, per the CVR-RCA tab's analysis), not an upstream campaign/bid/targeting issue.</p>
+
+</div><!-- /md-content -->
+</div><!-- /tab-pane perfaudit -->
+
+</div><!-- /container -->
+
+<footer>CVR-RCA · CE 243 Eiffel Tower Tickets · generated 2026-05-28 · run dir: ce243_2026-03-29_2026-05-27</footer>
+
+<script>
+var DATES_90 = ["2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27"];
+var CVR_CURRENT_90 = [0.030864,0.036053,0.031977,0.034702,0.030248,0.032278,0.025264,0.033888,0.030091,0.035259,0.030687,0.032320,0.038803,0.033204,0.033856,0.034044,0.037242,0.032688,0.029757,0.029512,0.029199,0.030549,0.030831,0.031413,0.030885,0.038462,0.035778,0.034065,0.036685,0.032003,0.031972,0.028293,0.023938,0.027624,0.031537,0.029628,0.029922,0.024172,0.026793,0.032190,0.031263,0.036618,0.030489,0.033782,0.034618,0.030056,0.032814,0.031732,0.033380,0.034190,0.040816,0.038837,0.033286,0.032047,0.036150,0.034827,0.034747,0.032009,0.039715,0.037396,0.033820,0.032000,0.028952,0.025796,0.032587,0.030215,0.035845,0.034596,0.034393,0.036474,0.033003,0.030571,0.041248,0.035876,0.037037,0.034558,0.030699,0.030042,0.028740,0.029194,0.028911,0.026364,0.027054,0.032651,0.026687,0.026030,0.027857,0.026131,0.023496,0.022339];
+var CVR_LY_90 = [0.031708,0.033151,0.035271,0.031615,0.037551,0.033651,0.035629,0.039645,0.038191,0.043183,0.039488,0.038312,0.037241,0.038450,0.041173,0.040016,0.042453,0.035626,0.040126,0.039884,0.042559,0.042333,0.039713,0.043779,0.041829,0.042525,0.037932,0.045929,0.047544,0.042469,0.047216,0.042971,0.042192,0.047304,0.048761,0.041613,0.046595,0.049044,0.047481,0.046379,0.045946,0.044377,0.040745,0.043727,0.047081,0.040593,0.037486,0.036129,0.035768,0.042556,0.038311,0.042508,0.041975,0.035373,0.030205,0.037736,0.041171,0.041850,0.053428,0.051251,0.041872,0.039792,0.038207,0.036133,0.036520,0.043647,0.043032,0.048457,0.044536,0.045059,0.044963,0.044076,0.045261,0.048019,0.045785,0.043731,0.043596,0.046191,0.042415,0.045163,0.044731,0.046040,0.046557,0.045600,0.046877,0.040829,0.048595,0.046872,0.053477,0.044788];
+var DATES_DAILY = ["2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27"];
+var S2C_DAILY = [0.247600,0.247800,0.251100,0.238600,0.248300,0.222600,0.210600,0.230000,0.228000,0.265300,0.279200,0.267200,0.249800,0.266700,0.248800,0.277200,0.278100,0.261900,0.260900,0.269600,0.254800,0.244300,0.258900,0.244500,0.243000,0.259800,0.230200,0.230900,0.236900,0.273700,0.260000,0.285600,0.267500,0.175300,0.226200,0.209400,0.270500,0.273700,0.265300,0.275500,0.258500,0.222600,0.253400,0.273300,0.276000,0.253400,0.224300,0.193500,0.213500,0.196100,0.230800,0.231500,0.228700,0.220300,0.222800,0.227100,0.223300,0.235100,0.223900,0.233000];
+var LP2S_DAILY = [0.421400,0.389900,0.354500,0.395500,0.403100,0.387000,0.387900,0.390100,0.400300,0.397300,0.376700,0.375300,0.361100,0.412400,0.465200,0.428100,0.413400,0.429900,0.397200,0.405200,0.432800,0.458400,0.431000,0.416100,0.447200,0.423800,0.408300,0.408900,0.447900,0.443500,0.416900,0.361900,0.360700,0.391200,0.374300,0.403700,0.414800,0.448500,0.434800,0.404800,0.408900,0.435400,0.448900,0.417100,0.406200,0.407800,0.414900,0.417500,0.395600,0.438900,0.445300,0.424700,0.409700,0.386300,0.363500,0.349600,0.354400,0.365400,0.358000,0.353700];
+var C2O_DAILY = [0.299300,0.297100,0.287900,0.283200,0.312200,0.326100,0.370900,0.260000,0.290200,0.315900,0.285300,0.329400,0.326800,0.330000,0.313100,0.274700,0.280300,0.291200,0.300600,0.310700,0.341300,0.355700,0.302400,0.288000,0.326900,0.318600,0.377000,0.327600,0.335400,0.283500,0.274400,0.301800,0.311500,0.336600,0.329200,0.325300,0.280600,0.294300,0.287500,0.309900,0.297300,0.278000,0.336000,0.300600,0.330000,0.326600,0.303200,0.329000,0.338100,0.330200,0.291700,0.289900,0.295000,0.371700,0.310000,0.346300,0.335800,0.279700,0.275600,0.260100];
+
+(function () {
+  var POST_START = '2026-04-28';
+  var traceCur = { x: DATES_90, y: CVR_CURRENT_90, name: 'Current CVR', type: 'scatter', mode: 'lines', line: { color: '#c62828', width: 2 } };
+  var traceLY  = { x: DATES_90, y: CVR_LY_90,      name: 'Last Year CVR', type: 'scatter', mode: 'lines', line: { color: '#999', width: 1.5, dash: 'dot' } };
+  var layout = {
+    height: 260, margin: { t: 10, r: 10, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { tickfont: { size: 10 }, tickformat: '.1%', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    shapes: [
+      { type:'rect', x0:POST_START, x1:'2026-05-27', y0:0, y1:1, xref:'x', yref:'paper', fillcolor:'rgba(198,40,40,0.06)', line:{width:0} },
+      { type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#c62828', dash:'dot', width:1} }
+    ],
+    annotations: [ { x:'2026-05-12', y:0.95, xref:'x', yref:'paper', text:'Post period', font:{color:'#c62828',size:10}, showarrow:false } ]
+  };
+  Plotly.newPlot('chart-90d', [traceLY, traceCur], layout, { responsive: true, displayModeBar: false });
+})();
+
+(function () {
+  var POST_START = '2026-04-28';
+  var traceS2C = { x: DATES_DAILY, y: S2C_DAILY, name: 'S2C', type: 'scatter', mode: 'lines+markers', line: { color: '#c62828', width: 2 }, marker: { size: 4, color: '#c62828' } };
+  var traceLP2S = { x: DATES_DAILY, y: LP2S_DAILY, name: 'LP2S', type: 'scatter', mode: 'lines', line: { color: '#3a4a8a', width: 1.5, dash: 'dash' } };
+  var traceC2O = { x: DATES_DAILY, y: C2O_DAILY, name: 'C2O', type: 'scatter', mode: 'lines', line: { color: '#aaa', width: 1.5, dash: 'dash' } };
+  var layout = {
+    height: 280, margin: { t: 10, r: 30, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { tickfont: { size: 10 }, tickformat: '.0%', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    shapes: [
+      { type:'rect', x0:POST_START, x1:'2026-05-27', y0:0, y1:1, xref:'x', yref:'paper', fillcolor:'rgba(198,40,40,0.06)', line:{width:0} },
+      { type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#c62828', dash:'dot', width:1} },
+      { type:'line', x0:'2026-05-14', x1:'2026-05-14', y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#e07b00', dash:'dot', width:1} }
+    ],
+    annotations: [
+      { x:'2026-05-14', y:0.92, xref:'x', yref:'paper', text:'S2C decline onset ~May 14', font:{color:'#e07b00',size:10}, showarrow:false, xshift:80 }
+    ]
+  };
+  Plotly.newPlot('chart-daily', [traceS2C, traceLP2S, traceC2O], layout, { responsive: true, displayModeBar: false });
+})();
+
+// Tab framework — switch tabs on button click + cross-tab anchor support
+(function () {
+  function activateTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-button').forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    var pane = document.getElementById('tab-' + tabId);
+    var btn  = document.querySelector('.tab-button[data-tab="' + tabId + '"]');
+    if (pane) pane.classList.add('active');
+    if (btn)  { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
+    if (pane && window.Plotly) {
+      pane.querySelectorAll('.js-plotly-plot').forEach(function (el) { try { window.Plotly.Plots.resize(el); } catch (e) {} });
+    }
+  }
+  document.querySelectorAll('.tab-button').forEach(function (btn) {
+    btn.addEventListener('click', function () { activateTab(btn.dataset.tab); });
+  });
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    var target = document.getElementById(href.slice(1));
+    if (!target) return;
+    var pane = target.closest('.tab-pane');
+    if (pane && !pane.classList.contains('active')) {
+      e.preventDefault();
+      var tabId = pane.id.replace(/^tab-/, '');
+      activateTab(tabId);
+      history.pushState(null, '', href);
+      setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+    }
+  });
+  if (location.hash) {
+    var initialTarget = document.getElementById(location.hash.slice(1));
+    var initialPane = initialTarget && initialTarget.closest('.tab-pane');
+    if (initialPane && !initialPane.classList.contains('active')) {
+      activateTab(initialPane.id.replace(/^tab-/, ''));
+      setTimeout(function () { initialTarget.scrollIntoView({ behavior: 'instant', block: 'start' }); }, 50);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

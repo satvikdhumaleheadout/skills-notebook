@@ -1,0 +1,104 @@
+{
+  "version": "v1.6",
+  "runs": [
+    {
+      "id": "ce229_2026-03-05_2026-05-03",
+      "ce_id": "229",
+      "ce_name": "Warner Bros. Studio Tour London Tickets",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-04",
+      "eval_score": 27,
+      "eval_max": 35,
+      "root_cause": "CVR improved +0.31pp overall (C2O +4.50pp from Easter/spring high-intent planners + price dip on main product), but S2C fell −1.13pp concentrated on mobile — near-term weekend slots selling out 2–3 days in advance left last-minute mobile visitors with no available dates. Structural S2C gap vs LY (~15–17pp below) suggests tighter WBSL allotment management in 2026 vs 2025. Re-evaluated 2026-05-05: original 26/35 was wrong on T1 (Language IS in ruled-out block; cited gap was factually incorrect); revised to 27/35.",
+      "files": {
+        "report": "runs/v1.6/ce229_2026-03-05_2026-05-03/report.html",
+        "transcript": "runs/v1.6/ce229_2026-03-05_2026-05-03/transcript.md",
+        "evaluation": "runs/v1.6/ce229_2026-03-05_2026-05-03/evaluation.md"
+      }
+    }
+    ,
+    {
+      "id": "ce189_2026-03-05_2026-05-03_run2",
+      "ce_id": "189",
+      "ce_name": "Vatican Museums",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-04",
+      "eval_score": 29,
+      "eval_max": 35,
+      "root_cause": "Vatican Museums CVR fell −0.63pp (4.47%→3.84%) because peak spring demand (+13% traffic) exceeded fixed timed-entry slot supply — shrinking available booking dates by 5.1 per 30-day window — while a secondary checkout failure on iOS (C2A, consistent with confirmed +7.4% price increase on exp 7998) and Android (A2O, consistent with live inventory race condition) added a compounding −40% Shapley contribution. Re-evaluated 2026-05-05: original 25/35 was wrong on T4 and T5 (those gaps were already resolved in run2 report); revised to 29/35.",
+      "files": {
+        "report": "runs/v1.6/ce189_2026-03-05_2026-05-03_run2/report.html",
+        "transcript": "runs/v1.6/ce189_2026-03-05_2026-05-03_run2/transcript.md",
+        "evaluation": "runs/v1.6/ce189_2026-03-05_2026-05-03_run2/evaluation.md"
+      }
+    },
+    {
+      "id": "ce3111_2026-03-05_2026-05-03",
+      "ce_id": "3111",
+      "ce_name": "Kennedy Space Center",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-04",
+      "eval_score": 31,
+      "eval_max": 35,
+      "root_cause": "CVR fell −0.29pp (3.66%→3.38%) because Google Ads traffic to kennedyspacecenter-tickets.com fell 30% (92k→64k users) while Paid CVR held completely flat (4.58%→4.59%) — a Level 2 mix exit routing story. ~75% of the apparent decline is an Easter 2026 calendar artifact (27,134 extra US domestic users in the final 6 days of pre). US domestic CVR is flat (+0.08pp, 4.35%→4.43%), confirming no conversion problem for the core audience.",
+      "files": {
+        "report": "runs/v1.6/ce3111_2026-03-05_2026-05-03/report.html",
+        "transcript": "runs/v1.6/ce3111_2026-03-05_2026-05-03/transcript.md",
+        "evaluation": "runs/v1.6/ce3111_2026-03-05_2026-05-03/evaluation.md"
+      }
+    },
+    {
+      "id": "ce254_2026-03-05_2026-05-03",
+      "ce_id": "254",
+      "ce_name": "Disneyland® Paris Tickets",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-04",
+      "eval_score": 34,
+      "eval_max": 35,
+      "root_cause": "S2C fell from 23.56% to 20.26% (−3.30pp, 188% of ΔCVR) because near-term Disneyland Paris dates sold out during the Spring holiday peak — confirmed by availability proxy (min_days_available_30d dropped to 0 vs 27 in pre). Dynamic pricing ruled out: 1-Park ticket average price fell 8.2% ($70.65→$64.88). Near-term checkout buckets (0–29 days) fell 20–27%; 30+ day bookings held flat. Scarcity persisted equally through non-Easter post days (20.92% S2C) and Easter week (21.21%), confirming a sustained Spring holiday peak rather than a single-event spike.",
+      "files": {
+        "report": "runs/v1.6/ce254_2026-03-05_2026-05-03/report.html",
+        "transcript": "runs/v1.6/ce254_2026-03-05_2026-05-03/transcript.md",
+        "evaluation": "runs/v1.6/ce254_2026-03-05_2026-05-03/evaluation.md"
+      }
+    },
+    {
+      "id": "ce6495_2026-03-05_2026-05-03_run2",
+      "ce_id": "6495",
+      "ce_name": "Kualoa Ranch",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-04",
+      "eval_score": 27,
+      "eval_max": 35,
+      "root_cause": "S2C fell from 31.8% to 25.2% (−6.65pp, 70% of ΔCVR) because the post period captured the wind-down of Hawaii's spring break season — US domestic (83% of traffic, S2C −6.8pp) and Canadian visitors were replaced by lower-intent off-peak tourists, while international non-spring-break visitors held flat. No supply, pricing, or UX change confirmed — purely demand quality decline.",
+      "files": {
+        "report": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run2/report.html",
+        "transcript": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run2/transcript.md",
+        "evaluation": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run2/evaluation.md"
+      }
+    },
+    {
+      "id": "ce6495_2026-03-05_2026-05-03_run5",
+      "ce_id": "6495",
+      "ce_name": "Kualoa Ranch",
+      "pre_start": "2026-03-05",
+      "post_end": "2026-05-03",
+      "run_date": "2026-05-08",
+      "skill_variant": "cvr-rca_events",
+      "eval_score": 33,
+      "eval_max": 35,
+      "root_cause": "Spring break wind-down: US domestic S2C fell −6.73pp (15,711 pre select users) and Canadian S2C fell −10.56pp (1,053 pre users) as schools returned in early April, removing the high-intent Hawaii travel cohort. Non-spring-break markets (South Korea, Mexico) held flat or improved. BQ micro-funnel event data confirms demand-exit signatures across all 3 affected experiences: UTV Raptor (−7.2pp variant card engagement), Movie Sites (−7.5pp post-date-selection abandonment), Jungle (−8.9pp post-date-selection abandonment). Supply ruled out via post-period time-series; TGID 37530 0-2d step-down (−46%, Apr 23) is a compounding factor only. One UX flag: single session recording shows 3× 'Error Viewed' on UTV Raptor select page — P1 action for Product/Engineering to verify in frontend logs.",
+      "files": {
+        "report": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run5/report.html",
+        "transcript": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run5/transcript.md",
+        "findings": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run5/findings.md",
+        "evaluation": "runs/v1.6/ce6495_2026-03-05_2026-05-03_run5/evaluation.md"
+      }
+    }
+  ]
+}

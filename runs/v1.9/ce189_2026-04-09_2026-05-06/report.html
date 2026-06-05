@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVR-RCA · Vatican Museums (CE 189)</title>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; line-height: 1.55; }
+    header { background: #1a1a2e; color: #fff; padding: 28px 40px 24px; }
+    header .eyebrow { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #8892a4; margin-bottom: 6px; }
+    header h1 { font-size: 24px; font-weight: 700; }
+    header .meta { margin-top: 8px; font-size: 13px; color: #b0bec5; }
+    header .meta span { margin-right: 20px; }
+    .container { max-width: 1050px; margin: 0 auto; padding: 0 24px 60px; }
+    .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8892a4; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #e0e4ef; }
+    .metric-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+    @media (max-width: 800px) { .metric-cards { grid-template-columns: repeat(3, 1fr); } }
+    .metric-card { background: #fff; border-radius: 10px; padding: 18px 16px 16px; border: 1px solid #e8ebf4; }
+    .metric-card .label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #8892a4; margin-bottom: 8px; }
+    .metric-card .values { display: flex; align-items: baseline; gap: 8px; }
+    .metric-card .pre { font-size: 14px; color: #8892a4; }
+    .metric-card .post { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+    .metric-card .delta { font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 12px; margin-top: 6px; display: inline-block; }
+    .delta-neg { background: #fdecea; color: #c62828; }
+    .delta-pos { background: #e8f5e9; color: #2e7d32; }
+    .delta-flat { background: #f3f4f6; color: #555; }
+    .callout { background: #fff; border-left: 4px solid #e53935; border-radius: 0 10px 10px 0; padding: 24px 28px; margin-bottom: 8px; border-top: 1px solid #e8ebf4; border-right: 1px solid #e8ebf4; border-bottom: 1px solid #e8ebf4; }
+    .callout h2 { font-size: 16px; font-weight: 700; color: #c62828; margin-bottom: 16px; letter-spacing: 0.2px; }
+    .callout-item { margin-bottom: 14px; }
+    .callout-item:last-child { margin-bottom: 0; }
+    .callout-item .q { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8892a4; margin-bottom: 4px; }
+    .callout-item .a { font-size: 15px; color: #1a1a2e; font-weight: 500; }
+    .action-card { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 16px; }
+    .action-card .ac-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+    .priority-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .p1 { background: #fdecea; color: #c62828; }
+    .p2 { background: #fff8e1; color: #f57c00; }
+    .p3 { background: #e8f5e9; color: #2e7d32; }
+    .action-card .cause { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+    .action-card .dri-row { font-size: 13px; color: #555; margin-bottom: 16px; display: flex; gap: 6px; align-items: center; }
+    .dri-badge { background: #e8edf7; color: #3a4a8a; font-weight: 600; font-size: 12px; padding: 2px 9px; border-radius: 8px; }
+    .action-card ul { padding-left: 18px; font-size: 14px; color: #333; }
+    .action-card ul li { margin-bottom: 7px; }
+    .analysis-block { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 20px; }
+    .analysis-block .block-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+    .verdict-line { font-size: 14px; font-weight: 600; color: #c62828; background: #fdecea; border-radius: 6px; padding: 8px 14px; margin-bottom: 18px; }
+    .verdict-line.neutral { color: #3a4a8a; background: #e8edf7; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #8892a4; padding: 8px 12px; border-bottom: 2px solid #e8ebf4; }
+    td { padding: 9px 12px; border-bottom: 1px solid #f0f2f8; color: #1a1a2e; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8f9ff; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .neg { color: #c62828; font-weight: 600; }
+    .pos { color: #2e7d32; font-weight: 600; }
+    .highlight-row td { background: #fff8f8 !important; }
+    .shapley-bars { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 32px; margin: 16px 0 8px; }
+    .shapley-bar { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .shapley-lp2s { background: #6c8ebf; }
+    .shapley-s2c  { background: #c62828; }
+    .shapley-c2o  { background: #d6a832; }
+    .shapley-legend { display: flex; gap: 20px; font-size: 12px; color: #555; }
+    .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+    .chart-container { margin-top: 16px; }
+    footer { text-align: center; font-size: 12px; color: #aaa; padding: 24px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">CVR Root Cause Analysis</div>
+  <h1>Vatican Museums — CE 189</h1>
+  <div class="meta">
+    <span>📅 Pre: 9 Apr – 22 Apr 2026</span>
+    <span>📅 Post: 23 Apr – 6 May 2026</span>
+    <span>🌍 Italy · Collection</span>
+    <span>🔗 <a href="https://www.thevaticantickets.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">thevaticantickets.com</a></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ===== SECTION 1: EXECUTIVE SUMMARY ===== -->
+  <div class="section-label">Section 1 — Executive Summary</div>
+
+  <div class="metric-cards">
+    <div class="metric-card">
+      <div class="label">CVR</div>
+      <div class="values"><span class="pre">4.39%</span><span class="post">3.57%</span></div>
+      <div class="delta delta-neg">Δ −0.83pp / −18.8%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">LP2S</div>
+      <div class="values"><span class="pre">42.1%</span><span class="post">41.3%</span></div>
+      <div class="delta delta-neg">Δ −0.77pp / −1.8%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">S2C</div>
+      <div class="values"><span class="pre">27.9%</span><span class="post">24.5%</span></div>
+      <div class="delta delta-neg">Δ −3.44pp / −12.3%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">C2O</div>
+      <div class="values"><span class="pre">37.4%</span><span class="post">35.3%</span></div>
+      <div class="delta delta-neg">Δ −2.13pp / −5.7%</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Traffic (LP Users)</div>
+      <div class="values"><span class="pre">85,769</span><span class="post">81,327</span></div>
+      <div class="delta delta-neg">Δ −4,442 / −5.2%</div>
+    </div>
+  </div>
+
+  <!-- 90-day trend chart -->
+  <div class="analysis-block" style="margin-bottom:20px;">
+    <div class="block-title">90-Day CVR Trend — Vatican Museums</div>
+    <div id="trend-90day" class="chart-container"></div>
+    <p style="font-size:13px;color:#555;margin-top:10px;">
+      The post-period CVR drop (shaded red region) closely mirrors the same calendar window last year. The LY line shows a more pronounced dip over the same weeks in 2025 — particularly around Easter week — confirming that a seasonal year-over-year CVR decline at this time is expected for Vatican Museums. The structural delta (this year's drop minus LY's) is +0.002pp, essentially zero: this year's performance is tracking fractionally better than LY at the same point.
+    </p>
+  </div>
+
+  <!-- Root cause callout -->
+  <div class="callout">
+    <h2>Root Cause</h2>
+    <div class="callout-item">
+      <div class="q">What broke?</div>
+      <div class="a">S2C fell from 27.9% to 24.5% (−3.44pp) across Vatican Museums, accounting for 63% of the total CVR decline. The sharpest drops occurred within Google Ads traffic on mobile devices, with Italian and European markets most affected. TGID 6732 (Vatican Skip-the-Line, the highest-volume experience) accounted for ~79% of the lost checkouts — its daily S2C hit 17.0% on April 25 (Italian Liberation Day) and 15.6–16.3% on April 30–May 1 (Italian Labour Day).</div>
+    </div>
+    <div class="callout-item">
+      <div class="q">Why did it break?</div>
+      <div class="a">Post-Easter demand composition shift. The pre-period (Apr 9–22) includes Easter week, when Vatican Museums attracts committed travelers with fixed plans and high booking intent. Post-Easter (Apr 23–May 6), the visitor mix shifts toward more casual European tourists and, on Italian national holidays, local day-trippers who browse dates but are less likely to commit to a booking. Italy traffic fell 22% in volume, while US visitors — who plan Vatican trips independently of the Easter calendar — showed only −0.9pp S2C decline. The same pattern occurred last year (structural delta ≈ 0).</div>
+    </div>
+    <div class="callout-item">
+      <div class="q">When did it break?</div>
+      <div class="a">Gradual onset from April 23. Two pronounced troughs on Italian national holidays: April 25 (Liberation Day) and May 1 (Labour Day). Partial recovery toward May 3–4 before the period closed.</div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 2: ACTIONS ===== -->
+  <div class="section-label">Section 2 — Actions</div>
+
+  <div class="action-card">
+    <div class="ac-header">
+      <div class="priority-badge p2">P2</div>
+      <div class="cause">Post-Easter seasonal S2C decline — no immediate action required, but recovery trajectory needs monitoring through May–June.</div>
+    </div>
+    <div class="dri-row">
+      <span class="dri-badge">BDM / Growth</span>
+      <span>+ Performance Marketing (Vatican Museums account)</span>
+    </div>
+    <ul>
+      <li>Monitor weekly S2C for Vatican Museums (CE 189) through the end of May. Specifically track TGID 6732 (Skip-the-Line) — the rate should recover toward 23–27% as Easter-related seasonality normalises and summer peak traffic resumes. Two consecutive weeks at or above 25% (the mid-pre-period level) would confirm recovery.</li>
+      <li>If S2C for TGID 6732 remains below 20% for two consecutive weeks past June 1, re-run RCA with the summer post period (June traffic vs. this post window) — the seasonal hypothesis would need revisiting.</li>
+      <li>Italy traffic volume fell 22% in the post period (8,313 → 6,503 Google Ads users). Verify whether this reflects the normal post-Easter domestic pullback or a reduction in Italy-targeted campaign spend — check campaign impression share for the Vatican Museums account over April 23 – May 6.</li>
+    </ul>
+  </div>
+
+  <div class="action-card">
+    <div class="ac-header">
+      <div class="priority-badge p2">P2</div>
+      <div class="cause">Checkout abandonment (C2A) rose 3pp alongside the S2C drop — review price anchoring and fee transparency at the Vatican Skip-the-Line date picker and checkout.</div>
+    </div>
+    <div class="dri-row">
+      <span class="dri-badge">Product / UX</span>
+      <span>+ BDM (Vatican Museums)</span>
+    </div>
+    <ul>
+      <li>Review the price displayed at the TGID 6732 listing page vs. the price shown on the date-picker (select) page and in the checkout form. If the displayed variant prices (including booking fees) are meaningfully higher than the listing-page anchor, this could be amplifying post-Easter price sensitivity — visitors see a lower number on entry and abandon at checkout.</li>
+      <li>C2A dropped from 44.3% → 41.4% (−3.0pp) while A2O improved slightly (+0.9pp), confirming the abandonment is before payment submission, not at gateway failure. The 3pp increase in checkout abandonment is consistent with price sensitivity in a lower-commitment visitor cohort, but a targeted UX review at the checkout step for TGID 6732 would confirm whether any specific field or fee display is contributing.</li>
+      <li><strong>Close if:</strong> C2A for CE 189 returns to ≥43% for two consecutive weeks by Jun 30, 2026. <strong>Escalate if:</strong> C2A remains below 40% past Jun 30 — re-run RCA with summer traffic as the post period.</li>
+    </ul>
+  </div>
+
+  <!-- ===== SECTION 3: SUPPORTING ANALYSIS ===== -->
+  <div class="section-label">Section 3 — Supporting Analysis</div>
+
+  <!-- Mix cascade -->
+  <div class="analysis-block">
+    <div class="block-title">Mix Cascade — Routing vs Conversion Determination</div>
+    <div class="verdict-line neutral">Conversion change at all levels — no routing story. Fixed segment: MB · Google Ads.</div>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 1 — MB vs HO</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Segment</th><th class="num">Pre Users</th><th class="num">Post Users</th>
+          <th class="num">Pre Share</th><th class="num">Post Share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix Effect</th><th class="num">Conv. Effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>MB</strong></td><td class="num">85,118</td><td class="num">80,273</td>
+          <td class="num">94.5%</td><td class="num">94.1%</td>
+          <td class="num">4.48%</td><td class="num">3.61%</td>
+          <td class="num">−0.02pp</td><td class="num neg">−0.82pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>HO</td><td class="num">4,942</td><td class="num">5,033</td>
+          <td class="num">5.5%</td><td class="num">5.9%</td>
+          <td class="num">6.98%</td><td class="num">5.98%</td>
+          <td class="num">+0.03pp</td><td class="num">−0.05pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 2 — Paid vs Organic (within MB)</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Segment</th><th class="num">Pre Users</th><th class="num">Post Users</th>
+          <th class="num">Pre Share</th><th class="num">Post Share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix Effect</th><th class="num">Conv. Effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>Paid</strong></td><td class="num">45,922</td><td class="num">41,798</td>
+          <td class="num">52.9%</td><td class="num">51.1%</td>
+          <td class="num">6.32%</td><td class="num">5.11%</td>
+          <td class="num">−0.11pp</td><td class="num neg">−0.64pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>Organic</td><td class="num">40,821</td><td class="num">40,028</td>
+          <td class="num">47.1%</td><td class="num">48.9%</td>
+          <td class="num">2.45%</td><td class="num">2.08%</td>
+          <td class="num">+0.04pp</td><td class="num">−0.17pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 3 — Channel breakdown within Paid</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Channel</th><th class="num">Pre Users</th><th class="num">Post Users</th>
+          <th class="num">Pre Share</th><th class="num">Post Share</th>
+          <th class="num">Pre CVR</th><th class="num">Post CVR</th>
+          <th class="num">Mix Effect</th><th class="num">Conv. Effect</th><th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>Google Ads</strong></td><td class="num">41,776</td><td class="num">37,226</td>
+          <td class="num">90.9%</td><td class="num">89.0%</td>
+          <td class="num">6.33%</td><td class="num">5.04%</td>
+          <td class="num">−0.12pp</td><td class="num neg">−1.17pp</td>
+          <td>Fixed — conversion dominates</td>
+        </tr>
+        <tr>
+          <td>Microsoft Ads</td><td class="num">4,186</td><td class="num">4,611</td>
+          <td class="num">9.1%</td><td class="num">11.0%</td>
+          <td class="num">6.26%</td><td class="num">5.62%</td>
+          <td class="num">+0.11pp</td><td class="num">−0.06pp</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      All three levels show conversion-dominant effects — traffic composition was stable across MB/HO, Paid/Organic, and channels. The drop is in per-session conversion rates, not in how traffic was distributed. Google Ads carries 91% of Paid volume and drove the S2C decline entirely through rate, not mix.
+    </p>
+  </div>
+
+  <!-- Fixed Segment banner -->
+  <div style="background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:4px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#1b5e20;">
+    <strong>Fixed segment for all funnel analysis:</strong> MB · Google Ads<br>
+    <span style="color:#555;font-size:12px;">
+      Post-period users: 37,226 &nbsp;|&nbsp; Share of CE post traffic: 45.8%
+      &nbsp;|&nbsp; Checkout impact: −1,640 vs pre period (Google Ads MB only)
+    </span>
+  </div>
+
+  <!-- Geo overview -->
+  <div class="analysis-block">
+    <div class="block-title">Geographic Overview — Domestic vs International</div>
+    <div class="verdict-line">Italy (domestic) showed both a 22% volume decline and the largest S2C drop (−4.7pp). All European markets declined by 3–5pp. US visitors held near-flat (−0.9pp S2C). The drop spans domestic and international, but is sharpest in European markets.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Country</th><th>Segment</th>
+          <th class="num">Pre Users</th><th class="num">Post Users</th>
+          <th class="num">Pre S2C</th><th class="num">Post S2C</th><th class="num">Δ S2C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>Italy</strong></td><td>Domestic</td>
+          <td class="num">8,313</td><td class="num">6,503</td>
+          <td class="num">24.0%</td><td class="num">19.3%</td><td class="num neg">−4.7pp</td>
+        </tr>
+        <tr>
+          <td>Spain</td><td>International</td>
+          <td class="num">3,831</td><td class="num">3,721</td>
+          <td class="num">26.9%</td><td class="num">21.6%</td><td class="num neg">−5.3pp</td>
+        </tr>
+        <tr>
+          <td>United Kingdom</td><td>International</td>
+          <td class="num">3,337</td><td class="num">2,349</td>
+          <td class="num">26.6%</td><td class="num">23.2%</td><td class="num neg">−3.4pp</td>
+        </tr>
+        <tr>
+          <td>United States</td><td>International</td>
+          <td class="num">2,712</td><td class="num">2,857</td>
+          <td class="num">36.8%</td><td class="num">35.9%</td><td class="num">−0.9pp</td>
+        </tr>
+        <tr>
+          <td>Netherlands</td><td>International</td>
+          <td class="num">1,808</td><td class="num">1,592</td>
+          <td class="num">26.4%</td><td class="num">22.2%</td><td class="num neg">−4.2pp</td>
+        </tr>
+        <tr>
+          <td>Germany</td><td>International</td>
+          <td class="num">1,986</td><td class="num">1,479</td>
+          <td class="num">25.3%</td><td class="num">22.0%</td><td class="num neg">−3.3pp</td>
+        </tr>
+        <tr>
+          <td>Greece</td><td>International</td>
+          <td class="num">1,971</td><td class="num">1,707</td>
+          <td class="num">23.5%</td><td class="num">21.6%</td><td class="num neg">−1.9pp</td>
+        </tr>
+        <tr>
+          <td>France</td><td>International</td>
+          <td class="num">1,267</td><td class="num">1,033</td>
+          <td class="num">29.0%</td><td class="num">21.1%</td><td class="num neg">−7.9pp</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      European Catholics and nearby-country tourists visit Vatican Museums during Holy Week at notably higher rates than in the weeks immediately after Easter. US visitors, whose Vatican trips are less tied to the Easter calendar, maintained near-stable conversion. Italy's volume decline (not just rate) confirms that fewer Italian visitors came through Google Ads post-Easter — consistent with the domestic post-holiday pullback. Note: downstream inventory and pricing data is not filtered by geography; geo-specific root causes should be investigated separately with the supply and BDM teams if needed.
+    </p>
+  </div>
+
+  <!-- Shapley decomposition -->
+  <div class="analysis-block">
+    <div class="block-title">Shapley Decomposition — Funnel Step Attribution</div>
+    <div class="verdict-line">S2C carries 63% of ΔCVR. C2O is secondary at 28%. LP2S contributes 9% and is not independently actionable.</div>
+    <div class="shapley-bars">
+      <div class="shapley-bar shapley-lp2s" style="flex:9">9%</div>
+      <div class="shapley-bar shapley-s2c" style="flex:63">S2C 63%</div>
+      <div class="shapley-bar shapley-c2o" style="flex:28">C2O 28%</div>
+    </div>
+    <div class="shapley-legend">
+      <span><span class="legend-dot" style="background:#6c8ebf"></span>LP2S −0.07pp</span>
+      <span><span class="legend-dot" style="background:#c62828"></span>S2C −0.52pp</span>
+      <span><span class="legend-dot" style="background:#d6a832"></span>C2O −0.23pp</span>
+    </div>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      Total ΔCVR = −0.83pp. S2C accounts for −0.52pp — the date-picker and variant-selection step is where most users are lost. The C2O component (−0.23pp) is driven entirely by C2A abandonment (+0.9pp A2O improvement rules out payment failure). LP2S (−0.07pp) is minor and consistent with the slight traffic decline.
+    </p>
+  </div>
+
+  <!-- S2C daily trend -->
+  <div class="analysis-block">
+    <div class="block-title">Daily S2C Trend — MB · Google Ads (full CE)</div>
+    <div class="verdict-line">S2C declined gradually from April 23. Two sharp troughs on Italian national holidays (April 25: Liberation Day; May 1: Labour Day). No single-day event — sustained 3–4pp gap vs pre-period throughout.</div>
+    <div id="s2c-trend" class="chart-container"></div>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      The pre-period S2C peaked at 30% (Apr 16) during the approach to Easter and averaged 27.9%. Post-Easter, S2C settled at 22–26%, with the deepest readings on Italian public holidays when local day-tripper traffic (lower booking intent) is most prominent. The absence of a single break-point rules out a product deploy or pricing change as the cause — this is a gradual visitor composition shift.
+    </p>
+  </div>
+
+  <!-- Experience breakdown -->
+  <div class="analysis-block">
+    <div class="block-title">S2C by Experience — Vatican Museums (MB · Google Ads)</div>
+    <div class="verdict-line">Vatican Museums Skip-the-Line (TGID 6732) accounts for ~79% of lost checkouts within the fixed segment. The decline is proportional and broad — no single experience is uniquely broken.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Experience</th>
+          <th class="num">Pre Select</th><th class="num">Post Select</th>
+          <th class="num">Pre S2C</th><th class="num">Post S2C</th><th class="num">Δ S2C</th>
+          <th class="num">Lost Checkouts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>Skip-the-Line Tickets (TGID 6732)</strong></td>
+          <td class="num">22,179</td><td class="num">19,672</td>
+          <td class="num">23.5%</td><td class="num">19.8%</td>
+          <td class="num neg">−3.7pp</td><td class="num">~727</td>
+        </tr>
+        <tr>
+          <td>Guided Tour + St. Peter's Basilica (TGID 7998)</td>
+          <td class="num">5,300</td><td class="num">4,529</td>
+          <td class="num">21.3%</td><td class="num">19.2%</td>
+          <td class="num neg">−2.1pp</td><td class="num">~95</td>
+        </tr>
+        <tr>
+          <td>Combo: Vatican + Pantheon (TGID 42093)</td>
+          <td class="num">2,350</td><td class="num">2,352</td>
+          <td class="num">8.6%</td><td class="num">6.7%</td>
+          <td class="num neg">−1.9pp</td><td class="num">~45</td>
+        </tr>
+        <tr>
+          <td>Combo: Colosseum + Vatican + Pantheon (TGID 42091)</td>
+          <td class="num">1,916</td><td class="num">1,435</td>
+          <td class="num">16.1%</td><td class="num">13.0%</td>
+          <td class="num neg">−3.1pp</td><td class="num">~44</td>
+        </tr>
+        <tr>
+          <td>Guided Tour (TGID 9379)</td>
+          <td class="num">1,665</td><td class="num">1,829</td>
+          <td class="num">11.5%</td><td class="num">10.4%</td>
+          <td class="num neg">−1.1pp</td><td class="num">~20</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      The S2C drop spans all major experiences. TGID 6732 dominates by volume (22K+ select users pre-period) and accounts for the majority of checkout loss. TGID 6732 maps to 9 TIDs. Of these, TIDs 52850 and 67659 are tracked in the inventory availability table — both show zero tickets across all lead-time buckets throughout the entire pre and post period (no change between windows). The remaining 7 TIDs are unlimited-capacity reseller products not tracked in the supply table. Supply is ruled out: there was no change in available inventory between the pre and post periods that could explain the S2C drop.
+    </p>
+  </div>
+
+  <!-- TGID 6732 daily S2C with holiday markers -->
+  <div class="analysis-block">
+    <div class="block-title">Daily S2C — Vatican Skip-the-Line (TGID 6732, MB · Google Ads)</div>
+    <div class="verdict-line">S2C reached 17.0% on April 25 (Italian Liberation Day) and 15.6–16.3% on April 30–May 1 (Labour Day). Between holidays, S2C partially recovered to 21–23%.</div>
+    <div id="tgid-6732-trend" class="chart-container"></div>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      The two deepest S2C troughs align precisely with Italian national holidays. Liberation Day (April 25) and Labour Day (May 1) bring a distinct visitor profile — Italian day-trippers and domestic tourists on public holidays — who browse Vatican tickets at lower purchase-commitment rates than the Easter-week religious and cultural travelers in the pre-period. The pre-period itself shows a mild taper at the Easter weekend (Apr 19-22 at 22-24%), confirming the holiday-visitor composition effect.
+    </p>
+  </div>
+
+  <!-- C2O sub-decomposition -->
+  <div class="analysis-block">
+    <div class="block-title">C2O Sub-Decomposition — Checkout Abandonment vs Payment Success</div>
+    <div class="verdict-line">C2A (checkout-to-payment-attempt) dropped 3.0pp — more users are abandoning before submitting payment. A2O (payment success) improved 0.9pp — no payment gateway issue.</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Sub-step</th><th class="num">Pre Rate</th><th class="num">Post Rate</th><th class="num">Δ</th><th>Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td><strong>C2A — Checkout to payment attempt</strong></td>
+          <td class="num">44.3%</td><td class="num">41.4%</td>
+          <td class="num neg">−3.0pp</td>
+          <td>More users abandoning after seeing price/fee breakdown</td>
+        </tr>
+        <tr>
+          <td>A2O — Payment attempt to order confirmed</td>
+          <td class="num">84.4%</td><td class="num">85.3%</td>
+          <td class="num pos">+0.9pp</td>
+          <td>Payment success slightly improved — no gateway issue</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#555;margin-top:12px;">
+      Checkout abandonment increased while payment success improved. This combination — more drop-off before submitting payment, not at payment failure — is consistent with price sensitivity. Visitors who made it through date selection to checkout are abandoning at the final price-confirmation step at a higher rate than in the pre-period. No new payment or technical issue is indicated.
+    </p>
+  </div>
+
+  <!-- Ruled out dimensions -->
+  <div class="analysis-block">
+    <div class="block-title">Dimensions Checked — Ruled Out as Independent Drivers</div>
+    <p style="font-size:13px;color:#555;margin-bottom:12px;">
+      These dimensions were checked and declined proportionally alongside the primary seasonal finding — none shows a concentrated signal that would indicate an independent or additional root cause.
+    </p>
+    <ul style="font-size:14px;color:#333;padding-left:18px;">
+      <li style="margin-bottom:8px;"><strong>Device:</strong> S2C declined across iOS Mweb (−4.0pp), Android Mweb (−4.3pp), and Desktop (−2.2pp). Mobile is proportionally worse, which is normal when lower-intent visitors are more likely to browse on mobile. No evidence of a mobile-specific UX regression — the pattern is consistent across all devices.</li>
+      <li style="margin-bottom:8px;"><strong>Language:</strong> S2C declined across English (−3.6pp), Spanish (−5.3pp), Dutch (−6.0pp), Italian (−1.7pp), and German (−2.5pp). No language was immune and no language showed an isolated spike. The broad decline across all markets confirms composition shift, not a localization issue.</li>
+      <li style="margin-bottom:8px;"><strong>Supply / inventory:</strong> Inventory availability queried for all 9 TIDs under TGID 6732. TIDs 52850 and 67659 (the only limited-capacity TIDs with tracked supply) show zero tickets across all lead-time buckets in both the pre and post periods — no change between windows. The remaining 7 TIDs are unlimited-capacity reseller products. Supply is cleanly ruled out as a contributor to the S2C drop.</li>
+      <li style="margin-bottom:0;"><strong>Session recordings:</strong> Attempted for mobile users who reached the TGID 6732 select page but did not proceed to checkout. Mixpanel returned no replay data for sampled users in this period. No UX-specific observations available — the seasonal composition finding is grounded in the funnel and geo data above.</li>
+    </ul>
+  </div>
+
+</div><!-- /container -->
+
+<footer>Generated 2026-05-07 · CVR-RCA · CE 189 · Vatican Museums</footer>
+
+<script>
+// ===== 90-DAY CVR TREND =====
+(function() {
+  var currentDates = ['2026-02-06','2026-02-07','2026-02-08','2026-02-09','2026-02-10','2026-02-11','2026-02-12','2026-02-13','2026-02-14','2026-02-15','2026-02-16','2026-02-17','2026-02-18','2026-02-19','2026-02-20','2026-02-21','2026-02-22','2026-02-23','2026-02-24','2026-02-25','2026-02-26','2026-02-27','2026-02-28','2026-03-01','2026-03-02','2026-03-03','2026-03-04','2026-03-05','2026-03-06','2026-03-07','2026-03-08','2026-03-09','2026-03-10','2026-03-11','2026-03-12','2026-03-13','2026-03-14','2026-03-15','2026-03-16','2026-03-17','2026-03-18','2026-03-19','2026-03-20','2026-03-21','2026-03-22','2026-03-23','2026-03-24','2026-03-25','2026-03-26','2026-03-27','2026-03-28','2026-03-29','2026-03-30','2026-03-31','2026-04-01','2026-04-02','2026-04-03','2026-04-04','2026-04-05','2026-04-06','2026-04-07','2026-04-08','2026-04-09','2026-04-10','2026-04-11','2026-04-12','2026-04-13','2026-04-14','2026-04-15','2026-04-16','2026-04-17','2026-04-18','2026-04-19','2026-04-20','2026-04-21','2026-04-22','2026-04-23','2026-04-24','2026-04-25','2026-04-26','2026-04-27','2026-04-28','2026-04-29','2026-04-30','2026-05-01','2026-05-02','2026-05-03','2026-05-04','2026-05-05','2026-05-06'];
+  var currentCvr = [0.040875,0.037983,0.040612,0.044967,0.039895,0.036126,0.039574,0.039073,0.033623,0.033173,0.040959,0.038034,0.03785,0.03799,0.035041,0.036272,0.034041,0.036364,0.034042,0.035646,0.039602,0.046415,0.039492,0.040658,0.04662,0.04698,0.03919,0.037919,0.042483,0.038572,0.048858,0.049652,0.05675,0.053931,0.045426,0.048562,0.043183,0.045637,0.045709,0.054287,0.053366,0.046603,0.043298,0.050276,0.050376,0.051041,0.053893,0.057462,0.054152,0.053136,0.040037,0.045324,0.042531,0.046886,0.044761,0.043734,0.036013,0.025701,0.028733,0.043158,0.039414,0.036064,0.038545,0.037198,0.04468,0.047612,0.044435,0.05023,0.051108,0.053617,0.044441,0.04582,0.049399,0.049345,0.047488,0.052333,0.044482,0.044056,0.039238,0.034213,0.042898,0.03862,0.031801,0.026687,0.035594,0.039478,0.038252,0.036788,0.038634,0.033764];
+  var lyCvr = [0.029446,0.027814,0.028102,0.028994,0.032515,0.033993,0.038289,0.034386,0.02934,0.033402,0.03248,0.033289,0.032722,0.030895,0.034163,0.03381,0.028244,0.029982,0.033851,0.033108,0.03536,0.034598,0.033067,0.034924,0.041113,0.044376,0.046285,0.040169,0.039673,0.035412,0.044226,0.041895,0.046459,0.044697,0.046466,0.035965,0.037304,0.042663,0.037927,0.041472,0.046809,0.042594,0.037107,0.036048,0.042135,0.03945,0.043879,0.042479,0.039808,0.039722,0.030771,0.037351,0.043422,0.046162,0.038585,0.046221,0.041858,0.039309,0.038778,0.037062,0.038774,0.037544,0.038211,0.038758,0.030563,0.036311,0.038454,0.033592,0.04034,0.035239,0.02719,0.022907,0.020599,0.007986,0.007512,0.009712,0.011382,0.009021,0.005721,0.013659,0.01543,0.016477,0.018916,0.021844,0.023623,0.020344,0.022029,0.019986,0.020994,0.009964];
+
+  var hasLyData = lyCvr.some(function(v) { return v !== null && v !== undefined && v > 0; });
+
+  var POST_START = '2026-04-23';
+  var POST_END = '2026-05-06';
+  var postDates = currentDates.filter(function(d) { return d >= POST_START && d <= POST_END; });
+  var midPostDate = postDates[Math.floor(postDates.length / 2)];
+
+  var traces = [
+    {type:'scatter', mode:'lines', name:'CVR 2026', x:currentDates, y:currentCvr, line:{color:'#6c8ebf', width:2}}
+  ];
+  if (hasLyData) {
+    traces.push({type:'scatter', mode:'lines', name:'CVR 2025 (LY)', x:currentDates, y:lyCvr, line:{color:'#9e9e9e', dash:'dash', width:1.5}});
+  }
+
+  Plotly.newPlot('trend-90day', traces, {
+    height: 280,
+    yaxis: {tickformat:'.1%', title:'CVR'},
+    xaxis: {tickformat:'%d %b', dtick: 7 * 86400000, title:''},
+    plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+    font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e', size:11},
+    legend: {orientation:'h', y:-0.25},
+    margin: {l:55, r:20, t:30, b:60},
+    shapes: [
+      {type:'rect', x0:POST_START, x1:POST_END, y0:0, y1:1, xref:'x', yref:'paper', fillcolor:'rgba(198,40,40,0.06)', line:{width:0}},
+      {type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#c62828', dash:'dot', width:1}}
+    ],
+    annotations: [{x:midPostDate, y:0.92, xref:'x', yref:'paper', text:'Post period', font:{color:'#c62828', size:10}, showarrow:false}]
+  }, {responsive:true, displayModeBar:false});
+})();
+
+// ===== DAILY S2C TREND (full CE, fixed segment) =====
+(function() {
+  var preDates  = ['2026-04-09','2026-04-10','2026-04-11','2026-04-12','2026-04-13','2026-04-14','2026-04-15','2026-04-16','2026-04-17','2026-04-18','2026-04-19','2026-04-20','2026-04-21','2026-04-22'];
+  var postDates = ['2026-04-23','2026-04-24','2026-04-25','2026-04-26','2026-04-27','2026-04-28','2026-04-29','2026-04-30','2026-05-01','2026-05-02','2026-05-03','2026-05-04','2026-05-05','2026-05-06'];
+
+  // MB · Google Ads overall S2C (from summary daily trend — full CE approximation)
+  var preS2C  = [0.2532,0.261,0.2687,0.2893,0.2808,0.2948,0.2964,0.3014,0.2891,0.285,0.2682,0.2743,0.267,0.2748];
+  var postS2C = [0.2478,0.2524,0.2279,0.2291,0.2471,0.2655,0.2515,0.1998,0.2124,0.2391,0.2578,0.255,0.2507,0.2362];
+
+  var preMean  = preS2C.reduce(function(a,b){return a+b;},0)/preS2C.length;
+  var postMean = postS2C.reduce(function(a,b){return a+b;},0)/postS2C.length;
+
+  Plotly.newPlot('s2c-trend', [
+    {type:'scatter', mode:'lines+markers', name:'Pre (Apr 9–22)', x:preDates, y:preS2C, line:{color:'#6c8ebf', width:2.5}, marker:{size:4, color:'#6c8ebf'}},
+    {type:'scatter', mode:'lines+markers', name:'Post (Apr 23–May 6)', x:postDates, y:postS2C, line:{color:'#c62828', width:2.5}, marker:{size:4, color:'#c62828'}}
+  ], {
+    height: 280,
+    yaxis: {tickformat:'.0%', title:'S2C rate', rangemode:'tozero'},
+    xaxis: {title:'Date'},
+    plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+    font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e', size:11},
+    legend: {orientation:'h', y:-0.28},
+    margin: {l:55, r:20, t:30, b:60},
+    shapes: [
+      {type:'line', x0:preDates[0], x1:preDates[preDates.length-1], y0:preMean, y1:preMean, line:{color:'#6c8ebf', dash:'dot', width:1.5}},
+      {type:'line', x0:postDates[0], x1:postDates[postDates.length-1], y0:postMean, y1:postMean, line:{color:'#c62828', dash:'dot', width:1.5}}
+    ],
+    annotations: [
+      {x:preDates[Math.floor(preDates.length/2)], y:preMean, text:'Pre avg '+((preMean*100).toFixed(1))+'%', font:{color:'#6c8ebf', size:11}, showarrow:false, yshift:12},
+      {x:postDates[Math.floor(postDates.length/2)], y:postMean, text:'Post avg '+((postMean*100).toFixed(1))+'%', font:{color:'#c62828', size:11}, showarrow:false, yshift:-16}
+    ]
+  }, {responsive:true, displayModeBar:false});
+})();
+
+// ===== TGID 6732 DAILY S2C =====
+(function() {
+  var preDates  = ['2026-04-09','2026-04-10','2026-04-11','2026-04-12','2026-04-13','2026-04-14','2026-04-15','2026-04-16','2026-04-17','2026-04-18','2026-04-19','2026-04-20','2026-04-21','2026-04-22'];
+  var postDates = ['2026-04-23','2026-04-24','2026-04-25','2026-04-26','2026-04-27','2026-04-28','2026-04-29','2026-04-30','2026-05-01','2026-05-02','2026-05-03','2026-05-04','2026-05-05','2026-05-06'];
+
+  var preS2C  = [0.2035,0.2197,0.2247,0.2559,0.2511,0.2513,0.2517,0.2702,0.2689,0.2504,0.2276,0.2447,0.2330,0.2257];
+  var postS2C = [0.2140,0.2045,0.1701,0.1983,0.2138,0.2228,0.2039,0.1564,0.1630,0.1977,0.2212,0.2330,0.2139,0.2021];
+
+  var preMean  = preS2C.reduce(function(a,b){return a+b;},0)/preS2C.length;
+  var postMean = postS2C.reduce(function(a,b){return a+b;},0)/postS2C.length;
+
+  Plotly.newPlot('tgid-6732-trend', [
+    {type:'scatter', mode:'lines+markers', name:'Pre (Apr 9–22)', x:preDates, y:preS2C, line:{color:'#6c8ebf', width:2.5}, marker:{size:4, color:'#6c8ebf'}},
+    {type:'scatter', mode:'lines+markers', name:'Post (Apr 23–May 6)', x:postDates, y:postS2C, line:{color:'#c62828', width:2.5}, marker:{size:4, color:'#c62828'}}
+  ], {
+    height: 280,
+    yaxis: {tickformat:'.0%', title:'S2C rate', rangemode:'tozero'},
+    xaxis: {title:'Date'},
+    plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+    font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e', size:11},
+    legend: {orientation:'h', y:-0.28},
+    margin: {l:55, r:20, t:30, b:60},
+    shapes: [
+      {type:'line', x0:preDates[0], x1:preDates[preDates.length-1], y0:preMean, y1:preMean, line:{color:'#6c8ebf', dash:'dot', width:1.5}},
+      {type:'line', x0:postDates[0], x1:postDates[postDates.length-1], y0:postMean, y1:postMean, line:{color:'#c62828', dash:'dot', width:1.5}}
+    ],
+    annotations: [
+      {x:preDates[Math.floor(preDates.length/2)], y:preMean, text:'Pre avg '+((preMean*100).toFixed(1))+'%', font:{color:'#6c8ebf', size:11}, showarrow:false, yshift:12},
+      {x:postDates[Math.floor(postDates.length/2)], y:postMean, text:'Post avg '+((postMean*100).toFixed(1))+'%', font:{color:'#c62828', size:11}, showarrow:false, yshift:-16},
+      {x:'2026-04-25', y:0.170, text:'Liberation Day<br>17.0%', font:{color:'#c62828', size:10}, showarrow:true, arrowhead:2, arrowcolor:'#c62828', ax:30, ay:-30},
+      {x:'2026-05-01', y:0.163, text:'Labour Day<br>16.3%', font:{color:'#c62828', size:10}, showarrow:true, arrowhead:2, arrowcolor:'#c62828', ax:-30, ay:-30}
+    ]
+  }, {responsive:true, displayModeBar:false});
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CVR-RCA · CE 3593 Antelope Canyon</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f5f6fa; color:#1a1a2e; line-height:1.55; }
+  header { background:#1a1a2e; color:#fff; padding:28px 40px 24px; }
+  header .eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; margin-bottom:6px; }
+  header h1 { font-size:24px; font-weight:700; }
+  header .meta { margin-top:8px; font-size:13px; color:#b0bec5; }
+  header .meta span { margin-right:20px; }
+  /* v1.20: dashboards row — pill-button links to external CE-scoped dashboards (Omni, Sentra) */
+  header .dashboards { margin-top:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  header .dash-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; margin-right:4px; }
+  header .dash-link { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14); color:#c8cfe0; text-decoration:none; padding:4px 12px; border-radius:14px; font-size:12px; font-weight:600; transition:background 0.15s, color 0.15s; }
+  header .dash-link:hover { background:rgba(255,255,255,0.16); color:#fff; }
+  .container { max-width:1050px; margin:0 auto; padding:0 24px 60px; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin:40px 0 16px; padding-bottom:8px; border-bottom:1px solid #e0e4ef; }
+  .metric-cards { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:24px; }
+  @media (max-width:800px) { .metric-cards { grid-template-columns:repeat(3, 1fr); } }
+  .metric-card { background:#fff; border-radius:10px; padding:18px 16px 16px; border:1px solid #e8ebf4; }
+  .metric-card .label { font-size:11px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:#8892a4; margin-bottom:8px; }
+  .metric-card .values { display:flex; align-items:baseline; gap:8px; }
+  .metric-card .pre { font-size:14px; color:#8892a4; }
+  .metric-card .post { font-size:22px; font-weight:700; color:#1a1a2e; }
+  .metric-card .delta { font-size:12px; font-weight:600; padding:2px 7px; border-radius:12px; margin-top:6px; display:inline-block; }
+  .delta-neg { background:#fdecea; color:#c62828; }
+  .delta-pos { background:#e8f5e9; color:#2e7d32; }
+  .delta-flat { background:#f3f4f6; color:#555; }
+  .callout { background:#fff; border-left:4px solid #2e7d32; border-radius:0 10px 10px 0; padding:24px 28px; margin-bottom:8px; border-top:1px solid #e8ebf4; border-right:1px solid #e8ebf4; border-bottom:1px solid #e8ebf4; }
+  .callout h2 { font-size:16px; font-weight:700; color:#2e7d32; margin-bottom:16px; letter-spacing:0.2px; }
+  .callout-item { margin-bottom:14px; }
+  .callout-item:last-child { margin-bottom:0; }
+  .callout-item .q { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#8892a4; margin-bottom:4px; }
+  .callout-item .a { font-size:15px; color:#1a1a2e; font-weight:500; }
+  /* v1.18 Shape B — lead claim + bullet list inside .callout-item .a */
+  .callout-item .a ul { margin:8px 0 0 0; padding-left:18px; }
+  .callout-item .a li { margin-bottom:4px; line-height:1.5; font-weight:500; }
+  .callout-item .a li strong { color:#1a1a2e; font-weight:700; }
+  .action-card { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:16px; }
+  .action-card .ac-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:16px; }
+  .priority-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .p1 { background:#fdecea; color:#c62828; }
+  .p2 { background:#fff8e1; color:#f57c00; }
+  .p3 { background:#e8f5e9; color:#2e7d32; }
+  .action-card .cause { font-size:15px; font-weight:600; color:#1a1a2e; }
+  .action-card .dri-row { font-size:13px; color:#555; margin-bottom:16px; display:flex; gap:6px; align-items:center; }
+  .dri-badge { background:#e8edf7; color:#3a4a8a; font-weight:600; font-size:12px; padding:2px 9px; border-radius:8px; }
+  .action-card ul { padding-left:18px; font-size:14px; color:#333; }
+  .action-card ul li { margin-bottom:7px; }
+  .analysis-block { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:20px; }
+  .analysis-block .block-title { font-size:14px; font-weight:700; color:#1a1a2e; margin-bottom:6px; }
+  .verdict-line { font-size:14px; font-weight:600; color:#2e7d32; background:#e8f5e9; border-radius:6px; padding:8px 14px; margin-bottom:18px; }
+  .verdict-line.neg { color:#c62828; background:#fdecea; }
+  .verdict-line.neutral { color:#3a4a8a; background:#e8edf7; }
+  .verdict-line.warning { color:#e65100; background:#fff8e1; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:0.7px; text-transform:uppercase; color:#8892a4; padding:8px 12px; border-bottom:2px solid #e8ebf4; }
+  td { padding:9px 12px; border-bottom:1px solid #f0f2f8; color:#1a1a2e; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8f9ff; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .neg { color:#c62828; font-weight:600; }
+  .pos { color:#2e7d32; font-weight:600; }
+  .highlight-row td { background:#f3f9f3 !important; }
+  .shapley-bars { display:flex; gap:0; border-radius:8px; overflow:hidden; height:32px; margin:16px 0 8px; }
+  .shapley-bar { display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+  .shapley-lp2s { background:#c62828; }
+  .shapley-s2c { background:#2e7d32; }
+  .shapley-c2o { background:#1a8f4a; }
+  .shapley-legend { display:flex; gap:20px; font-size:12px; color:#555; }
+  .legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; }
+  .fixed-segment-banner { background:#e8edf7; border-left:4px solid #3a4a8a; border-radius:0 8px 8px 0; padding:12px 16px; margin-bottom:18px; font-size:13px; color:#1a1a2e; }
+  .fixed-segment-banner strong { color:#3a4a8a; }
+  .chart-container { margin-top:16px; }
+  footer { text-align:center; font-size:12px; color:#aaa; padding:24px; margin-top:20px; }
+  html { scroll-behavior:smooth; }
+  .ref-link { color:#3a4a8a; text-decoration:none; font-size:12px; font-weight:700; margin-left:3px; }
+  .ref-link:hover { color:#c62828; }
+  .analysis-block:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; }
+  .md-content:target, .md-content *:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; border-radius: 4px; }
+
+  /* Tab framework — bar outside .container, full-viewport-width, left-anchored */
+  .tab-bar { display:flex; gap:4px; position:sticky; top:0; z-index:50; background:#1a1a2e; padding:0 40px; border-bottom:1px solid #2a2a44; }
+  .tab-button { font-family:inherit; font-size:13px; font-weight:600; color:#8892a4; background:transparent; border:none; padding:14px 22px; cursor:pointer; border-bottom:3px solid transparent; transition:color 0.15s, border-color 0.15s; }
+  .tab-button:hover { color:#c8cfe0; }
+  .tab-button.active { color:#fff; border-bottom-color:#4a7eff; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+
+  /* Markdown-sourced tab content */
+  .md-content { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:28px 32px; margin:20px 0; line-height:1.7; }
+  .md-content h1 { font-size:22px; font-weight:800; margin:24px 0 12px; color:#1a1a2e; }
+  .md-content h2 { font-size:18px; font-weight:700; margin:28px 0 10px; color:#1a1a2e; border-bottom:1px solid #e8ebf4; padding-bottom:6px; }
+  .md-content h3 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#2a2a44; }
+  .md-content p { margin:8px 0; }
+  .md-content ul, .md-content ol { margin:8px 0 12px 24px; }
+  .md-content li { margin:4px 0; }
+  .md-content code { font-family:'SF Mono',Menlo,monospace; font-size:12px; background:#f5f6fa; padding:2px 6px; border-radius:4px; color:#c62828; }
+  .md-content a { color:#3a4a8a; text-decoration:none; border-bottom:1px solid rgba(58,74,138,0.3); }
+  .md-content a:hover { border-bottom-color:#3a4a8a; }
+  .md-content hr { border:none; border-top:1px solid #e8ebf4; margin:24px 0; }
+  .md-table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; margin:12px 0 16px; font-size:13px; }
+  .md-table th { background:#f5f6fa; color:#8892a4; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; border-bottom:2px solid #e0e4ef; padding:10px 12px; text-align:left; }
+  .md-table td { border-bottom:1px solid #f0f1f5; padding:10px 12px; }
+  .md-table tr:last-child td { border-bottom:none; }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">CVR Root-Cause Analysis · CVR Improved YoY (with WARNING)</div>
+  <h1>Antelope Canyon — CE 3593</h1>
+  <div class="meta">
+    <span>📅 Pre (LY 2025): 01 Jan – 27 May 2025</span>
+    <span>📅 Post (YTD 2026): 01 Jan – 27 May 2026</span>
+    <span>🌍 United States · Collection</span>
+    <span>🔗 <a href="https://www.antelope-canyon-tours.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">antelope-canyon-tours.com</a></span>
+  </div>
+  <div class="dashboards">
+    <span class="dash-label">DASHBOARDS</span>
+    <a href="https://headout.omniapp.co/dashboards/5368ab53?f--iv8lWOuS=%7B%22values%22%3A%5B%223593%22%5D%7D&f--uvd3KWWJ=%7B%22left_side%22%3A%2230+complete+days+ago%22%2C%22right_side%22%3A%2230+days%22%7D" target="_blank" class="dash-link">Omni ↗</a>
+    <a href="https://sentra-analytics.headout.com/analysis/3593" target="_blank" class="dash-link">Sentra ↗</a>
+  </div>
+</header>
+
+<div class="tab-bar" role="tablist">
+  <button class="tab-button active" data-tab="cvr-rca" role="tab" aria-selected="true">CVR RCA</button>
+  <button class="tab-button" data-tab="perfaudit" role="tab" aria-selected="false">Paid Performance Audit</button>
+</div>
+
+<div class="container">
+
+<div class="tab-pane active" id="tab-cvr-rca" role="tabpanel">
+
+<!-- ============== SECTION 1 ============== -->
+<div class="section-label">1 · Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">CVR</div>
+    <div class="values"><span class="pre">4.93%</span><span class="post">6.15%</span></div>
+    <div class="delta delta-pos">Δ +1.22pp / +24.8%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">LP2S</div>
+    <div class="values"><span class="pre">46.6%</span><span class="post">43.4%</span></div>
+    <div class="delta delta-neg">Δ −3.1pp / −6.7%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">S2C</div>
+    <div class="values"><span class="pre">30.5%</span><span class="post">33.5%</span></div>
+    <div class="delta delta-pos">Δ +3.0pp / +10.0%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">C2O</div>
+    <div class="values"><span class="pre">34.7%</span><span class="post">42.2%</span></div>
+    <div class="delta delta-pos">Δ +7.5pp / +21.7%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Traffic (LP users)</div>
+    <div class="values"><span class="pre">83.0k</span><span class="post">143.2k</span></div>
+    <div class="delta delta-pos">Δ +60.2k / +72.6%</div>
+  </div>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">90-day CVR Trend — Current (2026) vs Last Year (2025)</div>
+  <div id="chart-90d" style="height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:10px;">The 90-day rolling window covers late Feb–May 2026 vs same period 2025. Current-year CVR runs visibly above LY for most of the window — the YoY structural lift is sustained, not a single-period spike. The late-May 2026 dip is the leading edge of the "May ROI cliff" flagged by perf-audit (see action card P1) — CVR is still acceptable but the *margin per dollar spent* has collapsed in the trailing month.</p>
+</div>
+
+<div class="callout">
+  <h2>CVR Improved YoY — What's Driving It &amp; What's Holding It Back</h2>
+  <div class="callout-item">
+    <div class="q">What drove the improvement?</div>
+    <div class="a">
+      CVR rose 4.93% → 6.15% YoY (+1.22pp, +24.8%) on +72.6% LP volume growth. The lift is <strong>structural and multi-causal</strong>, not single-mechanism. Within the fixed segment <strong>MB · Paid · Google Ads</strong>: LP2S held flat (+0.12pp), S2C +3.81pp, C2O +7.40pp, CVR +1.97pp <a class="ref-link" href="#block-mix-cascade">↗</a>.
+      <ul>
+        <li><strong>Subdomain microsite expansion</strong> — six new vendor/category-specific subdomains went live in 2026 (Ken's Tours, Taadidiin Tours, Canyon X, Lower, Upper, Navajo) and now carry 32% of fixed-segment LP traffic at 7–11% CVR vs the main microsite's 6.67%; Ken's Tours alone (22k users at 11.09% CVR) is the biggest single contributor <a class="ref-link" href="#block-url">↗</a></li>
+        <li><strong>CE-wide A2O infrastructure fix</strong> — A2O improved +5.5pp on the fixed segment and +1–6pp broadly across nearly every TGID, consistent with a platform-level payment/fraud/inventory-sync change <a class="ref-link" href="#block-c2o-sub">↗</a></li>
+        <li><strong>C2A +5.7pp on the fixed segment</strong> — checkout-form friction fell sharply; likely a CE-wide checkout-flow deploy in early 2026 <a class="ref-link" href="#block-c2o-sub">↗</a></li>
+        <li><strong>Catalogue maturation</strong> — TGID 40324 (Dixie's Lower Antelope) launched 2026-01-20; TGID 32732 (Secret Antelope) scaled with a 23.6% price reduction; review counts grew 3–5x on top TGIDs <a class="ref-link" href="#block-catalogue">↗</a></li>
+        <li><strong>TGID-level demand reallocation</strong> — generic TGID 30270 declined while specific named tours (Lower Antelope, Upper Antelope, Antelope Canyon X) grew 50–230% <a class="ref-link" href="#block-experience">↗</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-item">
+    <div class="q">What's holding it back?</div>
+    <div class="a">
+      <strong>The YoY CVR win does NOT translate to incremental margin per dollar</strong> — the headline is volume, not efficiency, and the latest trailing month is in free-fall.
+      <ul>
+        <li><strong>Blended Google ROI flat YoY at 1.29</strong> (vs 1.31 prior, −1.5%) despite revenue +56% and orders +106% on spend +63%. Per-dollar return unchanged (per perf-audit <a class="ref-link" href="#perfaudit-executive-summary">↗</a>)</li>
+        <li><strong>CVR lift is mechanically Smart-Bidding-driven, not organic</strong> — tCPA → tROAS migration + Feb 2026 account consolidation shifted bid logic to MAXIMIZE_CONVERSION_VALUE, raising CTR +62% (8.97% → 14.50%) and click-CVR +47% at +16% CPC (per perf-audit <a class="ref-link" href="#perfaudit-paid-deep-dive">↗</a>)</li>
+        <li><strong>URGENT — May 2026 ROI cliff</strong>: monthly ROI cratered Jan 1.61 → Feb 1.62 → Mar 1.41 → Apr 1.17 → <strong>May 0.47</strong>. English campaign (tROAS target 167) trailing-8w ROI is 0.85; Other Languages (tROAS 158) is 0.91 — 50–60% of target, far outside Smart Bidding's normal ±15% variance band. Potentially $30K CM1/month being left on the table. Validate May attribution completeness first; if real, urgent diagnostic. <strong>Do NOT lower tROAS until root cause identified</strong> (per perf-audit <a class="ref-link" href="#perfaudit-monthly-trajectory">↗</a>)</li>
+        <li><strong>CE-level LP2S "decline" (−3.14pp) is NOT a real headwind</strong> — within the fixed segment LP2S is flat (+0.12pp). The headline number is mix dilution from the 4x organic surge (Organic LP2S 32.8% pulling the weighted average down) <a class="ref-link" href="#block-mix-cascade">↗</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-item">
+    <div class="q">When did improvement begin?</div>
+    <div class="a">Gradual ramp across 2026 YTD. TGID 40324 (Dixie's Lower Antelope Canyon) launched 2026-01-20; subdomain microsites went live in late 2025 / early 2026 (the URL data shows zero pre-period traffic for all six subdomains, so they were either launched or remarketed at the start of 2026). The tROAS migration + account consolidation completed Feb 2026 per perf-audit — that's when paid click quality stepped up. The CVR improvement is sustained throughout the 2026 YTD window with the dip arriving only in late May (the ROI cliff edge). <code>pre_period_healthy = TRUE</code>.</div>
+  </div>
+</div>
+
+<!-- ============== SECTION 2 ============== -->
+<div class="section-label">2 · Actions</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p1">P1 — Investigate-headwind</span>
+    <div class="cause"><strong>Diagnose the May 2026 ROI cliff before any bid changes.</strong> Blended monthly Google ROI fell Jan 1.61 → Feb 1.62 → Mar 1.41 → Apr 1.17 → May 0.47. The English campaign (tROAS 167) and Other Languages (tROAS 158) are at trailing-8-week ROI 0.85 and 0.91 — 50–60% of target. This may be either incomplete May attribution or real efficiency degradation; either way the diagnosis comes first. <a class="ref-link" href="#perfaudit-paid-deep-dive">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Performance Marketing — US Google Ads owner + Perf-data team</span></div>
+  <ul>
+    <li><strong>Step 1 — Validate May 2026 CM1 completeness first.</strong> Offline conversions and price corrections may still be landing for May orders. Pull the cohort of May orders and check the CM1 backfill status with the data team. If May is incomplete, the ROI cliff is partial and the real trajectory is closer to ~1.0–1.2. Wait two weeks for backfill before drawing structural conclusions.</li>
+    <li><strong>Step 2 — If May attribution is complete</strong>, diagnose: (a) landing-page CR check on the LP set the affected campaigns route to (cross-reference with the LP2S story below), (b) query-mix shift via search-terms CSV on the consolidated NA account, (c) broad-match overflow audit, (d) margin/take-rate verification for May orders (could be a discount or fee structure change reducing CM1 per order without CVR moving).</li>
+    <li><strong>Step 3 — Do NOT lower tROAS yet.</strong> Lowering the target tells Smart Bidding to bid more aggressively into the same low-ROI auctions, accelerating the leak. Maintain current 167/158 targets while the root cause is identified.</li>
+    <li><strong>Also validate</strong> the 0% SIS reading in the trailing 8 weeks across all 4 active campaigns — almost certainly a reporting anomaly post-consolidation; whole-window SIS (23.7%) is the reliable signal. Flag to perf-data.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Protect</span>
+    <div class="cause">Lock in the subdomain microsite playbook and document the operational state that drove the win. Ken's Tours (`kens-tours.antelope-canyon-tours.com`) carries 22k users at 11.09% CVR; Taadidiin Tours at 8.34%; the six new subdomains collectively absorb 32% of fixed-segment LP traffic at materially higher CVR than the main domain (6.67%). A future site restructure could accidentally revert this. <a class="ref-link" href="#block-url">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Growth / SEO / Microsite team — US market</span></div>
+  <ul>
+    <li>Document the launch dates, content templates, and routing rules of the six 2026 subdomains (Ken's Tours, Taadidiin Tours, Canyon X, Lower, Upper, Navajo) so a future "consolidate microsites" initiative doesn't undo them. Per-subdomain CVR is in the URL breakdown table below — Ken's Tours' 11.09% is the highest single-URL CVR observed on any CE in recent runs and worth protecting deliberately.</li>
+    <li>Audit the routing of paid Google Ads campaigns — confirm that high-intent queries are landing on the subdomain pages (not just the main microsite). Misrouting any campaign to the main microsite (6.67% CVR) instead of Ken's Tours (11.09% CVR) is a measurable revenue leak.</li>
+    <li>Replicate the playbook to adjacent US-market CEs (Horseshoe Bend, Grand Canyon, Bryce/Zion if applicable) — vendor-specific subdomains for the top operators is a portable pattern. Capture the SEO traffic + content template requirements as a Growth-team runbook.</li>
+    <li>Pre-register the launching TGIDs (32732, 40324) with the fraud team if not already done — prevents A2O over-blocking once volume scales further. The current A2O 89.75% is excellent; protect it.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Extend</span>
+    <div class="cause">Three high-leverage extensions: (1) localize the CE-wide A2O improvement mechanism so the same fix can be reproduced on adjacent CEs, (2) capture the C2A improvement playbook, (3) scale the TGID 29649 (Lower Antelope Canyon) growth pattern to its Upper/X siblings. <a class="ref-link" href="#block-c2o-sub">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Payments / Ops / Engineering for A2O; Product/UX for C2A; Growth for TGID scaling</span></div>
+  <ul>
+    <li><strong>Localize the A2O fix.</strong> A2O improved +5.5pp on the fixed segment AND +1–6pp broadly across nearly every TGID (29649 +5.9pp, 29650 +6.3pp, 30270 +5.8pp, 29647 +1.2pp). The cohort breadth rules out per-product cause — this is a platform-level change. Query <code>order_attempted_events_v2</code> filtered to CE 3593 between Jan and May 2025 vs 2026, breaking <code>failure_reason</code> by <code>payment_gateway</code> and <code>fraud_evaluation_result_origin</code>. Identify which failure class dropped most — that's the lever to replicate on adjacent CEs.</li>
+    <li><strong>Document the C2A improvement (+5.7pp).</strong> Audit the checkout flow currently in production (Jan–May 2026 version) vs the early-2025 version. Identify any deploys to the checkout form, fee transparency, autofill, or trust-signal components that landed in this window. Capture as a CRO runbook.</li>
+    <li><strong>TGID 29649 (Lower Antelope Canyon)</strong> grew selects 3.3x YoY (9.4k → 30.9k) and is the dominant lift carrier. Confirm with the supply partner (Lower Antelope Canyon Tours / Ken's Tours) that inventory and lead-time commitments hold for the summer peak. Negotiate higher inventory commitment using the volume + CVR data as the business case.</li>
+    <li>The generic TGID 30270 ("Antelope Canyon Tour with Navajo Guide") declined 18.4k → 9.9k selects. Confirm with merchandising whether this was intentional deprioritization (in favor of specific named tours) or accidental — if accidental, restore ranking.</li>
+  </ul>
+</div>
+
+<!-- ============== SECTION 3 ============== -->
+<div class="section-label">3 · Supporting Analysis</div>
+
+<div class="analysis-block" id="block-mix-cascade">
+  <div class="block-title">Mix Cascade — Routing vs Conversion at Three Levels</div>
+  <div class="verdict-line neutral">Conversion change at every level; mix shifts are meaningful but conversion dominates. <strong>Fixed segment: MB · Paid · Google Ads</strong>. Within fixed segment: LP2S held flat (+0.12pp), S2C +3.81pp, C2O +7.40pp, CVR +1.97pp.</div>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:8px 0 4px;">Level 1 — MB vs HO</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>MB (primary, grew)</td><td class="num">93.93%</td><td class="num">96.57%</td><td class="num">5.06%</td><td class="num pos">6.44%</td><td class="num pos">+0.13pp</td><td class="num pos">+1.30pp</td><td>Conversion</td></tr>
+      <tr><td>HO</td><td class="num">6.07%</td><td class="num">3.43%</td><td class="num">6.84%</td><td class="num neg">4.06%</td><td class="num">−0.12pp</td><td class="num">−0.03pp</td><td>Mix (small)</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 2 — Paid vs Organic within MB</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Share Δ</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Paid (fixed)</td><td class="num">72,696</td><td class="num">110,551</td><td class="num">88% → 73%</td><td class="num">5.16%</td><td class="num pos">7.13%</td><td class="num neg">−0.76pp</td><td class="num pos">+1.74pp</td><td>Conversion</td></tr>
+      <tr><td>Organic</td><td class="num">9,739</td><td class="num pos">40,120 (4.1x)</td><td class="num pos">12% → 27%</td><td class="num">5.52%</td><td class="num">4.32%</td><td class="num pos">+0.82pp</td><td class="num">−0.14pp</td><td>Mix tailwind</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 3 — Channel within Paid MB</p>
+  <table>
+    <thead><tr><th>Channel</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Google Ads (fixed)</td><td class="num">60,471</td><td class="num pos">97,299</td><td class="num">5.31%</td><td class="num pos">7.28%</td><td class="num">51.31% → 51.43% (flat)</td><td class="num pos">29.33% → 33.14%</td><td class="num pos">35.31% → 42.70%</td></tr>
+      <tr><td>Microsoft Ads</td><td class="num">12,893</td><td class="num">13,842</td><td class="num">4.65%</td><td class="num pos">6.29%</td><td class="num">43.03% → 40.85%</td><td class="num pos">32.84% → 36.99%</td><td class="num pos">32.88% → 41.59%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fixed-segment-banner">
+    <strong>Fixed segment for all subsequent analysis:</strong> <code>is_microbrand_page = TRUE</code> AND <code>channel_name = 'Google Ads'</code>. Google Ads is 88% of Paid MB volume and grew +5pp share — the conversion-driven lift carrier. Within this segment <strong>LP2S held flat (+0.12pp)</strong> — meaning the CE-level LP2S decline (−3.14pp) is mix dilution from the organic surge, not a real per-user funnel weakening on the paid side.
+  </div>
+</div>
+
+<div class="analysis-block" id="block-geo">
+  <div class="block-title">Geo Overview — US Domestic vs Non-Geo (Google Ads · MB)</div>
+  <div class="verdict-line">Improvement is broad across both Geo and Non-Geo. US domestic (Antelope Canyon's home country, Arizona) carries 75% of fixed-segment volume; both segments lifted CVR ~2pp.</div>
+  <table>
+    <thead><tr><th>Group</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Geo (US)</td><td>pre</td><td class="num">46,418</td><td class="num">51.5%</td><td class="num">29.4%</td><td class="num">37.5%</td><td class="num">5.68%</td></tr>
+      <tr class="highlight-row"><td>Geo (US)</td><td>post</td><td class="num pos">73,595 (+59%)</td><td class="num">51.0%</td><td class="num pos">33.1%</td><td class="num pos">45.4%</td><td class="num pos">7.66%</td></tr>
+      <tr><td>Non-Geo</td><td>pre</td><td class="num">14,241</td><td class="num">50.6%</td><td class="num">28.9%</td><td class="num">28.4%</td><td class="num">4.16%</td></tr>
+      <tr><td>Non-Geo</td><td>post</td><td class="num pos">23,996 (+69%)</td><td class="num">52.8%</td><td class="num pos">33.2%</td><td class="num pos">34.8%</td><td class="num pos">6.11%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Both audiences improved at similar magnitude (~+2pp CVR). The Antelope Canyon CE attracts US domestic road-trip and Las Vegas-day-trip travelers as its primary audience, with international tourists as a secondary cohort. The lift is structural across both — not a single-geo win.</p>
+</div>
+
+<div class="analysis-block" id="block-shapley">
+  <div class="block-title">Shapley Decomposition — C2O Carries the Lift</div>
+  <div class="verdict-line">C2O dominates Shapley (89% of total ΔCVR); S2C contributes 43%; LP2S is the only negative (−32%). Within fixed segment, LP2S is flat — the CE-level LP2S "decline" is mix dilution from the organic surge, not a real per-user funnel issue.</div>
+  <div class="shapley-bars" style="position:relative;">
+    <div class="shapley-bar shapley-lp2s" style="width:24%;">LP2S −0.39pp</div>
+    <div class="shapley-bar shapley-s2c" style="width:32%;">S2C +0.53pp</div>
+    <div class="shapley-bar shapley-c2o" style="width:44%;">C2O +1.08pp</div>
+  </div>
+  <div class="shapley-legend"><span><span class="legend-dot" style="background:#c62828;"></span>LP2S (−32%, mix dilution)</span><span><span class="legend-dot" style="background:#2e7d32;"></span>S2C (+43%)</span><span><span class="legend-dot" style="background:#1a8f4a;"></span>C2O (+89%, dominant)</span></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Shapley contributions sum exactly to the +1.22pp total ΔCVR (check_sum_matches=true). Within fixed segment <strong>C2A +5.66pp</strong> AND <strong>A2O +5.53pp</strong> both contribute roughly equally to the C2O lift — unusual; most C2O moves are dominated by one sub-step (see C2O Sub-Decomposition block below).</p>
+</div>
+
+<div class="analysis-block" id="block-daily-trend">
+  <div class="block-title">Daily CVR + Funnel-step Trend (Pre 2025 + Post 2026, CE-level)</div>
+  <div class="verdict-line warning">Lift sustained throughout 2026 YTD; CVR ran above LY most days. <strong>Late-May 2026 shows the leading edge of the ROI cliff</strong> — CVR dropping back into the 4–5% range while LY same-window was 4–6%. This is concurrent with the perf-audit's May ROI 0.47 reading.</div>
+  <div id="chart-daily" style="height:300px;"></div>
+</div>
+
+<div class="analysis-block" id="block-url">
+  <div class="block-title">URL-Level Breakdown — The Six Subdomain Microsites Are the Story</div>
+  <div class="verdict-line">Six new vendor/category-specific subdomain microsites launched in 2026 (zero pre-period traffic on any of them). They absorbed 32% of post-period fixed-segment LP traffic and all convert at materially higher CVR (7–11%) than the main microsite (6.67%). Ken's Tours alone is 20.7% of LP traffic at 11.09% CVR — the highest URL-level CVR seen on any CE in this skill's recent runs.</div>
+  <table>
+    <thead><tr><th>URL</th><th>Period</th><th class="num">Users</th><th class="num">% of LP</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td><code>antelope-canyon-tours.com/</code> (main)</td><td>pre</td><td class="num">58,451</td><td class="num">80.6%</td><td class="num">50.6%</td><td class="num">29.4%</td><td class="num">35.6%</td><td class="num">5.28%</td></tr>
+      <tr><td><code>antelope-canyon-tours.com/</code> (main)</td><td>post</td><td class="num pos">68,845</td><td class="num neg">65.0%</td><td class="num">49.8%</td><td class="num pos">31.9%</td><td class="num pos">42.0%</td><td class="num pos">6.67%</td></tr>
+      <tr class="highlight-row"><td><code>kens-tours.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">21,967</td><td class="num pos">20.7%</td><td class="num pos">59.8%</td><td class="num pos">39.8%</td><td class="num pos">46.6%</td><td class="num pos">11.09%</td></tr>
+      <tr class="highlight-row"><td><code>taadidiin-tours.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">5,969</td><td class="num pos">5.6%</td><td class="num pos">55.3%</td><td class="num pos">36.2%</td><td class="num pos">41.7%</td><td class="num pos">8.34%</td></tr>
+      <tr class="highlight-row"><td><code>canyon-x.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">3,301</td><td class="num pos">3.1%</td><td class="num pos">54.4%</td><td class="num pos">34.0%</td><td class="num pos">39.0%</td><td class="num pos">7.21%</td></tr>
+      <tr class="highlight-row"><td><code>lower.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">1,441</td><td class="num pos">1.4%</td><td class="num pos">54.1%</td><td class="num pos">38.1%</td><td class="num pos">41.1%</td><td class="num pos">8.47%</td></tr>
+      <tr class="highlight-row"><td><code>upper.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">1,161</td><td class="num pos">1.1%</td><td class="num pos">60.0%</td><td class="num pos">35.7%</td><td class="num pos">37.3%</td><td class="num pos">8.01%</td></tr>
+      <tr class="highlight-row"><td><code>navajo.antelope-canyon-tours.com/</code> <strong>(new)</strong></td><td>post</td><td class="num pos">1,070</td><td class="num pos">1.0%</td><td class="num pos">54.8%</td><td class="num pos">29.4%</td><td class="num pos">37.8%</td><td class="num pos">6.07%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;"><strong>The six new subdomains absorbed 32% of fixed-segment LP traffic in 2026.</strong> Each is themed around a specific high-search-intent query: Ken's Tours (a real Navajo-operated brand near Lower Antelope Canyon), Taadidiin Tours, Canyon X, Lower / Upper / Navajo. These are SEO-friendly subdomain landing pages that match user query intent more precisely than the generic main microsite. The main microsite's volume actually grew (58k → 69k, +18%) but its share of LP traffic fell (80.6% → 65%) as the subdomains absorbed the incremental SEO surface. The mix shift alone raises weighted-average CVR by ~+0.55pp even before any per-page improvement.</p>
+</div>
+
+<div class="analysis-block" id="block-experience">
+  <div class="block-title">Experience-level Breakdown — TGID Demand Reallocation + Two New Launches</div>
+  <div class="verdict-line">TGID 29649 (Lower Antelope Canyon) tripled selects (9.4k → 30.9k); TGID 30270 (generic "Antelope Canyon Tour") halved (18.4k → 9.9k). Two new TGIDs (32732 Secret Antelope Canyon, 40324 Dixie's Lower Antelope Canyon) added new catalogue surface. A2O improvement is broad across every TGID.</div>
+  <table>
+    <thead><tr><th>TGID</th><th>Name</th><th>Period</th><th class="num">Selects</th><th class="num">S2C</th><th class="num">C2A</th><th class="num">A2O</th><th class="num">C2O</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>29649</td><td>Lower Antelope Canyon Tour</td><td>pre</td><td class="num">9,429</td><td class="num">30.2%</td><td class="num">49.1%</td><td class="num">83.5%</td><td class="num">41.0%</td></tr>
+      <tr class="highlight-row"><td>29649</td><td>Lower Antelope Canyon Tour</td><td>post</td><td class="num pos">30,902 (+228%)</td><td class="num">31.2%</td><td class="num">48.8%</td><td class="num pos">89.4%</td><td class="num pos">43.6%</td></tr>
+      <tr><td>30270</td><td>Antelope Canyon Tour (generic, deprioritized)</td><td>pre</td><td class="num">18,437</td><td class="num">22.4%</td><td class="num">35.8%</td><td class="num">80.5%</td><td class="num">28.8%</td></tr>
+      <tr><td>30270</td><td>Antelope Canyon Tour (generic, deprioritized)</td><td>post</td><td class="num neg">9,915 (−46%)</td><td class="num">19.7%</td><td class="num pos">40.0%</td><td class="num pos">86.3%</td><td class="num pos">34.5%</td></tr>
+      <tr><td>29650</td><td>Upper Antelope Canyon Tour</td><td>pre</td><td class="num">7,662</td><td class="num">23.2%</td><td class="num">40.5%</td><td class="num">83.6%</td><td class="num">33.8%</td></tr>
+      <tr><td>29650</td><td>Upper Antelope Canyon Tour</td><td>post</td><td class="num pos">14,972 (+95%)</td><td class="num pos">27.4%</td><td class="num">38.1%</td><td class="num pos">89.9%</td><td class="num pos">34.3%</td></tr>
+      <tr><td>29647</td><td>Antelope Canyon X Tour</td><td>pre</td><td class="num">4,318</td><td class="num">23.1%</td><td class="num">38.6%</td><td class="num">87.6%</td><td class="num">33.8%</td></tr>
+      <tr><td>29647</td><td>Antelope Canyon X Tour</td><td>post</td><td class="num pos">6,598 (+53%)</td><td class="num pos">25.6%</td><td class="num pos">42.6%</td><td class="num pos">88.8%</td><td class="num pos">37.8%</td></tr>
+      <tr><td>32732 <strong>(new in 2026 traffic)</strong></td><td>Secret Antelope Canyon &amp; Horseshoe Bend</td><td>post</td><td class="num pos">2,024</td><td class="num">20.6%</td><td class="num pos">48.8%</td><td class="num pos">90.6%</td><td class="num pos">44.2%</td></tr>
+      <tr><td>40324 <strong>(launched 2026-01-20)</strong></td><td>Dixie's Lower Antelope Canyon Tour</td><td>post</td><td class="num pos">1,760</td><td class="num">17.2%</td><td class="num">42.2%</td><td class="num pos">85.9%</td><td class="num pos">36.3%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">The dominant lift carrier is TGID 29649 (Lower Antelope Canyon) which more than tripled in select volume. The generic TGID 30270 halved — demand reallocated from the generic listing to specific named tours. Specific named tours have higher native CVR (29649 at 13.6% vs 30270 at ~6.8%) so the reallocation is favorable for CE-level CVR even at constant per-TGID rates. <strong>A2O improvement is broad across every TGID</strong> (+1–6pp each independently) — the cohort breadth rules out per-product cause and points to a CE-wide platform/infrastructure change.</p>
+</div>
+
+<div class="analysis-block" id="block-c2o-sub">
+  <div class="block-title">C2O Sub-Decomposition — Both C2A and A2O Improved Substantially</div>
+  <div class="verdict-line">Within fixed segment: C2A 41.92% → 47.58% (+5.66pp) AND A2O 84.22% → 89.75% (+5.53pp). Both sub-steps contributed roughly equally. This is unusual — most C2O moves are dominated by one sub-step. Two independent mechanisms are likely operating in parallel.</div>
+  <table>
+    <thead><tr><th>Sub-step</th><th>Period</th><th class="num">Users (denom)</th><th class="num">Rate</th><th class="num">Δ rate</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>C2A (checkout → attempt)</td><td>pre</td><td class="num">9,100</td><td class="num">41.92%</td><td class="num"></td></tr>
+      <tr class="highlight-row"><td>C2A (checkout → attempt)</td><td>post</td><td class="num pos">16,586</td><td class="num pos">47.58%</td><td class="num pos">+5.66pp</td></tr>
+      <tr class="highlight-row"><td>A2O (attempt → order)</td><td>pre</td><td class="num">3,815</td><td class="num">84.22%</td><td class="num"></td></tr>
+      <tr class="highlight-row"><td>A2O (attempt → order)</td><td>post</td><td class="num pos">7,892</td><td class="num pos">89.75%</td><td class="num pos">+5.53pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">The two improvements have different signatures: <strong>C2A improvement</strong> reflects checkout-form completion (fewer abandonments after entering payment details) — likely a CRO/UX deploy or fee-transparency change. <strong>A2O improvement</strong> is platform-level (payment gateway, fraud rules, or live inventory sync) — confirmed broad across TGIDs in the Experience block above. The P2 Extend action card asks for `order_attempted_events_v2` breakdowns to localize the A2O mechanism by failure-class.</p>
+</div>
+
+<div class="analysis-block" id="block-catalogue">
+  <div class="block-title">Catalogue Change (Pattern 11) — Two New Launches + Scaled-Traffic TGID</div>
+  <div class="verdict-line">Confirmed partial. TGID 40324 (Dixie's Lower Antelope Canyon) is a true new launch (created 2026-01-20). TGID 32732 (Secret Antelope Canyon &amp; Horseshoe Bend) existed since 2025-03 but scaled traffic only in 2026 with a 23.6% price reduction. Top TGIDs' review counts grew 3–5x YoY — meaningful social-proof maturation.</div>
+  <table>
+    <thead><tr><th>TGID</th><th>Name</th><th>Created</th><th class="num">Pre ratings</th><th class="num">Post ratings</th><th class="num">Pre price</th><th class="num">Post price</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>40324</td><td>Dixie's Lower Antelope Canyon Tour</td><td>2026-01-20</td><td class="num">—</td><td class="num">~12</td><td class="num">—</td><td class="num">$94</td><td>True new launch in window</td></tr>
+      <tr class="highlight-row"><td>32732</td><td>Secret Antelope Canyon &amp; Horseshoe Bend</td><td>2025-03-07</td><td class="num">0</td><td class="num">~30</td><td class="num">$195</td><td class="num pos">$149 (−23.6%)</td><td>Existed pre-window, scaled in 2026 with price drop</td></tr>
+      <tr><td>29649</td><td>Lower Antelope Canyon Tour</td><td>2024-08-25</td><td class="num">351</td><td class="num pos">1,740 (+395%)</td><td class="num">$89</td><td class="num">$94 (+5.6%)</td><td>Top TGID — 5x review growth</td></tr>
+      <tr><td>30270</td><td>Antelope Canyon Tour (generic)</td><td>2024-10-07</td><td class="num">752</td><td class="num pos">3,108 (+313%)</td><td class="num">$69</td><td class="num">$69 (flat)</td><td>Volume halved despite review growth — deprioritized</td></tr>
+      <tr><td>29650</td><td>Upper Antelope Canyon Tour</td><td>—</td><td class="num">254</td><td class="num pos">824 (+225%)</td><td class="num">$135</td><td class="num">$135 (flat)</td><td>3x review growth</td></tr>
+      <tr><td>29647</td><td>Antelope Canyon X Tour</td><td>—</td><td class="num">151</td><td class="num pos">541 (+258%)</td><td class="num">$69</td><td class="num">$69 (flat)</td><td>3.6x review growth</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Pricing is essentially stable on the dominant TGIDs — TGID 29649 ticked up +5.6% which is a small headwind absorbed by the much-larger CVR gain. The standout pricing move is TGID 32732's $195 → $149 price drop (−23.6%) which appears to have unlocked traffic that didn't exist in 2025. The 3–5x review count growth on top TGIDs is consistent with sustained order volume + active review collection — a compounding tailwind on social-proof signals.</p>
+</div>
+
+<div class="analysis-block" id="block-device">
+  <div class="block-title">Device Breakdown — Desktop is the Strongest Beneficiary (Google Ads · MB)</div>
+  <div class="verdict-line">All devices improved on CVR. Desktop is the strongest (+2.86pp), then Android (+2.21pp), then iOS (+1.14pp). The improvement is broad-based, not device-concentrated. Desktop's higher base CVR (6.77% pre, 9.63% post) is consistent with the Antelope Canyon audience profile — US road-trip planners using desktop for itinerary research.</div>
+  <table>
+    <thead><tr><th>Device</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Desktop</td><td>pre</td><td class="num">23,596</td><td class="num">53.6%</td><td class="num">37.4%</td><td class="num">33.8%</td><td class="num">6.77%</td></tr>
+      <tr class="highlight-row"><td>Desktop</td><td>post</td><td class="num pos">37,516 (+59%)</td><td class="num pos">54.9%</td><td class="num pos">41.3%</td><td class="num pos">42.5%</td><td class="num pos">9.63%</td></tr>
+      <tr><td>iOS Mweb</td><td>pre</td><td class="num">25,234</td><td class="num">50.1%</td><td class="num">24.2%</td><td class="num">37.5%</td><td class="num">4.55%</td></tr>
+      <tr><td>iOS Mweb</td><td>post</td><td class="num pos">46,708 (+85%)</td><td class="num">48.4%</td><td class="num pos">27.2%</td><td class="num pos">43.3%</td><td class="num pos">5.69%</td></tr>
+      <tr><td>Android Mweb</td><td>pre</td><td class="num">10,660</td><td class="num">49.1%</td><td class="num">22.6%</td><td class="num">34.9%</td><td class="num">3.86%</td></tr>
+      <tr><td>Android Mweb</td><td>post</td><td class="num pos">11,833 (+11%)</td><td class="num pos">52.0%</td><td class="num pos">28.1%</td><td class="num pos">41.6%</td><td class="num pos">6.08%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="analysis-block" id="block-market-context">
+  <div class="block-title">Market Context — Paid Performance Audit Reconciliation</div>
+  <div class="verdict-line warning">Pattern C reframing AND Pattern D testable gap from perf-audit. The CVR lift is real but mechanically Smart-Bidding-driven, not "organic" improvement. <strong>YoY blended ROI is flat at 1.29. Critically, the trailing-month ROI is collapsing — Jan 1.61 → May 0.47.</strong></div>
+  <table>
+    <thead><tr><th>Signal</th><th>What it tells us about this report</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Paid Google Ads verdict: WARNING (improved on aggregate; latest-month efficiency in retreat)</td>
+        <td><strong>Pattern A corroboration</strong>: paid click-CVR rose +47% (3.94% → 5.79%) and CTR rose +62% (8.97% → 14.50%) under the tCPA → tROAS bidding migration completed Feb 2026. Smart Bidding under MAXIMIZE_CONVERSION_VALUE bought higher-intent traffic at +16% CPC. <strong>Pattern B mechanism</strong>: the +1.97pp paid CVR lift is mechanically driven by the bidding migration + Feb 2026 account consolidation, not organic user-behaviour improvement. <strong>Pattern C reframing</strong>: YoY blended ROI held flat at 1.29 (vs 1.31 prior) — revenue +56%, spend +63%, orders +106% but per-dollar margin unchanged. The headline "+24.8% CVR lift" reframed as "we scaled paid ~60% YoY at flat ROI."</td>
+        <td><a href="#perfaudit-executive-summary" class="ref-link">perf-audit §1 ↗</a></td>
+      </tr>
+      <tr>
+        <td><strong>May 2026 ROI cliff (Pattern D)</strong> — blended monthly ROI Jan 1.61 → Feb 1.62 → Mar 1.41 → Apr 1.17 → May 0.47</td>
+        <td>Trailing-8-week per-campaign ROI: English (tROAS target 167) at 0.85; Other Languages (tROAS 158) at 0.91. 50–60% of target, far outside Smart Bidding's ±15% normal variance band. Two competing hypotheses: (a) May 2026 attribution incomplete (offline conversions still landing), (b) real efficiency degradation under tROAS. Pattern D testable gap — needs CM1 completeness validation first. <strong>This is the P1 action card.</strong></td>
+        <td><a href="#perfaudit-paid-deep-dive" class="ref-link">perf-audit §4 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Bing ROI deteriorated 1.64 → 1.40 (−15%)</td>
+        <td>Secondary efficiency concern. Spend +17%, orders +39% — order growth looks good but per-dollar return is bleeding. Smaller magnitude than the Google story; flagged for separate diagnosis.</td>
+        <td><a href="#perfaudit-coverage-matchmaking" class="ref-link">perf-audit §3 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Rank-lost IS rising +12pp YoY (53.8% → 66.2%); 0% SIS in trailing 8 weeks (anomaly)</td>
+        <td>Rank-lost climbing is consistent with Smart Bidding under tROAS choosing not to enter auctions where predicted value falls short of target. The 0% SIS reading is almost certainly a reporting artifact post-consolidation; whole-window SIS (23.7%) is the reliable signal. Auction-insights CSV would clarify whether competitive pressure is also part of the picture.</td>
+        <td><a href="#perfaudit-paid-deep-dive" class="ref-link">perf-audit §4 ↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background:#f3f4f6;border-left:4px solid #8892a4;border-radius:0 6px 6px 0;padding:10px 14px;margin-top:16px;font-size:13px;color:#444;">
+    <strong>Slack context only partially included in this run.</strong> The Slack MCP returned permission-denied for the CE-specific global search and the <code>#mkt-usa</code> market channel read; only <code>#tf-bugalert</code> was queryable. The 7 platform-wide bug signals retrieved (Zapdos error rate / response time, LCP breaches, Next-Deimos errors) are sustained in the post window but are not CE-3593-specific — relevant context but not material to the lift attribution. The operational signals that would have explained the subdomain microsite launch dates, the A2O fix mechanism, or the May ROI cliff would have lived in the denied channels. To enrich this report with the full Slack lens, re-run with the Claude Code context extension and request a Slack pass on CE 3593.
+  </div>
+</div>
+
+<div class="analysis-block" id="block-ruled-out">
+  <div class="block-title">Dimensions Checked — Ruled Out as Independent Drivers</div>
+  <p style="font-size:13px;color:#555;margin-bottom:10px;">These cuts were run but did not surface an independent mechanism beyond what the primary findings already explain.</p>
+  <ul style="padding-left:18px;font-size:13px;color:#444;">
+    <li><strong>CE-level LP2S "decline" (−3.14pp):</strong> RULED OUT as a real per-user mechanism. Within fixed segment LP2S is flat (+0.12pp). The headline number is mix dilution: Organic LP2S (32.82%) pulled the weighted average down as Organic share grew 4x.</li>
+    <li><strong>Supply constraint:</strong> RULED OUT. Top TGIDs show median <code>days_to_first_available_date</code> = 0 in both periods — same/next-day inventory available throughout.</li>
+    <li><strong>Geo-concentrated lift:</strong> RULED OUT. Both US Geo (+1.98pp CVR) and Non-Geo (+1.95pp CVR) improved at similar magnitude. Not a single-audience story.</li>
+    <li><strong>Device-specific UX deploy:</strong> RULED OUT. All three devices improved on CVR (Desktop +2.86pp, Android +2.21pp, iOS +1.14pp). Improvement is broad-based.</li>
+    <li><strong>HO (headout.com) brand:</strong> Only 3.4% of CE volume post; HO share fell 6.07% → 3.43% and CVR fell 6.84% → 4.06%. Small absolute impact. Worth a separate look but not a CE-level driver.</li>
+    <li><strong>Microsoft Ads:</strong> Smaller cohort (12% of Paid MB). CVR did improve (4.65% → 6.29%) but Bing ROI compressed −15% per perf-audit — secondary concern flagged separately.</li>
+  </ul>
+</div>
+
+<div class="analysis-block" id="block-hypotheses">
+  <div class="block-title">Hypotheses Explored</div>
+  <table>
+    <thead><tr><th>Hypothesis</th><th>Status</th><th>Test run</th></tr></thead>
+    <tbody>
+      <tr><td>Subdomain microsite expansion is the dominant URL-level driver</td><td class="pos">CONFIRMED</td><td>URL breakdown — 6 new subdomains absorbed 32% of fixed-segment LP traffic at 7-11% CVR <a class="ref-link" href="#block-url">↗</a></td></tr>
+      <tr><td>CE-wide A2O improvement reflects platform-level infrastructure change</td><td class="pos">CONFIRMED</td><td>Per-TGID A2O breakdown: +1-6pp broad across every TGID; +5.53pp on fixed segment <a class="ref-link" href="#block-c2o-sub">↗</a></td></tr>
+      <tr><td>C2A improvement is checkout-side UX/pricing change</td><td class="pos">CONFIRMED</td><td>C2A +5.66pp on fixed segment <a class="ref-link" href="#block-c2o-sub">↗</a></td></tr>
+      <tr><td>Catalogue change (Pattern 11) contributes via new launches</td><td class="pos">CONFIRMED partial</td><td>TGID 40324 true launch; TGID 32732 scaled with price drop; reviews +3-5x <a class="ref-link" href="#block-catalogue">↗</a></td></tr>
+      <tr><td>TGID demand reallocation: generic 30270 ↓, specific named ↑</td><td class="pos">CONFIRMED</td><td>Experience-level breakdown <a class="ref-link" href="#block-experience">↗</a></td></tr>
+      <tr><td>Paid CVR lift is Smart-Bidding-driven, not organic (Pattern B/C from perf-audit)</td><td class="pos">CONFIRMED</td><td>Per perf-audit: CTR +62%, click-CVR +47%, ROI flat at 1.29 <a class="ref-link" href="#perfaudit-executive-summary">↗</a></td></tr>
+      <tr><td>May 2026 ROI cliff (Pattern D from perf-audit) is real, urgent</td><td>OPEN — P1 action</td><td>Per perf-audit: blended May ROI 0.47 vs YTD avg 1.29; English campaign 0.85, Other Languages 0.91 vs target 1.67/1.58 <a class="ref-link" href="#perfaudit-paid-deep-dive">↗</a></td></tr>
+      <tr><td>CE-level LP2S decline is a real per-user funnel weakening</td><td class="neg">RULED OUT</td><td>Within fixed segment LP2S +0.12pp (flat); CE-level decline is mix dilution <a class="ref-link" href="#block-mix-cascade">↗</a></td></tr>
+      <tr><td>Supply scarcity contributing</td><td class="neg">RULED OUT</td><td>days_to_first_available_date = 0 on top TGIDs in both periods <a class="ref-link" href="#block-catalogue">↗</a></td></tr>
+      <tr><td>Geo-specific or device-specific UX change</td><td class="neg">RULED OUT</td><td>Improvement broad across US/Non-Geo and across all devices <a class="ref-link" href="#block-geo">↗</a></td></tr>
+      <tr><td>Slack-reported operational events explain residual</td><td>DATA GAP</td><td>Slack MCP coverage limited — CE-specific search + #mkt-usa channel denied; only #tf-bugalert returned. Re-run with context extension to enrich.</td></tr>
+      <tr><td>A2O mechanism (gateway / fraud / inventory-sync) localization</td><td>OPEN — P2 action</td><td>Cohort breadth confirmed platform-level; specific mechanism untested. Requires order_attempted_events_v2 query.</td></tr>
+      <tr><td>Subdomain microsite launch dates &amp; operational rationale</td><td>OPEN</td><td>URL data confirms 2026 launches; exact go-live dates and the SEO/microsite team rationale unverified due to Slack coverage gap.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /tab-pane cvr-rca -->
+
+<div class="tab-pane" id="tab-perfaudit" role="tabpanel">
+<!-- ============== SECTION 1 ============== -->
+<div class="section-label">1 · Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">Paid Spend (Google)</div>
+    <div class="values"><span class="pre">$165k</span><span class="post">$269k</span></div>
+    <div class="delta delta-flat">Δ +63% YoY</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Revenue (BQ)</div>
+    <div class="values"><span class="pre">$250k</span><span class="post">$390k</span></div>
+    <div class="delta delta-pos">Δ +56% YoY</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">ROI (CM1 / Spend)</div>
+    <div class="values"><span class="pre">1.31</span><span class="post">1.29</span></div>
+    <div class="delta delta-flat">Δ −0.02 (−1.5%)</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">CPC</div>
+    <div class="values"><span class="pre">$1.72</span><span class="post">$2.00</span></div>
+    <div class="delta delta-flat">Δ +16% (offset by RPC +12%)</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Paid CVR (click-CVR)</div>
+    <div class="values"><span class="pre">3.94%</span><span class="post">5.79%</span></div>
+    <div class="delta delta-pos">Δ +1.85pp (+47%)</div>
+  </div>
+</div>
+
+<div class="callout" id="perfaudit-executive-summary">
+  <h2>Status: WARNING</h2>
+  <div class="callout-item">
+    <div class="q">What's the verdict?</div>
+    <div class="a">YTD looks excellent on aggregate — revenue +56%, orders +106%, click-CVR +47% — but the latest trailing month shows efficiency collapsing well below tROAS targets, masked by the YTD aggregate. The +47% click-CVR lift is real on the click side, but blended ROI held flat YoY at 1.29 (vs 1.31 prior) and monthly ROI has cratered from Jan 1.61 → Feb 1.62 → Mar 1.41 → Apr 1.17 → <strong>May 0.47</strong>.</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">What's driving it?</div>
+    <div class="a">
+      <ul>
+        <li><strong>tCPA → tROAS migration + Feb 2026 account consolidation</strong> — Smart Bidding under MAXIMIZE_CONVERSION_VALUE shifted bid logic; CTR jumped +62% (8.97% → 14.50%), click-CVR +47%, CPC up only +16%. The CVR lift is the mechanical outcome of the bidding migration, not organic improvement. <a class="ref-link" href="#perfaudit-paid-deep-dive">↗</a></li>
+        <li><strong>Tour ad-group cohort drove the win</strong> — 75% of spend, ROI 1.69, CVR 5.99% (up from 4.74%). Sensible reallocation under tROAS toward highest-AOV intent. <a class="ref-link" href="#perfaudit-coverage-matchmaking">↗</a></li>
+        <li><strong>ROI per dollar unchanged</strong> — revenue +56% on spend +63%, so margin per dollar invested did not improve. This is volume growth, not efficiency growth. <a class="ref-link" href="#perfaudit-ce-overview">↗</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout-item">
+    <div class="q">What needs urgent attention?</div>
+    <div class="a"><strong>May 2026 ROI cliff.</strong> English campaign (tROAS target 167) trailing-8-week ROI is 0.85; Other Languages (tROAS 158) is 0.91 — 50–60% of target, far outside Smart Bidding's normal ±15% variance band. Budget-lost IS is essentially zero (constraint is auction-side, not budget-side); rank-lost IS has climbed to 79% in trailing 8 weeks. Two competing hypotheses: (a) May 2026 CM1 attribution incomplete (offline conversions still landing), or (b) real efficiency degradation under tROAS. Validate (a) first; if real, the gap implies ~$30K CM1/month leak.</div>
+  </div>
+</div>
+
+<!-- ============== SECTION 2 ============== -->
+<div class="section-label">2 · Recommended Actions</div>
+
+<div class="action-card" id="perfaudit-actions">
+  <div class="ac-header">
+    <span class="priority-badge p1">P1 — Diagnose-and-fix</span>
+    <div class="cause">Diagnose the May 2026 ROI cliff on English (tROAS 167) and Other Languages (tROAS 158) campaigns before any bid change. Budget-lost IS is essentially zero, so the constraint is auction-side, not budget-side. Estimated $30K CM1/month leak if the trajectory continues. <a class="ref-link" href="#perfaudit-monthly-trajectory">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Performance Marketing — US Google Ads owner + Perf-data team</span></div>
+  <ul>
+    <li><strong>Step 1: Validate May 2026 CM1 completeness</strong> with the data team. Offline conversions and price corrections may still be landing for May orders. If May is incomplete, the ROI cliff is partial and the real trajectory is closer to ~1.0–1.2 — wait two weeks for backfill before drawing structural conclusions.</li>
+    <li><strong>Step 2: If May attribution is complete</strong>, diagnose in this order: (a) landing-page CR check (cross-reference CVR-RCA's Tab 1 for the page-side picture), (b) query-mix shift via search-terms CSV on the consolidated NA account, (c) broad-match overflow audit, (d) margin/take-rate verification (could be a discount or fee structure change reducing CM1 per order without CVR moving).</li>
+    <li><strong>Do NOT lower tROAS yet.</strong> Lowering the target tells Smart Bidding to bid more aggressively into the same low-ROI auctions, accelerating the leak. Maintain current 167/158 targets while the root cause is identified.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Audit-and-document</span>
+    <div class="cause">Validate the 0% SIS reading in the trailing 8 weeks across all 4 active campaigns. Almost certainly a reporting anomaly post-consolidation — whole-window SIS (23.7%) is reliable; trailing-8w appears to mis-attribute eligible-impression denominator. <a class="ref-link" href="#perfaudit-paid-deep-dive">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Perf-data team</span></div>
+  <ul>
+    <li>Open a perf-data ticket on the trailing-8-week SIS = 0% reading for all 4 active CE 3593 campaigns. Compare with the whole-window SIS (23.7%) which is reliable. Either fix the dashboard query or document the metric's known limitation post-consolidation so analysts don't act on it.</li>
+    <li>Pull auction insights CSV (last 8 weeks, consolidated NA account, cid3593 campaigns) to size competitive pressure independently. Rank-lost IS rose +12pp YoY (53.8% → 66.2%) — suggestive of competitor incursion or eligibility expansion under broad match, but unverified without auction insights.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Scale-with-guardrails</span>
+    <div class="cause">Bing efficiency check. Microsoft Ads ROI compressed 1.64 → 1.40 (−15%) on +17% spend / +39% orders. Order growth looks good but per-dollar return is bleeding — worth a query-mix and match-type audit. <a class="ref-link" href="#perfaudit-channel-breakdown">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Performance Marketing — Bing owner</span></div>
+  <ul>
+    <li>Pull Bing search-terms report (last 4 weeks, cid3593 campaigns). Cluster terms into Tour / Tickets / Generic / Competitor / Informational. Identify wasted spend categories (Competitor / Informational typically negative ROI).</li>
+    <li>Match-type audit: confirm whether broad-match overflow is pulling lower-intent traffic. If yes, tighten to phrase or exact for the underperforming clusters.</li>
+    <li>If query-mix is healthy and Bing's ROI compression is structural (CPC competition), evaluate a Bing budget cap that lets the channel maintain order volume at >1.4 ROI floor.</li>
+  </ul>
+</div>
+
+<!-- ============== SECTION 3 ============== -->
+<div class="section-label">3 · Supporting Analysis</div>
+
+<div class="analysis-block" id="perfaudit-ce-overview">
+  <div class="block-title">CE Overview — YoY Paid Metrics</div>
+  <div class="verdict-line warning">Revenue +56%, orders +106%, click-CVR +47% — strong volume growth on the click side. But ROI held flat at 1.29 (vs 1.31 prior, −1.5%); spend grew faster than revenue. The headline is volume, not efficiency.</div>
+  <table>
+    <thead><tr><th>Metric</th><th class="num">PRE (2025)</th><th class="num">POST (2026)</th><th class="num">YoY Δ</th></tr></thead>
+    <tbody>
+      <tr><td>Paid Spend (Google Ads)</td><td class="num">$164,896</td><td class="num">$268,852</td><td class="num">+63%</td></tr>
+      <tr><td>Paid Spend (Bing)</td><td class="num">$37,760</td><td class="num">$44,016</td><td class="num">+17%</td></tr>
+      <tr><td>Total Paid Spend</td><td class="num">$202,656</td><td class="num">$312,868</td><td class="num">+54%</td></tr>
+      <tr><td>Clicks (Google)</td><td class="num">95,849</td><td class="num">134,408</td><td class="num pos">+40%</td></tr>
+      <tr><td>Orders (Google attributed)</td><td class="num">3,780</td><td class="num">7,778</td><td class="num pos">+106%</td></tr>
+      <tr><td>Revenue (Google, BQ)</td><td class="num">$249,526</td><td class="num">$389,843</td><td class="num pos">+56%</td></tr>
+      <tr><td>CM1 (Google, BQ)</td><td class="num">$216,680</td><td class="num">$346,605</td><td class="num pos">+60%</td></tr>
+      <tr class="highlight-row"><td>ROI = CM1/Spend (Google)</td><td class="num">1.31</td><td class="num">1.29</td><td class="num">−1.5%</td></tr>
+      <tr><td>CPC</td><td class="num">$1.72</td><td class="num">$2.00</td><td class="num">+16%</td></tr>
+      <tr><td>CTR</td><td class="num">8.97%</td><td class="num">14.50%</td><td class="num pos">+62%</td></tr>
+      <tr><td>Click-CVR</td><td class="num">3.94%</td><td class="num">5.79%</td><td class="num pos">+47%</td></tr>
+      <tr><td>SIS (impression-share weighted)</td><td class="num">44.91%</td><td class="num">23.67%</td><td class="num">−47% (not strictly comparable post-consolidation)</td></tr>
+      <tr><td>Rank-lost IS</td><td class="num">53.77%</td><td class="num">66.23%</td><td class="num neg">+23%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:#777;margin-top:8px;font-style:italic;">SIS YoY is not strictly comparable — Feb 2026 account consolidation moved campaigns from "Rest Of Usa" to "North America" account, expanding the eligible-impressions denominator. Use MoM as the primary SIS signal.</p>
+</div>
+
+<div class="analysis-block" id="perfaudit-channel-breakdown">
+  <div class="block-title">Channel Breakdown</div>
+  <div class="verdict-line warning">Google Search dominates (no PMax, no Display for this CE — collection-type, US market). Bing is the secondary paid channel, ROI compressed −15%.</div>
+  <table>
+    <thead><tr><th>Channel</th><th class="num">PRE spend</th><th class="num">POST spend</th><th class="num">PRE orders</th><th class="num">POST orders</th><th class="num">PRE ROI</th><th class="num">POST ROI</th></tr></thead>
+    <tbody>
+      <tr><td>Google Search</td><td class="num">$164,896</td><td class="num">$268,852</td><td class="num">3,780</td><td class="num">7,778</td><td class="num">1.31</td><td class="num">1.29</td></tr>
+      <tr class="highlight-row"><td>Microsoft Ads (Bing)</td><td class="num">$37,760</td><td class="num">$44,016</td><td class="num">818</td><td class="num">1,137</td><td class="num">1.64</td><td class="num neg">1.40</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Google ROI held flat (within noise); Bing ROI deteriorated −15% despite +17% spend / +39% orders. The order growth on Bing looks healthy in isolation but the per-dollar return is bleeding.</p>
+</div>
+
+<div class="analysis-block" id="perfaudit-paid-deep-dive">
+  <div class="block-title">Paid Deep Dive — Campaign Roster (post-consolidation, Apr–May 2026 trailing 8w)</div>
+  <div class="verdict-line">Two largest campaigns are running trailing ROI at 50–60% of tROAS target — far outside Smart Bidding's normal ±15% variance band. Rank-lost IS 67–87% across the board. 0% SIS in trailing 8 weeks is almost certainly a reporting anomaly post-consolidation.</div>
+  <table>
+    <thead><tr><th>Campaign</th><th>Status</th><th class="num">tROAS</th><th class="num">Spend (8w)</th><th class="num">Trailing ROI</th><th class="num">SIS</th><th class="num">Rank-lost</th><th class="num">Budget-lost</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Page - Antelope Canyon - English - All</td><td>ENABLED</td><td class="num">167</td><td class="num">$62,465</td><td class="num neg">0.85</td><td class="num">0.0%</td><td class="num neg">79.2%</td><td class="num">0.0%</td></tr>
+      <tr class="highlight-row"><td>Page - Antelope Canyon - Other Languages</td><td>ENABLED</td><td class="num">158</td><td class="num">$30,701</td><td class="num neg">0.91</td><td class="num">0.0%</td><td class="num neg">66.6%</td><td class="num">0.0%</td></tr>
+      <tr><td>Page - Las Vegas → Antelope Canyon - English</td><td>ENABLED</td><td class="num">0 (Portfolio)</td><td class="num">$2,277</td><td class="num">1.00</td><td class="num">0.0%</td><td class="num">74.1%</td><td class="num">0.0%</td></tr>
+      <tr><td>Page - Antelope Canyon - Spanish</td><td>ENABLED</td><td class="num">0 (Portfolio)</td><td class="num">$842</td><td class="num">0.80</td><td class="num">0.4%</td><td class="num">86.8%</td><td class="num">0.0%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">All paused campaigns ("Transitioned" / "Merged" / "Rest Of Usa" accounts) are intentionally paused per the Feb 2026 consolidation playbook — do not flag. Active roster is 4 Search campaigns in the consolidated "North America" account. Rank-lost IS climbing is consistent with Smart Bidding under tROAS choosing not to enter auctions where predicted value falls short of target — but the 50% target gap on the two largest campaigns means the algorithm is significantly under-delivering, bidding into auctions where actual CM1 falls well short of predicted value.</p>
+</div>
+
+<div class="analysis-block" id="perfaudit-cpc-3-lens">
+  <div class="block-title">CPC 3-Lens Diagnostic</div>
+  <div class="verdict-line pos">CPC rise is efficiency-positive at the YTD level, not competitive pressure. CTR +62% and click-CVR +47% justify the +16% CPC increase. Latest-month ROI is a separate concern (see action card P1).</div>
+  <table>
+    <thead><tr><th>Lens</th><th>Verdict</th><th>Evidence</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Quality traffic?</strong></td><td class="pos">YES</td><td>CTR jumped 8.97% → 14.50% (+62%) and click-CVR rose 3.94% → 5.79% (+47%). Google bought meaningfully better clicks under tROAS.</td></tr>
+      <tr><td><strong>AOV structural?</strong></td><td class="pos">PARTIAL</td><td>RPC rose +12% indicating either price or mix lift. Tour ad-group (75% of spend) has higher AOV than Tickets/Generic.</td></tr>
+      <tr><td><strong>Competition?</strong></td><td>UNKNOWN</td><td>Rank-lost IS rose +12pp YoY — suggestive of competitive pressure or eligibility expansion under broad match, but auction insights CSV not supplied. P2 action card asks for the CSV.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="analysis-block" id="perfaudit-coverage-matchmaking">
+  <div class="block-title">Coverage + Matchmaking — Ad-group cohort backbone</div>
+  <div class="verdict-line pos">Tour-intent ad groups carry the CE (75% of spend, ROI 1.69) and improved CVR materially (4.74% → 5.99%) — sensible reallocation under tROAS toward highest-AOV intent. Generic/Brand spend shrunk in absolute terms (−11%) while Tour doubled.</div>
+  <table>
+    <thead><tr><th>AG Type</th><th class="num">POST Spend</th><th class="num">POST Clicks</th><th class="num">POST CVR</th><th class="num">POST ROI</th><th class="num">Spend share</th><th class="num">PRE Spend</th><th class="num">YoY Δ</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Tour</td><td class="num">$200,708</td><td class="num">92,787</td><td class="num">5.99%</td><td class="num pos">1.69</td><td class="num">75%</td><td class="num">$99,373</td><td class="num pos">+102%</td></tr>
+      <tr><td>Generic/Brand</td><td class="num">$47,603</td><td class="num">30,817</td><td class="num">3.29%</td><td class="num">1.38</td><td class="num">18%</td><td class="num">$53,201</td><td class="num">−11%</td></tr>
+      <tr><td>Tickets</td><td class="num">$20,541</td><td class="num">10,804</td><td class="num">4.28%</td><td class="num">1.53</td><td class="num">8%</td><td class="num">$12,322</td><td class="num">+67%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;"><strong>Coverage gap:</strong> No Tickets-dedicated campaign — Tickets clicks are catching overflow from Tour-named Page campaigns under broad match. Match-type tightening or a dedicated Tickets ad group could lift CTR + ad relevance.</p>
+</div>
+
+<div class="analysis-block" id="perfaudit-funnel">
+  <div class="block-title">Funnel Reconciliation (handoff with CVR-RCA Tab 1)</div>
+  <div class="verdict-line warning">LP2S regressed −3.14pp YoY at CE level despite paid CTR rising +62% (better click quality). Within Paid · Google Ads · MB the LP2S held flat — the CE-level "decline" is mix dilution from organic surge. S2C and C2O contributed positively; checkout improvements likely structural and durable.</div>
+  <table>
+    <thead><tr><th>Step</th><th class="num">PRE</th><th class="num">POST</th><th class="num">Δ (abs)</th><th class="num">Δ (rel)</th></tr></thead>
+    <tbody>
+      <tr><td>LP users</td><td class="num">82,996</td><td class="num">143,244</td><td class="num pos">+60,248</td><td class="num pos">+73%</td></tr>
+      <tr><td>LP2S</td><td class="num">46.58%</td><td class="num">43.44%</td><td class="num neg">−3.14pp</td><td class="num neg">−6.7%</td></tr>
+      <tr><td>S2C</td><td class="num">30.50%</td><td class="num">33.54%</td><td class="num pos">+3.04pp</td><td class="num pos">+10.0%</td></tr>
+      <tr><td>C2O</td><td class="num">34.68%</td><td class="num">42.20%</td><td class="num pos">+7.52pp</td><td class="num pos">+21.7%</td></tr>
+      <tr><td>&nbsp;&nbsp;→ C2A</td><td class="num">42.17%</td><td class="num">47.29%</td><td class="num pos">+5.12pp</td><td class="num pos">+12.1%</td></tr>
+      <tr><td>&nbsp;&nbsp;→ A2O</td><td class="num">82.22%</td><td class="num">89.23%</td><td class="num pos">+7.01pp</td><td class="num pos">+8.5%</td></tr>
+      <tr class="highlight-row"><td><strong>Overall CVR</strong></td><td class="num"><strong>4.93%</strong></td><td class="num"><strong>6.15%</strong></td><td class="num pos"><strong>+1.22pp</strong></td><td class="num pos"><strong>+24.8%</strong></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Shapley contribution: C2O 89%, S2C 43%, LP2S −32%. Cross-tab citation: CVR-RCA Tab 1 carries the full cascade analysis including the URL-level subdomain microsite finding that explains a portion of the CE-level LP2S "decline" as mix dilution from organic surge, not a per-user funnel weakening.</p>
+</div>
+
+<div class="analysis-block" id="perfaudit-external-dynamics">
+  <div class="block-title">External Dynamics</div>
+  <div class="verdict-line neutral">Auction insights CSV not supplied; Ahrefs MCP not loaded. Limited external visibility this cycle — flagged for next run.</div>
+  <ul style="padding-left:18px;font-size:13px;color:#444;margin-top:8px;">
+    <li><strong>Demand (Ahrefs):</strong> Unavailable this cycle. Antelope Canyon has strong evergreen US tourist demand, peaking spring–summer; the Q1–Q2 monthly trajectory matches this seasonal pattern.</li>
+    <li><strong>Competition:</strong> Auction insights CSV not supplied. Rank-lost IS rising +12pp YoY is suggestive but inconclusive. Recommend pulling auction insights to identify whether GetYourGuide / Viator / direct operators (Ken's Tours, Dixie Ellis) are bidding up.</li>
+    <li><strong>Tourist mix (estimated):</strong> US domestic + LATAM is the bulk; APAC/EU smaller share. Other Languages campaign captures Spanish primarily.</li>
+  </ul>
+</div>
+
+<div class="analysis-block" id="perfaudit-red-flags">
+  <div class="block-title">Red Flags Summary</div>
+  <div class="verdict-line">Six red flags ranked by severity. The May 2026 ROI cliff is the only HIGH-severity item and the subject of the P1 action card.</div>
+  <table>
+    <thead><tr><th class="num">#</th><th>Severity</th><th>Issue</th><th>Source block</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td class="num">1</td><td class="neg">HIGH</td><td>Latest-month ROI collapse (Apr–May 2026): English campaign ROI 0.85, Other Languages 0.91, blended May 0.47 vs tROAS targets of 1.67/1.58. Gap to target 50–60% — far outside Smart Bidding's 15% variance band.</td><td><a class="ref-link" href="#perfaudit-paid-deep-dive">§ Paid Deep Dive</a></td></tr>
+      <tr><td class="num">2</td><td>MEDIUM</td><td>LP2S regression −3.14pp YoY at CE level despite paid CTR rising +62%. Landing-page diagnostic needed — handoff to CVR-RCA Tab 1's URL-level analysis.</td><td><a class="ref-link" href="#perfaudit-funnel">§ Funnel</a></td></tr>
+      <tr><td class="num">3</td><td>MEDIUM</td><td>Rank-lost IS climbing to 66% YoY and 79% in trailing 8 weeks. Auction-side constraint, consistent with tROAS predicting low value — needs auction insights to confirm.</td><td><a class="ref-link" href="#perfaudit-paid-deep-dive">§ Paid Deep Dive</a></td></tr>
+      <tr><td class="num">4</td><td>LOW</td><td>0% SIS in trailing 8 weeks across all 4 active campaigns — almost certainly a reporting anomaly post-consolidation. Validate with perf-data team.</td><td><a class="ref-link" href="#perfaudit-paid-deep-dive">§ Paid Deep Dive</a></td></tr>
+      <tr><td class="num">5</td><td>LOW</td><td>Bing ROI −15% (1.64 → 1.40). Small but real efficiency leak. P2 action card.</td><td><a class="ref-link" href="#perfaudit-channel-breakdown">§ Channel Breakdown</a></td></tr>
+      <tr><td class="num">6</td><td>LOW</td><td>May 2026 attribution completeness uncertain — offline conversions may still be landing. Validate before acting on May ROI specifically. Pre-condition for the P1 action card.</td><td><a class="ref-link" href="#perfaudit-monthly-trajectory">§ Monthly Trajectory</a></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="analysis-block" id="perfaudit-monthly-trajectory">
+  <div class="block-title">Monthly Trajectory (Google Ads only, last 17 months)</div>
+  <div class="verdict-line warning">Jan-Feb 2026 saw the bidding migration deliver outstanding ROI (1.61 / 1.62). Then declined month-on-month — 1.41 → 1.17 → <strong>0.47</strong>. CVR is holding (5.4–6.1%), CPC is holding ($1.97–$2.12), but ROI per dollar has dropped. Validate May 2026 CM1 completeness before drawing structural conclusions.</div>
+  <table>
+    <thead><tr><th>Month</th><th class="num">Spend</th><th class="num">Orders</th><th class="num">ROI (CM1)</th><th class="num">CPC</th><th class="num">CVR</th><th class="num">SIS</th></tr></thead>
+    <tbody>
+      <tr><td>2025-01</td><td class="num">$6,347</td><td class="num">138</td><td class="num">1.31</td><td class="num">$1.30</td><td class="num">2.83%</td><td class="num">30.9%</td></tr>
+      <tr><td>2025-03</td><td class="num">$64,179</td><td class="num">1,448</td><td class="num">1.29</td><td class="num">$1.97</td><td class="num">4.45%</td><td class="num">55.9%</td></tr>
+      <tr><td>2025-06</td><td class="num">$43,977</td><td class="num">1,027</td><td class="num">1.46</td><td class="num">$1.71</td><td class="num">3.99%</td><td class="num">40.4%</td></tr>
+      <tr><td>2025-09</td><td class="num">$50,842</td><td class="num">1,368</td><td class="num">1.26</td><td class="num">$1.77</td><td class="num">4.76%</td><td class="num">38.3%</td></tr>
+      <tr><td>2025-12</td><td class="num">$30,745</td><td class="num">717</td><td class="num">1.46</td><td class="num">$1.53</td><td class="num">3.56%</td><td class="num">24.5%</td></tr>
+      <tr><td><strong>2026-01</strong></td><td class="num">$38,989</td><td class="num">1,219</td><td class="num pos"><strong>1.61</strong></td><td class="num">$1.69</td><td class="num">5.28%</td><td class="num">18.1%</td></tr>
+      <tr><td><strong>2026-02</strong></td><td class="num">$55,224</td><td class="num">1,581</td><td class="num pos"><strong>1.62</strong></td><td class="num">$2.09</td><td class="num">5.98%</td><td class="num">22.7%</td></tr>
+      <tr><td><strong>2026-03</strong></td><td class="num">$78,269</td><td class="num">2,182</td><td class="num">1.41</td><td class="num">$2.12</td><td class="num">5.92%</td><td class="num">29.2%</td></tr>
+      <tr><td><strong>2026-04</strong></td><td class="num">$55,099</td><td class="num">1,656</td><td class="num">1.17</td><td class="num">$2.04</td><td class="num">6.12%</td><td class="num">22.6%</td></tr>
+      <tr class="highlight-row"><td><strong>2026-05</strong></td><td class="num">$41,270</td><td class="num">1,140</td><td class="num neg"><strong>0.47</strong></td><td class="num">$1.97</td><td class="num">5.44%</td><td class="num">25.8%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Either CM1 per order has fallen sharply (margin / take-rate / discounting shift) or the May 2026 data is incomplete (offline conversions still landing). Validate completeness first — P1 action card's Step 1.</p>
+</div>
+</div><!-- /tab-pane perfaudit -->
+
+</div><!-- /container -->
+
+<footer>CVR-RCA · CE 3593 Antelope Canyon · generated 2026-05-29 · run dir: ce3593_2025-01-01_2026-05-27</footer>
+
+<script>
+var DATES_90 = ["2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27"];
+var CVR_CURRENT_90 = [0.073868,0.069519,0.081065,0.076579,0.085017,0.082884,0.076366,0.081633,0.075284,0.081861,0.075595,0.067764,0.068988,0.066064,0.063800,0.075114,0.082938,0.064710,0.057753,0.059373,0.069534,0.066510,0.063797,0.053733,0.069878,0.073066,0.062348,0.064947,0.066542,0.080235,0.067883,0.067578,0.050374,0.069808,0.058554,0.065156,0.069376,0.060870,0.051756,0.068089,0.061376,0.064442,0.096401,0.092060,0.089197,0.072826,0.086086,0.080241,0.079956,0.058166,0.071044,0.073764,0.077209,0.078749,0.074279,0.074799,0.085681,0.090442,0.071867,0.079320,0.054077,0.067385,0.061892,0.070423,0.065041,0.086351,0.074656,0.080402,0.059000,0.067568,0.050000,0.064394,0.063510,0.069351,0.057716,0.062139,0.052121,0.068427,0.068881,0.055354,0.041812,0.067347,0.053593,0.047554,0.044944,0.054945,0.045652,0.043431,0.036093,0.039642];
+var CVR_LY_90 = [0.076023,0.061118,0.078059,0.068966,0.066362,0.064882,0.055085,0.067644,0.076923,0.065170,0.065523,0.078466,0.067979,0.056604,0.058416,0.067970,0.052277,0.066667,0.064433,0.053226,0.056221,0.063158,0.061492,0.054416,0.057664,0.053897,0.063806,0.068279,0.052870,0.057716,0.059499,0.058228,0.047554,0.055728,0.070018,0.063752,0.055062,0.085106,0.050378,0.041278,0.043421,0.063075,0.035115,0.041494,0.024133,0.027221,0.048855,0.050769,0.055679,0.035052,0.039604,0.043933,0.041401,0.046816,0.067766,0.046368,0.046843,0.050467,0.051519,0.048711,0.039185,0.067773,0.054545,0.044383,0.044295,0.052339,0.063636,0.055970,0.080780,0.047278,0.057190,0.069193,0.069767,0.051435,0.050343,0.052519,0.070875,0.063804,0.048900,0.053535,0.057143,0.059314,0.063457,0.051370,0.050602,0.045977,0.042194,0.057368,0.052870,0.064189];
+
+(function () {
+  var traceCur = { x: DATES_90, y: CVR_CURRENT_90, name: 'Current CVR (2026)', type: 'scatter', mode: 'lines', line: { color: '#2e7d32', width: 2 } };
+  var traceLY  = { x: DATES_90, y: CVR_LY_90,      name: 'Last Year CVR (2025)', type: 'scatter', mode: 'lines', line: { color: '#999', width: 1.5, dash: 'dot' } };
+  var layout = {
+    height: 260, margin: { t: 10, r: 10, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { tickfont: { size: 10 }, tickformat: '.1%', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff'
+  };
+  Plotly.newPlot('chart-90d', [traceLY, traceCur], layout, { responsive: true, displayModeBar: false });
+})();
+
+// Daily trend chart (294 days: 147 pre 2025 + 147 post 2026)
+var DATES_DAILY = ["2025-01-01","2025-01-02","2025-01-03","2025-01-04","2025-01-05","2025-01-06","2025-01-07","2025-01-08","2025-01-09","2025-01-10","2025-01-11","2025-01-12","2025-01-13","2025-01-14","2025-01-15","2025-01-16","2025-01-17","2025-01-18","2025-01-19","2025-01-20","2025-01-21","2025-01-22","2025-01-23","2025-01-24","2025-01-25","2025-01-26","2025-01-27","2025-01-28","2025-01-29","2025-01-30","2025-01-31","2025-02-01","2025-02-02","2025-02-03","2025-02-04","2025-02-05","2025-02-06","2025-02-07","2025-02-08","2025-02-09","2025-02-10","2025-02-11","2025-02-12","2025-02-13","2025-02-14","2025-02-15","2025-02-16","2025-02-17","2025-02-18","2025-02-19","2025-02-20","2025-02-21","2025-02-22","2025-02-23","2025-02-24","2025-02-25","2025-02-26","2025-02-27","2025-02-28","2025-03-01","2025-03-02","2025-03-03","2025-03-04","2025-03-05","2025-03-06","2025-03-07","2025-03-08","2025-03-09","2025-03-10","2025-03-11","2025-03-12","2025-03-13","2025-03-14","2025-03-15","2025-03-16","2025-03-17","2025-03-18","2025-03-19","2025-03-20","2025-03-21","2025-03-22","2025-03-23","2025-03-24","2025-03-25","2025-03-26","2025-03-27","2025-03-28","2025-03-29","2025-03-30","2025-03-31","2025-04-01","2025-04-02","2025-04-03","2025-04-04","2025-04-05","2025-04-06","2025-04-07","2025-04-08","2025-04-09","2025-04-10","2025-04-11","2025-04-12","2025-04-13","2025-04-14","2025-04-15","2025-04-16","2025-04-17","2025-04-18","2025-04-19","2025-04-20","2025-04-21","2025-04-22","2025-04-23","2025-04-24","2025-04-25","2025-04-26","2025-04-27","2025-04-28","2025-04-29","2025-04-30","2025-05-01","2025-05-02","2025-05-03","2025-05-04","2025-05-05","2025-05-06","2025-05-07","2025-05-08","2025-05-09","2025-05-10","2025-05-11","2025-05-12","2025-05-13","2025-05-14","2025-05-15","2025-05-16","2025-05-17","2025-05-18","2025-05-19","2025-05-20","2025-05-21","2025-05-22","2025-05-23","2025-05-24","2025-05-25","2025-05-26","2025-05-27","2026-01-01","2026-01-02","2026-01-03","2026-01-04","2026-01-05","2026-01-06","2026-01-07","2026-01-08","2026-01-09","2026-01-10","2026-01-11","2026-01-12","2026-01-13","2026-01-14","2026-01-15","2026-01-16","2026-01-17","2026-01-18","2026-01-19","2026-01-20","2026-01-21","2026-01-22","2026-01-23","2026-01-24","2026-01-25","2026-01-26","2026-01-27","2026-01-28","2026-01-29","2026-01-30","2026-01-31","2026-02-01","2026-02-02","2026-02-03","2026-02-04","2026-02-05","2026-02-06","2026-02-07","2026-02-08","2026-02-09","2026-02-10","2026-02-11","2026-02-12","2026-02-13","2026-02-14","2026-02-15","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26","2026-05-27"];
+var CVR_DAILY = [0.085084,0.041100,0.042864,0.032782,0.047613,0.041666,0.049506,0.049380,0.018178,0.021057,0.015031,0.026455,0.098219,0.032250,0.038618,0.030734,0.033211,0.046362,0.036502,0.060183,0.044366,0.051362,0.036574,0.029848,0.035013,0.029585,0.029625,0.059042,0.062220,0.075015,0.066355,0.053290,0.037203,0.052512,0.071807,0.043485,0.072531,0.071236,0.052511,0.049812,0.050943,0.055764,0.052085,0.055693,0.070561,0.051795,0.054731,0.062809,0.059257,0.041604,0.061385,0.062602,0.066480,0.060234,0.060061,0.055941,0.046307,0.053389,0.076685,0.061444,0.077092,0.068190,0.065909,0.057167,0.051908,0.063410,0.072483,0.058722,0.062393,0.078416,0.064670,0.056776,0.050720,0.063374,0.048952,0.063920,0.058538,0.047793,0.048296,0.063346,0.057980,0.055935,0.054636,0.050789,0.068165,0.061595,0.039525,0.056100,0.061913,0.055154,0.045307,0.056778,0.072684,0.065081,0.057258,0.097255,0.055721,0.040481,0.041411,0.052306,0.035403,0.045344,0.022923,0.027858,0.051044,0.057441,0.057544,0.034744,0.042247,0.043988,0.041588,0.048110,0.059567,0.044202,0.044707,0.046807,0.053252,0.053520,0.042282,0.068912,0.055551,0.036148,0.045248,0.049639,0.061790,0.058891,0.081329,0.044384,0.057190,0.070526,0.067722,0.050675,0.051251,0.052575,0.069431,0.062003,0.047430,0.048567,0.052845,0.055897,0.058020,0.053978,0.053338,0.044042,0.045291,0.055206,0.054041,0.072248,0.066674,0.061387,0.065062,0.055099,0.059081,0.051551,0.059222,0.071874,0.069870,0.049435,0.065440,0.054871,0.056210,0.059731,0.052726,0.059950,0.056024,0.054672,0.055560,0.059537,0.066308,0.067662,0.063807,0.089171,0.073722,0.055503,0.081964,0.054926,0.065153,0.058047,0.075610,0.075302,0.068900,0.056938,0.053518,0.069175,0.068864,0.069154,0.070483,0.060322,0.072543,0.062149,0.071962,0.065608,0.067929,0.081315,0.079846,0.078402,0.066775,0.069533,0.091047,0.072812,0.087573,0.081662,0.075709,0.076298,0.076139,0.074751,0.083823,0.080924,0.085387,0.083333,0.073252,0.083129,0.074612,0.083854,0.076197,0.066310,0.069907,0.064885,0.065049,0.074936,0.084313,0.065234,0.056630,0.060988,0.069138,0.065326,0.063499,0.053829,0.067612,0.072280,0.063344,0.064245,0.064927,0.080462,0.067859,0.066936,0.048199,0.067212,0.055828,0.067063,0.068933,0.059144,0.052133,0.063868,0.059148,0.066516,0.094559,0.086706,0.088295,0.071679,0.083764,0.080935,0.080039,0.055613,0.068504,0.073637,0.077273,0.079556,0.073896,0.074734,0.086760,0.091283,0.072404,0.076107,0.052396,0.068509,0.060218,0.069944,0.065480,0.085871,0.073163,0.080010,0.061439,0.065919,0.051614,0.062160,0.066919,0.066737,0.059142,0.064307,0.052703,0.069390,0.068357,0.055513,0.041131,0.067087,0.051438,0.045955,0.045453,0.055939,0.045709,0.043338,0.038642,0.040529];
+
+(function () {
+  var POST_START = '2026-01-01';
+  var traceCVR = { x: DATES_DAILY, y: CVR_DAILY, name: 'Daily CVR', type: 'scatter', mode: 'lines+markers', line: { color: '#2e7d32', width: 1.5 }, marker: { size: 3, color: '#2e7d32' } };
+  var layout = {
+    height: 280, margin: { t: 10, r: 10, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %Y', nticks: 12 },
+    yaxis: { tickfont: { size: 10 }, tickformat: '.1%', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    shapes: [
+      { type:'rect', x0:POST_START, x1:'2026-05-27', y0:0, y1:1, xref:'x', yref:'paper', fillcolor:'rgba(46,125,50,0.06)', line:{width:0} },
+      { type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#2e7d32', dash:'dot', width:1} },
+      { type:'line', x0:'2026-05-01', x1:'2026-05-01', y0:0, y1:1, xref:'x', yref:'paper', line:{color:'#e07b00', dash:'dot', width:1} }
+    ],
+    annotations: [
+      { x:POST_START, y:0.96, xref:'x', yref:'paper', text:'2026 Post window starts', font:{color:'#2e7d32',size:10}, showarrow:false, xshift:90 },
+      { x:'2026-05-01', y:0.82, xref:'x', yref:'paper', text:'May ROI cliff edge →', font:{color:'#e07b00',size:10}, showarrow:false, xshift:60 }
+    ]
+  };
+  Plotly.newPlot('chart-daily', [traceCVR], layout, { responsive: true, displayModeBar: false });
+})();
+
+// Tab framework
+(function () {
+  function activateTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-button').forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+    var pane = document.getElementById('tab-' + tabId);
+    var btn  = document.querySelector('.tab-button[data-tab="' + tabId + '"]');
+    if (pane) pane.classList.add('active');
+    if (btn)  { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
+    if (pane && window.Plotly) {
+      pane.querySelectorAll('.js-plotly-plot').forEach(function (el) { try { window.Plotly.Plots.resize(el); } catch (e) {} });
+    }
+  }
+  document.querySelectorAll('.tab-button').forEach(function (btn) {
+    btn.addEventListener('click', function () { activateTab(btn.dataset.tab); });
+  });
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    var target = document.getElementById(href.slice(1));
+    if (!target) return;
+    var pane = target.closest('.tab-pane');
+    if (pane && !pane.classList.contains('active')) {
+      e.preventDefault();
+      var tabId = pane.id.replace(/^tab-/, '');
+      activateTab(tabId);
+      history.pushState(null, '', href);
+      setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+    }
+  });
+  if (location.hash) {
+    var initialTarget = document.getElementById(location.hash.slice(1));
+    var initialPane = initialTarget && initialTarget.closest('.tab-pane');
+    if (initialPane && !initialPane.classList.contains('active')) {
+      activateTab(initialPane.id.replace(/^tab-/, ''));
+      setTimeout(function () { initialTarget.scrollIntoView({ behavior: 'instant', block: 'start' }); }, 50);
+    }
+  }
+})();
+</script>
+
+</body>
+</html>

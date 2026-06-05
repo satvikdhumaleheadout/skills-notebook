@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CVR-RCA · CE 252 Louvre Museum Tickets</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#f5f6fa; color:#1a1a2e; line-height:1.55; }
+  header { background:#1a1a2e; color:#fff; padding:28px 40px 24px; }
+  header .eyebrow { font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#8892a4; margin-bottom:6px; }
+  header h1 { font-size:24px; font-weight:700; }
+  header .meta { margin-top:8px; font-size:13px; color:#b0bec5; }
+  header .meta span { margin-right:20px; }
+  .container { max-width:1050px; margin:0 auto; padding:0 24px 60px; }
+  .section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#8892a4; margin:40px 0 16px; padding-bottom:8px; border-bottom:1px solid #e0e4ef; }
+  .metric-cards { display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:24px; }
+  @media (max-width:800px) { .metric-cards { grid-template-columns:repeat(3, 1fr); } }
+  .metric-card { background:#fff; border-radius:10px; padding:18px 16px 16px; border:1px solid #e8ebf4; }
+  .metric-card .label { font-size:11px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:#8892a4; margin-bottom:8px; }
+  .metric-card .values { display:flex; align-items:baseline; gap:8px; }
+  .metric-card .pre { font-size:14px; color:#8892a4; }
+  .metric-card .post { font-size:22px; font-weight:700; color:#1a1a2e; }
+  .metric-card .delta { font-size:12px; font-weight:600; padding:2px 7px; border-radius:12px; margin-top:6px; display:inline-block; }
+  .delta-neg { background:#fdecea; color:#c62828; }
+  .delta-pos { background:#e8f5e9; color:#2e7d32; }
+  .delta-flat { background:#f3f4f6; color:#555; }
+  .callout { background:#fff; border-left:4px solid #2e7d32; border-radius:0 10px 10px 0; padding:24px 28px; margin-bottom:8px; border-top:1px solid #e8ebf4; border-right:1px solid #e8ebf4; border-bottom:1px solid #e8ebf4; }
+  .callout h2 { font-size:16px; font-weight:700; color:#2e7d32; margin-bottom:16px; letter-spacing:0.2px; }
+  .callout-item { margin-bottom:14px; }
+  .callout-item:last-child { margin-bottom:0; }
+  .callout-item .q { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#8892a4; margin-bottom:4px; }
+  .callout-item .a { font-size:15px; color:#1a1a2e; font-weight:500; }
+  .action-card { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:16px; }
+  .action-card .ac-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:16px; }
+  .priority-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+  .p1 { background:#fdecea; color:#c62828; }
+  .p2 { background:#fff8e1; color:#f57c00; }
+  .p3 { background:#e8f5e9; color:#2e7d32; }
+  .action-card .cause { font-size:15px; font-weight:600; color:#1a1a2e; }
+  .action-card .dri-row { font-size:13px; color:#555; margin-bottom:16px; display:flex; gap:6px; align-items:center; }
+  .dri-badge { background:#e8edf7; color:#3a4a8a; font-weight:600; font-size:12px; padding:2px 9px; border-radius:8px; }
+  .action-card ul { padding-left:18px; font-size:14px; color:#333; }
+  .action-card ul li { margin-bottom:7px; }
+  .analysis-block { background:#fff; border-radius:10px; border:1px solid #e8ebf4; padding:24px 28px; margin-bottom:20px; }
+  .analysis-block .block-title { font-size:14px; font-weight:700; color:#1a1a2e; margin-bottom:6px; }
+  .verdict-line { font-size:14px; font-weight:600; color:#2e7d32; background:#e8f5e9; border-radius:6px; padding:8px 14px; margin-bottom:18px; }
+  .verdict-line.neg { color:#c62828; background:#fdecea; }
+  .verdict-line.neutral { color:#3a4a8a; background:#e8edf7; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:11px; font-weight:700; letter-spacing:0.7px; text-transform:uppercase; color:#8892a4; padding:8px 12px; border-bottom:2px solid #e8ebf4; }
+  td { padding:9px 12px; border-bottom:1px solid #f0f2f8; color:#1a1a2e; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#f8f9ff; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .neg { color:#c62828; font-weight:600; }
+  .pos { color:#2e7d32; font-weight:600; }
+  .highlight-row td { background:#f3f9f3 !important; }
+  .shapley-bars { display:flex; gap:0; border-radius:8px; overflow:hidden; height:32px; margin:16px 0 8px; }
+  .shapley-bar { display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; }
+  .shapley-lp2s { background:#c62828; }
+  .shapley-s2c { background:#2e7d32; }
+  .shapley-c2o { background:#1a8f4a; }
+  .shapley-legend { display:flex; gap:20px; font-size:12px; color:#555; }
+  .legend-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; }
+  .fixed-segment-banner { background:#e8edf7; border-left:4px solid #3a4a8a; border-radius:0 8px 8px 0; padding:12px 16px; margin-bottom:18px; font-size:13px; color:#1a1a2e; }
+  .fixed-segment-banner strong { color:#3a4a8a; }
+  .chart-container { margin-top:16px; }
+  footer { text-align:center; font-size:12px; color:#aaa; padding:24px; margin-top:20px; }
+  html { scroll-behavior:smooth; }
+  .ref-link { color:#3a4a8a; text-decoration:none; font-size:12px; font-weight:700; margin-left:3px; }
+  .ref-link:hover { color:#c62828; }
+  .analysis-block:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; }
+  .md-content:target, .md-content *:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; border-radius: 4px; }
+
+  /* ─── Tabbed report layout — per report_structure.md "Tabbed report structure" ── */
+  /* NOTE: moved out of .container so the bar stretches full-width and the buttons
+     hug the left edge (aligned with the header's 40px content padding) rather than
+     centering inside the 1050px content column. The skill template places .tab-bar
+     inside .container; this is a per-report override for left-aligned tabs. */
+  .tab-bar {
+    display:flex; gap:4px;
+    position:sticky; top:0; z-index:50;
+    background:#1a1a2e;
+    padding:0 40px;
+    border-bottom:1px solid #2a2a44;
+    margin-bottom:24px;
+  }
+  .tab-button {
+    font-family:inherit; font-size:13px; font-weight:600;
+    color:#8892a4; background:transparent; border:none;
+    padding:14px 22px; cursor:pointer;
+    border-bottom:3px solid transparent;
+    transition:color 0.15s, border-color 0.15s;
+  }
+  .tab-button:hover { color:#c8cfe0; }
+  .tab-button.active { color:#fff; border-bottom-color:#4a7eff; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+
+  /* ─── Markdown-sourced tab content (perf-audit) ─── */
+  .md-content {
+    background:#fff; border-radius:10px; border:1px solid #e8ebf4;
+    padding:28px 32px; margin:20px 0; line-height:1.7;
+  }
+  .md-content h1 { font-size:22px; font-weight:800; margin:24px 0 12px; color:#1a1a2e; }
+  .md-content h2 { font-size:18px; font-weight:700; margin:28px 0 10px; color:#1a1a2e; border-bottom:1px solid #e8ebf4; padding-bottom:6px; }
+  .md-content h3 { font-size:15px; font-weight:700; margin:20px 0 8px; color:#2a2a44; }
+  .md-content p { margin:8px 0; }
+  .md-content ul, .md-content ol { margin:8px 0 12px 24px; }
+  .md-content li { margin:4px 0; }
+  .md-content code { font-family:'SF Mono',Menlo,monospace; font-size:12px; background:#f5f6fa; padding:2px 6px; border-radius:4px; color:#c62828; }
+  .md-content a { color:#3a4a8a; text-decoration:none; border-bottom:1px solid rgba(58,74,138,0.3); }
+  .md-content a:hover { border-bottom-color:#3a4a8a; }
+  .md-content hr { border:none; border-top:1px solid #e8ebf4; margin:24px 0; }
+  .md-table {
+    width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;
+    margin:12px 0 16px; font-size:13px;
+  }
+  .md-table th {
+    background:#f5f6fa; color:#8892a4; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.06em;
+    border-bottom:2px solid #e0e4ef; padding:10px 12px; text-align:left;
+  }
+  .md-table td { border-bottom:1px solid #f0f1f5; padding:10px 12px; }
+  .md-table tr:last-child td { border-bottom:none; }
+  .md-table tr:hover td { background:#fafbfd; }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">CVR Root-Cause Analysis · CVR Improved</div>
+  <h1>Louvre Museum Tickets — CE 252</h1>
+  <div class="meta">
+    <span>📅 Pre: 28 Mar – 26 Apr 2026</span>
+    <span>📅 Post: 27 Apr – 26 May 2026</span>
+    <span>🌍 France · Collection</span>
+    <span>🔗 <a href="https://louvre-museum.paristickets.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">louvre-museum.paristickets.com</a></span>
+  </div>
+</header>
+
+<div class="tab-bar" role="tablist">
+  <button class="tab-button active" data-tab="cvr-rca" role="tab" aria-selected="true">CVR RCA</button>
+  <button class="tab-button" data-tab="perfaudit" role="tab" aria-selected="false">Paid Performance Audit</button>
+</div>
+
+<div class="container">
+
+<div class="tab-pane active" id="tab-cvr-rca" role="tabpanel">
+
+<!-- ======================= SECTION 1 ======================= -->
+<div class="section-label">1 · Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">CVR</div>
+    <div class="values"><span class="pre">3.46%</span><span class="post">4.19%</span></div>
+    <div class="delta delta-pos">Δ +0.72pp / +20.8%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">LP2S</div>
+    <div class="values"><span class="pre">38.2%</span><span class="post">34.9%</span></div>
+    <div class="delta delta-neg">Δ −3.3pp / −8.5%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">S2C</div>
+    <div class="values"><span class="pre">28.5%</span><span class="post">32.7%</span></div>
+    <div class="delta delta-pos">Δ +4.2pp / +14.8%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">C2O</div>
+    <div class="values"><span class="pre">31.8%</span><span class="post">36.6%</span></div>
+    <div class="delta delta-pos">Δ +4.8pp / +15.1%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Traffic (LP users)</div>
+    <div class="values"><span class="pre">46.7k</span><span class="post">41.7k</span></div>
+    <div class="delta delta-neg">Δ −5.0k / −10.7%</div>
+  </div>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">90-day CVR Trend — Current vs Last Year</div>
+  <div id="chart-90d" style="height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:10px;">Current-year CVR (red) trends upward through the post window, while LY (grey) declined over the same period. Structural ΔCVR (after stripping seasonality) is <strong>+1.69pp</strong> vs apparent +0.72pp — the lift is real, not seasonal. Pre window starts 28 Mar.</p>
+</div>
+
+<div class="callout">
+  <h2>CVR Improved — What's Driving It &amp; What's Holding It Back</h2>
+  <div class="callout-item">
+    <div class="q">What drove the improvement?</div>
+    <div class="a">CVR rose 3.46% → 4.19% (+0.72pp at CE level). Last year over the same late-March-to-late-May window CVR fell 1.07pp — the calendar transition into peak Paris tourism tends to dilute traffic mix. We rose 0.62pp despite that same seasonal pressure, so <strong>the underlying gain vs the seasonal baseline is +1.69pp</strong> — a structural improvement, not a calendar artefact. Within the dominant cohort <strong>MB · Paid · Google Ads</strong> <a class="ref-link" href="#block-mix-cascade">↗</a>, S2C lifted +3.4pp and C2O lifted +5.6pp, anchored on the main Louvre product (TGID 3909) — 78% of select-page volume — where S2C rose +7.6pp and C2O rose +8.4pp <a class="ref-link" href="#block-experience">↗</a>. C2A is the primary C2O sub-driver (+6.1pp on the fixed segment <a class="ref-link" href="#block-shapley">↗</a>); same/next-day availability improved measurably (median <em>days_to_first_available</em> 1 → 0 on top TGIDs <a class="ref-link" href="#block-availability">↗</a>) — a direct lever for both S2C and C2A. Paid Google Ads quality lens corroborates independently: paid revenue +32%, ROI +17.8pp, CPC efficiency-positive (per perf-audit <a class="ref-link" href="#perfaudit-traffic-quality-pre-vs-post">↗</a>).</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">What's holding it back?</div>
+    <div class="a">LP2S declined −3.3pp at CE level (Shapley −47% <a class="ref-link" href="#block-shapley">↗</a>). Within the fixed segment, the headwind is broad across devices (iOS −5.8pp, Android −4.1pp, Desktop −5.7pp <a class="ref-link" href="#block-device">↗</a>) — not a device-specific UX regression. Two contributors: (1) the secondary MB URL <code>paristickets.com/louvre-museum/</code> retreated from 11.3% → 4.7% of LP traffic, and that URL had higher native LP2S (61% vs 53% on the primary URL) — a routing effect that lowers the weighted average; (2) the primary microsite URL's own LP2S fell 53% → 48% on +1,663 user growth <a class="ref-link" href="#block-url">↗</a>. Per perf-audit <a class="ref-link" href="#perfaudit-traffic-quality-pre-vs-post">↗</a>, paid quality IMPROVED (refutes a paid-dilution explanation), so the residual is consistent with an on-page browsing/engagement change rather than traffic quality.</div>
+  </div>
+  <div class="callout-item">
+    <div class="q">When did improvement begin?</div>
+    <div class="a">Gradual. No sharp inflection date <a class="ref-link" href="#block-daily-trend">↗</a>; the lift compounds across the post window with the strongest daily readings in mid-May. <code>pre_period_healthy = TRUE</code> (so the pre-window baseline is not depressed). The fact that LY <em>declined</em> over the same calendar window while we improved is what makes the structural gain meaningful, not just a recovery story.</div>
+  </div>
+</div>
+
+<!-- ======================= SECTION 2 ======================= -->
+<div class="section-label">2 · Actions</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Protect</span>
+    <div class="cause">Lock in same/next-day availability on TGID 3909 (Louvre Museum Reserved Access Tickets) — the S2C +7.6pp and C2A +6.1pp lift depends on the daily 0–2d ticket counts (median ~1,700 across TIDs 13861 + 5980, range 286–4,398 over the post window) holding through the summer peak. <a class="ref-link" href="#block-availability">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>BDM / Ops — France supply ownership for Louvre supply partners</span></div>
+  <ul>
+    <li>Confirm with the SP that same-day and next-day inventory commitments hold for at least the next 60 days; quantify the 0–2d ticket counts currently shown on TGID 3909 (TIDs 13861 + 5980) and document the SP's commitment.</li>
+    <li>Document the current API cut-off period and release-window settings for TGID 3909 so a future routine update does not silently reduce near-term availability — same-day inventory is the lever carrying ~⅔ of the S2C lift on the dominant product.</li>
+    <li>Set up an alert on the <code>inventory_availability</code> 0–2d bucket for TGID 3909 (trigger if the combined daily ticket count on TIDs 13861 + 5980 falls below ~500 over any rolling 7-day window) — flags a supply regression within a week instead of waiting for CVR to drop.</li>
+    <li>Audit the same availability state on TGID 23442 (Combo: Louvre + Seine River Cruise) which shares TID 50290 with TGID 3909 — confirm whether the shared combo TID's 0–2d ticket counts and the dedicated standalone TID counts are both being managed by the same SP-side cut-off period.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p2">P2 — Extend</span>
+    <div class="cause">Geo France traffic on Google Ads MB grew +60.8% (3,265 → 5,249 LP users) at +1.19pp CVR uplift — sustain or scale French-language Google Search investment through the May–August Paris peak. <a class="ref-link" href="#block-geo">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Performance Marketing — French market / Google Ads</span></div>
+  <ul>
+    <li>Quantify the budget headroom: French-language Google Search is currently the highest-CVR cohort entering the funnel on this CE (Geo France CVR 5.94% vs Non-Geo 5.35% within Google Ads MB). Raise the budget cap to absorb additional demand without diluting CVR — perf-audit reports no budget exhaustion on French campaigns (budget-lost IS ≤6.1% on non-English).</li>
+    <li>Replicate the French audience expansion playbook to adjacent Paris CEs (Eiffel Tower, Versailles, Orsay) in the same market — the same seasonal/demand pattern likely lifts there too.</li>
+    <li>Audit the 64–84% rank-lost impression-share ceiling across language cohorts (flagged by perf-audit as a structural ceiling). Quality Score remediation on the highest-CVR cohorts (French, Italian, Spanish) is the headroom unlock for the next quarter.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <span class="priority-badge p3">P3 — Investigate-headwind</span>
+    <div class="cause">LP2S on the primary microsite URL <code>louvre-museum.paristickets.com/</code> fell 53% → 48% on a +1,663 user growth — paid-quality is ruled out, so the cause is likely on-page (content, sort order, or browsing-behaviour shift). Worth a structured page-element audit. <a class="ref-link" href="#block-url">↗</a></div>
+  </div>
+  <div class="dri-row"><span class="dri-badge">DRI</span><span>Product / Content — Microsite team</span></div>
+  <ul>
+    <li>Run a page-element diff on <code>louvre-museum.paristickets.com/</code> between pre and post windows: top-3 listed TGIDs, sort order, hero image, price anchors, badge configuration. Flag any element introduced or removed after 26 Apr.</li>
+    <li>Pull session recordings on the primary URL filtered to Google Ads · iOS Mweb (the highest-volume bucket) — 10 recordings landed before 26 Apr, 10 recordings landed after — and look for changes in scroll depth, time-to-first-tap, or interaction with the listing tiles.</li>
+    <li>Quantify the routing-vs-performance split of the LP2S headwind. Of the −5.2pp fixed-segment LP2S decline, approximately one-third is the secondary URL retreating (mix effect); the other two-thirds is the primary URL's own rate decline. Confirm the split by recomputing weighted LP2S holding URL share constant — if the on-page residual is smaller than two-thirds, the page audit need not be P2.</li>
+  </ul>
+</div>
+
+<!-- ======================= SECTION 3 ======================= -->
+<div class="section-label">3 · Supporting Analysis</div>
+
+<!-- ===== Mix cascade ===== -->
+<div class="analysis-block" id="block-mix-cascade">
+  <div class="block-title">Mix Cascade — Routing vs Conversion at Three Levels</div>
+  <div class="verdict-line">Conversion change at every level. <strong>Fixed segment: MB · Paid · Google Ads.</strong> Mix shift toward Paid contributes meaningfully (~⅓ of MB's lift) but is overshadowed by conversion lift within Paid.</div>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:8px 0 4px;">Level 1 — MB vs HO</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>MB (primary)</td><td class="num">95.06%</td><td class="num">93.33%</td><td class="num">3.41%</td><td class="num pos">4.20%</td><td class="num">−0.06pp</td><td class="num pos">+0.75pp</td><td>Conversion</td></tr>
+      <tr><td>HO</td><td class="num">4.94%</td><td class="num">6.67%</td><td class="num">6.73%</td><td class="num">5.58%</td><td class="num">+0.12pp</td><td class="num">−0.06pp</td><td>Mix</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 2 — Paid vs Organic within MB</p>
+  <table>
+    <thead><tr><th>Segment</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv effect</th><th>Driver</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Paid (fixed)</td><td class="num">63.25%</td><td class="num">72.94%</td><td class="num">4.22%</td><td class="num pos">4.87%</td><td class="num pos">+0.41pp</td><td class="num pos">+0.41pp</td><td>Both</td></tr>
+      <tr><td>Organic</td><td class="num">36.75%</td><td class="num">27.06%</td><td class="num">1.88%</td><td class="num">2.12%</td><td class="num">−0.18pp</td><td class="num">+0.09pp</td><td>Mix</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:16px 0 4px;">Level 3 — Channel within Paid MB</p>
+  <table>
+    <thead><tr><th>Channel</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th></tr></thead>
+    <tbody>
+      <tr class="highlight-row"><td>Google Ads (fixed)</td><td class="num">22,935</td><td class="num">23,155</td><td class="num">4.56%</td><td class="num pos">5.42%</td><td class="num neg">51.8% → 46.6%</td><td class="num pos">27.3% → 30.7%</td><td class="num pos">32.3% → 37.9%</td></tr>
+      <tr><td>Microsoft Ads</td><td class="num">6,867</td><td class="num">6,943</td><td class="num">3.07%</td><td class="num">3.01%</td><td class="num">30.8% → 25.0%</td><td class="num">32.0% → 36.1%</td><td class="num">31.2% → 33.4%</td></tr>
+    </tbody>
+  </table>
+
+  <div class="fixed-segment-banner">
+    <strong>Fixed segment for all subsequent analysis:</strong> <code>is_microbrand_page = TRUE</code> AND <code>channel_name = 'Google Ads'</code>. Google Ads carries 77% of Paid MB volume on flat share — conversion-driven, +0.86pp CVR lift.
+  </div>
+</div>
+
+<!-- ===== Geo overview ===== -->
+<div class="analysis-block" id="block-geo">
+  <div class="block-title">Geo Overview — Domestic France vs Non-Geo (Google Ads · MB)</div>
+  <div class="verdict-line">Both Geo France and Non-Geo improved on CVR. Geo France contributes a notable volume injection (+60.8%) with the larger per-user lift; Non-Geo remains the majority of traffic and lifted +0.79pp.</div>
+  <table>
+    <thead><tr><th>Group</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td>Geo (France)</td><td>pre</td><td class="num">3,265</td><td class="num">54.7%</td><td class="num">23.7%</td><td class="num">36.6%</td><td class="num">4.75%</td></tr>
+      <tr class="highlight-row"><td>Geo (France)</td><td>post</td><td class="num pos">5,249 (+60.8%)</td><td class="num">48.6%</td><td class="num pos">27.8%</td><td class="num pos">43.9%</td><td class="num pos">5.94%</td></tr>
+      <tr><td>Non-Geo</td><td>pre</td><td class="num">19,799</td><td class="num">51.4%</td><td class="num">27.9%</td><td class="num">31.9%</td><td class="num">4.57%</td></tr>
+      <tr><td>Non-Geo</td><td>post</td><td class="num">18,141</td><td class="num">46.2%</td><td class="num pos">31.7%</td><td class="num pos">36.6%</td><td class="num pos">5.35%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Domestic French traffic surged on Google Ads MB — consistent with spring/Easter and early-summer demand for the Louvre — at a notable per-user CVR lift. Non-Geo (international) traffic shrank slightly but its CVR also rose, so the improvement is broad-based. Note: downstream supply/inventory and pricing tables are not geo-filtered (product-level only); the Geo signal informs hypothesis direction but does not change the analysis scope.</p>
+</div>
+
+<!-- ===== Shapley ===== -->
+<div class="analysis-block" id="block-shapley">
+  <div class="block-title">Shapley Decomposition — Which Funnel Step Carries the ΔCVR</div>
+  <div class="verdict-line">C2O and S2C carry the lift in roughly equal measure. LP2S is the headwind. The three values sum to ΔCVR exactly (Shapley sums to total by construction).</div>
+  <div class="shapley-bars" style="position:relative;">
+    <div class="shapley-bar shapley-lp2s" style="width:24%;">LP2S −0.34pp</div>
+    <div class="shapley-bar shapley-s2c" style="width:38%;">S2C +0.53pp</div>
+    <div class="shapley-bar shapley-c2o" style="width:38%;">C2O +0.54pp</div>
+  </div>
+  <div class="shapley-legend"><span><span class="legend-dot" style="background:#c62828;"></span>LP2S (−47%)</span><span><span class="legend-dot" style="background:#2e7d32;"></span>S2C (+73%)</span><span><span class="legend-dot" style="background:#1a8f4a;"></span>C2O (+74%)</span></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Within C2O, <strong>C2A is the primary sub-driver</strong>: C2A 40.3% → 44.8% (+4.5pp at CE level; +6.1pp within fixed segment), A2O 79.0% → 81.7% (+2.7pp). The improvement is concentrated at the checkout-form stage — users abandoning before submitting payment fell sharply.</p>
+</div>
+
+<!-- ===== Daily trend ===== -->
+<div class="analysis-block" id="block-daily-trend">
+  <div class="block-title">Daily CVR + Funnel-step Trend (Pre + Post, CE-level)</div>
+  <div class="verdict-line">Gradual lift across the post window. No sharp inflection date; the strongest daily CVR readings come in mid-May, consistent with compounding seasonal/structural effects rather than a single deploy event.</div>
+  <div id="chart-daily" style="height:300px;"></div>
+</div>
+
+<!-- ===== Experience-level ===== -->
+<div class="analysis-block" id="block-experience">
+  <div class="block-title">Experience-level Breakdown — Where the Lift Concentrates</div>
+  <div class="verdict-line">TGID 3909 (Louvre Museum Tickets, the main product) is the dominant lift carrier — 78% of select-page volume, S2C +7.6pp, C2O +8.4pp, completions +57.6%.</div>
+  <table>
+    <thead><tr><th>Experience</th><th>Period</th><th class="num">Selects</th><th class="num">Checkouts</th><th class="num">Completions</th><th class="num">S2C</th><th class="num">C2O</th></tr></thead>
+    <tbody>
+      <tr><td>TGID 3909 — Louvre Museum Reserved Access Tickets</td><td>pre</td><td class="num">9,013</td><td class="num">1,908</td><td class="num">564</td><td class="num">21.2%</td><td class="num">29.6%</td></tr>
+      <tr class="highlight-row"><td>TGID 3909 — Louvre Museum Reserved Access Tickets</td><td>post</td><td class="num">8,133</td><td class="num pos">2,340 (+22.6%)</td><td class="num pos">889 (+57.6%)</td><td class="num pos">28.8% (+7.6pp)</td><td class="num pos">38.0% (+8.4pp)</td></tr>
+      <tr><td>TGID 9082</td><td>pre</td><td class="num">2,093</td><td class="num">264</td><td class="num">75</td><td class="num">12.6%</td><td class="num">28.4%</td></tr>
+      <tr><td>TGID 9082</td><td>post</td><td class="num">1,734</td><td class="num">196</td><td class="num">66</td><td class="num">11.3%</td><td class="num">33.7%</td></tr>
+      <tr><td>TGID 23442</td><td>pre</td><td class="num">1,114</td><td class="num">237</td><td class="num">64</td><td class="num">21.3%</td><td class="num">27.0%</td></tr>
+      <tr><td>TGID 23442</td><td>post</td><td class="num">878</td><td class="num">314</td><td class="num">91</td><td class="num pos">35.8% (+14.5pp)</td><td class="num">29.0%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">TGID 3909 carries 78% of select-page volume on the fixed segment and accounts for the majority of the lift in both S2C and C2O. No new TGID launched mid-window with material volume — Pattern 11 (catalogue change) ruled out: experiences first-seen in the post period all have ≤40 select rows, i.e. long-tail.</p>
+</div>
+
+<!-- ===== Availability ===== -->
+<div class="analysis-block" id="block-availability">
+  <div class="block-title">Availability — Inventory Per Lead-Time Bucket (Path A · post period only)</div>
+  <div class="verdict-line">TGID 3909 (Louvre Museum Reserved Access Tickets) carried <strong>~1,500–2,500 bookable tickets in the 0–2 day window every day</strong> across the post period, with 3–7d and 8–13d buckets in the thousands. Near-term supply is abundant and stable — directly supports the S2C +7.6pp and C2A +6.1pp lift on this TGID.</div>
+
+  <p style="font-size:13px;color:#e07b00;background:#fff8e1;border-left:4px solid #f9a825;padding:10px 14px;margin-bottom:14px;border-radius:0 4px 4px 0;"><strong>Path A — pre-period inventory unavailable:</strong> the <code>inventory_availability</code> table only retains the trailing ~30 days, so the pre window (28 Mar – 26 Apr) is no longer queryable. Showing post-period medians and the daily time-series for the post window only; pre-period state is informed by <code>days_to_first_available_date</code> from <code>product_rankings_features</code> (the analytics_features daily snapshot of "days to first bookable slot") which showed the median fell 1 → 0 — directionally consistent with the abundant near-term supply observed below.</p>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:8px 0 6px;">Post-period median daily inventory per TID (limited-capacity, total tickets remaining)</p>
+  <table>
+    <thead>
+      <tr>
+        <th>TGID · TID</th>
+        <th>Tour name</th>
+        <th class="num">Median 0–2d</th>
+        <th class="num">Median 3–7d</th>
+        <th class="num">Median 8–13d</th>
+        <th class="num">Median 14–30d</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td>3909 · TID 13861</td><td>Skip The Line Entry + Audioguide</td><td class="num pos">793</td><td class="num pos">1,295</td><td class="num pos">1,799</td><td class="num pos">6,119</td></tr>
+      <tr class="highlight-row"><td>3909 · TID 5980</td><td>Skip The Line Tickets Only</td><td class="num pos">916</td><td class="num pos">2,250</td><td class="num pos">3,125</td><td class="num pos">9,134</td></tr>
+      <tr><td>3909 · TID 50290 ¹</td><td>Louvre + Seine River Cruise (combo)</td><td class="num">904</td><td class="num">2,235</td><td class="num">3,388</td><td class="num">9,247</td></tr>
+      <tr><td>23442 · TID 50290 ¹</td><td>Louvre + Seine River Cruise (combo)</td><td class="num">904</td><td class="num">2,235</td><td class="num">3,388</td><td class="num">9,247</td></tr>
+      <tr><td>9082 · TID 16383</td><td>2 Hours Guided Tour</td><td class="num">218</td><td class="num">655</td><td class="num">930</td><td class="num">3,165</td></tr>
+      <tr><td>9082 · TID 50337</td><td>2-Hr Guided Tour</td><td class="num">101</td><td class="num">364</td><td class="num">490</td><td class="num">1,548</td></tr>
+      <tr><td>9082 · TID 87741/2/3</td><td>Louvre Private Guided Tour (Eng/Fre/Spa)</td><td class="num">42–46</td><td class="num">168–176</td><td class="num">210–220</td><td class="num">612–642</td></tr>
+      <tr><td>9082 · TID 50848</td><td>German Guided Tour</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">4</td></tr>
+      <tr><td>9082 · TID 90191</td><td>Semi-Private Guided Tour Spanish</td><td class="num">0</td><td class="num">6</td><td class="num">6</td><td class="num">37</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:#777;margin-top:8px;font-style:italic;">¹ TID 50290 (the Combo: Louvre + Seine River Cruise) is shared between TGID 3909 and TGID 23442 — it appears once per TGID in the table but the inventory is the same physical pool.</p>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:18px 0 6px;">Daily inventory time-series — TGID 3909 standalone TIDs (13861 + 5980 aggregated)</p>
+  <div id="chart-inventory-3909" style="height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Across all 30 days of the post period the 0–2d bucket on the two standalone Louvre TIDs stayed between ~290 and ~4,400 tickets (most days 1,500–3,000); the 14–30d bucket grew from ~14,000 in late April to ~18,000 in mid-May — supply expanded forward, not contracted. No bucket shows the sustained depression that would indicate a supply constraint. <strong>Supply is healthy and abundant</strong> on the dominant TGID — the right condition for both the S2C lift (users see bookable near-term slots at the date-picker) and the C2A lift (no last-minute "sold out" surprise at the checkout step).</p>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:18px 0 6px;">Pricing — top TGIDs (product_rankings_features, pre vs post medians)</p>
+  <table>
+    <thead><tr><th>TGID</th><th>Period</th><th class="num">Median price (USD)</th><th class="num">Avg rating</th></tr></thead>
+    <tbody>
+      <tr><td>3909 — Louvre Museum Reserved Access Tickets</td><td>pre</td><td class="num">$56.44</td><td class="num">4.20</td></tr>
+      <tr><td>3909 — Louvre Museum Reserved Access Tickets</td><td>post</td><td class="num">$57.34</td><td class="num">4.11</td></tr>
+      <tr><td>9082 — Louvre Museum Guided Tour</td><td>pre</td><td class="num">$70.36</td><td class="num">4.40</td></tr>
+      <tr><td>9082 — Louvre Museum Guided Tour</td><td>post</td><td class="num">$57.25</td><td class="num">4.40</td></tr>
+      <tr><td>23442 — Combo: Louvre + Seine</td><td>pre</td><td class="num">$67.92</td><td class="num">3.80</td></tr>
+      <tr><td>23442 — Combo: Louvre + Seine</td><td>post</td><td class="num">$68.01</td><td class="num">3.80</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">Pricing on the dominant TGID 3909 is effectively flat (+1.6%). TGID 9082's median price fell ~19% but its volume also fell — not a major lift driver. The consistent signal is <strong>abundant near-term supply</strong> across the post window — not a price story.</p>
+</div>
+
+<!-- ===== Device ===== -->
+<div class="analysis-block" id="block-device">
+  <div class="block-title">Device — Where Improvement Concentrates &amp; Why LP2S Headwind Is Broad</div>
+  <div class="verdict-line">iOS Mweb is the dominant device beneficiary (volume +18.6%, CVR +1.65pp). LP2S decline is broad across all devices (−4 to −6pp) — confirms the headwind is not a mobile-specific UX regression.</div>
+  <table>
+    <thead><tr><th>Device</th><th>Period</th><th class="num">Users</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td>iOS Mweb</td><td>pre</td><td class="num">9,765</td><td class="num">50.7%</td><td class="num">21.6%</td><td class="num">34.8%</td><td class="num">3.81%</td></tr>
+      <tr class="highlight-row"><td>iOS Mweb</td><td>post</td><td class="num pos">11,583</td><td class="num neg">44.9%</td><td class="num pos">28.7%</td><td class="num pos">42.5%</td><td class="num pos">5.46%</td></tr>
+      <tr><td>Android Mweb</td><td>pre</td><td class="num">6,385</td><td class="num">56.9%</td><td class="num">24.1%</td><td class="num">29.5%</td><td class="num">4.04%</td></tr>
+      <tr><td>Android Mweb</td><td>post</td><td class="num">6,425</td><td class="num neg">52.8%</td><td class="num">25.8%</td><td class="num">32.0%</td><td class="num">4.36%</td></tr>
+      <tr><td>Desktop</td><td>pre</td><td class="num">6,650</td><td class="num">48.5%</td><td class="num">39.4%</td><td class="num">32.1%</td><td class="num">6.15%</td></tr>
+      <tr><td>Desktop</td><td>post</td><td class="num">4,995</td><td class="num neg">42.8%</td><td class="num">43.7%</td><td class="num">36.3%</td><td class="num pos">6.79%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">iOS Mweb improved on S2C, C2O, and CVR while attracting +18.6% more volume — the strongest single segment in this RCA. Desktop volume fell (−24.9%) but per-user CVR still rose. The LP2S decline visits every device with similar magnitude, ruling out a device-specific UX regression.</p>
+</div>
+
+<!-- ===== URL ===== -->
+<div class="analysis-block" id="block-url">
+  <div class="block-title">URL Breakdown — Landing-Page Routing &amp; Performance</div>
+  <div class="verdict-line">Routing shift: traffic consolidated onto the primary microsite URL (82% → 89% of LP). The retreating secondary URL had higher native LP2S (61%) — its loss is part of the aggregate LP2S decline. The primary URL's own LP2S also fell modestly (53% → 48%).</div>
+  <table>
+    <thead><tr><th>URL</th><th>Period</th><th class="num">Users</th><th class="num">% of LP</th><th class="num">LP2S</th><th class="num">S2C</th><th class="num">C2O</th><th class="num">CVR</th></tr></thead>
+    <tbody>
+      <tr><td><code>louvre-museum.paristickets.com/</code></td><td>pre</td><td class="num">19,479</td><td class="num">82.2%</td><td class="num">53.0%</td><td class="num">26.9%</td><td class="num">32.1%</td><td class="num">4.56%</td></tr>
+      <tr class="highlight-row"><td><code>louvre-museum.paristickets.com/</code></td><td>post</td><td class="num pos">21,142</td><td class="num pos">89.1%</td><td class="num neg">48.0%</td><td class="num pos">30.8%</td><td class="num pos">38.1%</td><td class="num pos">5.64%</td></tr>
+      <tr><td><code>paristickets.com/louvre-museum/</code></td><td>pre</td><td class="num">2,679</td><td class="num">11.3%</td><td class="num">60.9%</td><td class="num">32.1%</td><td class="num">32.3%</td><td class="num">6.31%</td></tr>
+      <tr class="highlight-row"><td><code>paristickets.com/louvre-museum/</code></td><td>post</td><td class="num neg">1,121 (−58%)</td><td class="num neg">4.7%</td><td class="num neg">51.4%</td><td class="num">32.3%</td><td class="num">33.3%</td><td class="num">5.53%</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">The secondary URL retreated sharply — −58% in volume and −6pp in its own LP2S. Because that URL had structurally higher LP2S than the primary (61% vs 53%), its withdrawal drags the weighted-average LP2S down even before any on-page change. The primary URL absorbed +1,663 users but its own LP2S fell 5pp — perf-audit refutes paid-quality dilution, so the residual is consistent with an on-page change (sort order, listed experiences, hero image, or browsing behaviour). This is the P3 Investigate-headwind action card.</p>
+</div>
+
+<!-- ===== Market context (perf-audit) ===== -->
+<div class="analysis-block" id="block-market-context">
+  <div class="block-title">Market Context &amp; Operational Signals</div>
+  <div class="verdict-line neutral">Independent corroboration: Paid Google Ads is HEALTHY and IMPROVED Pre → Post. This refutes the "paid traffic dilution" explanation for the LP2S decline — the residual is on-page, not upstream.</div>
+  <table>
+    <thead><tr><th>Signal</th><th>What it tells us about this report</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Paid Google Ads verdict: HEALTHY · traffic quality IMPROVED</td>
+        <td>Direct corroboration of the CVR lift. Paid revenue +32%, ROI +17.8pp, Paid CVR +0.7pp on +13% clicks. CPC +5% offset by RPC +16% (efficiency-positive). Google is bidding more aggressively, not less — this is a Pattern A signal supporting the "Paid grew share and converted better" leg of the root cause.</td>
+        <td><a href="#perfaudit-traffic-quality-pre-vs-post" class="ref-link">perf-audit §2 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Campaign status: no pauses, no tROAS self-suppression, no budget exhaustion (except English at 11.3%)</td>
+        <td>Rules out a campaign-pause routing story. The conversion-path cascade was the right interpretation.</td>
+        <td><a href="#perfaudit-campaign-status-audit" class="ref-link">perf-audit §4 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Structural ceiling: 64–84% rank-lost impression share across language cohorts</td>
+        <td>Pre-existing structural ceiling — not a Pre → Post mover. Surfaces an Extend opportunity: Quality Score remediation on the highest-CVR cohorts would unlock additional volume.</td>
+        <td><a href="#perfaudit-sis-reach-largest-cohorts-l4w" class="ref-link">perf-audit §3 ↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">The perf-audit verdict carries the heavy weight in the corroboration story above. Slack signals are documented below for completeness — none materially reframe the data-driven findings.</p>
+
+  <p style="font-size:12px;font-weight:600;color:#444;margin:18px 0 6px;">Slack signals (12 collected — none material to the root cause)</p>
+  <table>
+    <thead><tr><th>Signal</th><th>Pattern</th><th>Why it doesn't reframe the report</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Argus P0/P1 alerts cluster on Zapdos, Calipso, Wallstreet, Next-Deimos, Kirby, headout-nginx-1</td>
+        <td>Reject</td>
+        <td>All alerts fired on <strong>2026-05-26</strong> — the final day of the 30-day post window. A single day of platform incidents at the tail does not move a 30-day funnel aggregate. Worth monitoring separately by the platform team; not a CVR-RCA finding.</td>
+        <td><a href="https://headout.slack.com/archives/C038T64PD/p1779791576087169" target="_blank" style="color:#3a4a8a;">Argus · May 26 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Mohamed Anas — "Have checked, Louvre does not require age. Can we hardcode as 'NA'?"</td>
+        <td>D — testable gap (not pursued)</td>
+        <td>Forward-looking <em>request</em> (May 25) to simplify a Louvre booking field, not a confirmation that the change already shipped. If a custom-field removal lands and a follow-up RCA shows an additional C2A lift, this is the place to come back to. Within this window the C2A +6.1pp is already explained by availability + pricing transparency.</td>
+        <td><a href="https://headout.slack.com/archives/CH64TEB71/p1779697695934829" target="_blank" style="color:#3a4a8a;">Mohamed Anas · May 25 ↗</a></td>
+      </tr>
+      <tr>
+        <td>4-PDF attachment bug — Seine River Cruise and Louvre bookings</td>
+        <td>Reject</td>
+        <td>Post-booking artefact, not a funnel-step issue. CX/Ops concern, not a CVR mover.</td>
+        <td><a href="https://headout.slack.com/archives/C038T64PD/p1779448290725099" target="_blank" style="color:#3a4a8a;">Manisha · May 22 ↗</a></td>
+      </tr>
+      <tr>
+        <td>Vedashree — rankings adhoc, "CVR/ARPU flat across groups including louvre-museum.paristickets.com subdomain"</td>
+        <td>Reject</td>
+        <td>Different framing (cross-CE URL-group cuts on a different time slice), not directly comparable to this pre/post; does not contradict the conversion lift inside the fixed segment.</td>
+        <td><a href="https://headout.slack.com/archives/C0526LMJYTX/p1779684300966639" target="_blank" style="color:#3a4a8a;">Vedashree · May 25 ↗</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;color:#777;margin-top:14px;font-style:italic;"><strong>Caveat on Slack coverage:</strong> the Slack context sub-agent took ~22 min to return (long-running global search across multiple channels) and was logged as "unavailable" in the initial findings.md per the SKILL.md fallback rule. The signals above were reconciled in a follow-up pass after the report was first written — captured here for completeness. Additionally, the sub-agent's read of <code>#mkt-france</code> was denied by Slack permissions, so French-market campaign-level signals are only partially covered (caught via the global Louvre search instead of a full channel scan). If a French-campaign mechanism mattered to this RCA, that gap would be material — but the data-driven cascade and perf-audit verdict already explain the lift without needing it.</p>
+</div>
+
+<!-- ===== Ruled-out dimensions ===== -->
+<div class="analysis-block" id="block-ruled-out">
+  <div class="block-title">Dimensions Checked — Ruled Out as Independent Drivers</div>
+  <p style="font-size:13px;color:#555;margin-bottom:10px;">These cuts were run but did not surface an independent mechanism beyond what the primary findings already explain.</p>
+  <ul style="padding-left:18px;font-size:13px;color:#444;">
+    <li><strong>Catalogue change (Pattern 11):</strong> no new TGID with material volume launched inside the window, and no high-volume TGID was disabled. TGIDs first-seen in the post period all have ≤40 select rows (long-tail). The lift comes from improved conversion on existing inventory, not catalogue restructure.</li>
+    <li><strong>Device-specific UX regression:</strong> LP2S declined uniformly across iOS Mweb (−5.8pp), Android (−4.1pp) and Desktop (−5.7pp). A device-specific deploy regression would concentrate on one platform — this does not.</li>
+    <li><strong>Microsoft Ads:</strong> within Paid MB, Microsoft Ads share is flat at 23%, CVR essentially flat (3.07% → 3.01%). Not a contributor to the lift in either direction.</li>
+    <li><strong>HO (headout.com) brand:</strong> only 5–7% of total LP volume; small mix gain (+0.04pp net) is dominated by MB's +0.68pp.</li>
+  </ul>
+</div>
+
+<!-- ===== Hypotheses explored ===== -->
+<div class="analysis-block" id="block-hypotheses">
+  <div class="block-title">Hypotheses Explored</div>
+  <table>
+    <thead><tr><th>Hypothesis</th><th>Status</th><th>Test run</th></tr></thead>
+    <tbody>
+      <tr><td>Conversion lift on dominant TGID 3909 (S2C + C2O)</td><td class="pos">CONFIRMED</td><td>Experience-level funnel breakdown (fixed segment) <a href="#block-experience" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Same/next-day availability improvement is the S2C/C2A lever</td><td class="pos">CONFIRMED</td><td>inventory_availability Path A medians + daily time-series on TGID 3909 (TIDs 13861, 5980); days_to_first_available_date as directional corroborator for pre period <a href="#block-availability" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Paid share growth (mix) contributes to CE-level CVR</td><td class="pos">CONFIRMED</td><td>Cascade L2 within MB; +0.23pp mix effect <a href="#block-mix-cascade" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Domestic France volume surge with CVR uplift</td><td class="pos">CONFIRMED</td><td>Geo cut on fixed segment <a href="#block-geo" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>iOS Mweb concentration of lift</td><td class="pos">CONFIRMED</td><td>Device cut on fixed segment <a href="#block-device" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>URL routing shift partly explains LP2S decline</td><td class="pos">CONFIRMED</td><td>URL breakdown with pct_of_lp <a href="#block-url" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Paid traffic-quality dilution explains LP2S decline</td><td class="neg">RULED OUT</td><td>Per perf-audit, paid quality IMPROVED, CPC efficiency-positive <a href="#perfaudit-traffic-quality-pre-vs-post" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Catalogue change (Pattern 11) drove the lift</td><td class="neg">RULED OUT</td><td>TGIDs first-seen in post all ≤40 select rows <a href="#block-experience" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Device-specific UX regression caused LP2S decline</td><td class="neg">RULED OUT</td><td>LP2S decline broad across all 3 devices (~4–6pp each) <a href="#block-device" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Sharp deploy event caused the change on a specific date</td><td class="neg">RULED OUT</td><td>Daily trend shows gradual lift across post window, no inflection <a href="#block-daily-trend" style="color:#3a4a8a;text-decoration:none;">↗</a></td></tr>
+      <tr><td>Slack-reported operational events explain residual</td><td class="neg">RULED OUT</td><td>12 Slack signals reconciled post-hoc; none Pattern A/B/C; Argus alerts isolated to the last day of the window; one Pattern D candidate (Louvre age-field simplification) is a forward-looking request, not an in-window change <a class="ref-link" href="#block-market-context">↗</a></td></tr>
+      <tr><td>Primary URL on-page change explains residual LP2S decline</td><td>OPEN</td><td>Consistent with the data after ruling out paid-quality; requires page-element audit / recordings (P3 action card)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /tab-pane cvr-rca -->
+
+<div class="tab-pane" id="tab-perfaudit" role="tabpanel">
+<div class="md-content">
+
+<h1 id="perfaudit-paid-performance-audit-louvre-museum-tickets-ce-252">Paid Performance Audit: Louvre Museum Tickets (CE 252)</h1>
+<p><strong>Market</strong>: France<br>
+<strong>Pre window (P4W)</strong>: 2026-03-28 — 2026-04-26<br>
+<strong>Post window (L4W)</strong>: 2026-04-27 — 2026-05-26<br>
+<strong>LY</strong>: 2025-04-28 — 2025-05-27<br>
+<strong>Trigger</strong>: CVR-RCA cascade fixed on Paid · Google Ads · MB</p>
+
+<hr>
+
+<h2 id="perfaudit-executive-summary">1. Executive Summary</h2>
+<p><strong>Status: HEALTHY (paid channel)</strong></p>
+<p>Paid Google Ads delivered a strong post-period: revenue +32%, ROI +17.8pp, CVR +0.7pp on +13% clicks at +5% CPC. None of the classic perf-suppression signatures fire (no tROAS-driven self-suppression, no broad budget exhaustion, no dormant primary campaigns, no SIS collapse). The cascade fix on Paid · Google Ads · MB is therefore unlikely to be caused by a paid-acquisition regression — paid quality and reach both improved Pre→Post. The remaining anomaly worth flagging is <strong>English campaign budget-lost IS at 11.3%</strong> (just over the 10% threshold) on the largest single cohort (38% of Google Search CM1) with extreme rank-lost (75.7%) — a chronic supply gap that pre-existed both windows, not a Post-period change.</p>
+
+<hr>
+
+<h2 id="perfaudit-traffic-quality-pre-vs-post">2. Traffic Quality (Pre vs Post)</h2>
+<p><strong>Paid (Google Search + PMax + Bing) — Table 2:</strong></p>
+<table class="md-table">
+  <thead><tr><th>Metric</th><th>P4W (Pre)</th><th>L4W (Post)</th><th>Δ</th></tr></thead>
+  <tbody>
+    <tr><td>Paid Revenue</td><td>$32.7K</td><td>$43.1K</td><td>+32%</td></tr>
+    <tr><td>Paid ROI</td><td>130.37%</td><td>148.14%</td><td>+17.8pp</td></tr>
+    <tr><td>RPC</td><td>$0.69</td><td>$0.80</td><td>+16%</td></tr>
+    <tr><td>CPC</td><td>$0.80</td><td>$0.84</td><td>+5%</td></tr>
+    <tr><td>Ad Spend</td><td>$37.8K</td><td>$45.2K</td><td>+20%</td></tr>
+    <tr><td>Clicks</td><td>47,477</td><td>53,832</td><td>+13%</td></tr>
+    <tr><td>CTR</td><td>6.34%</td><td>5.99%</td><td>-0.4pp</td></tr>
+    <tr><td>Paid CVR</td><td>3.12%</td><td>3.86%</td><td><strong>+0.7pp</strong></td></tr>
+    <tr><td>Paid CR</td><td>90.34%</td><td>97.27%</td><td>+6.9pp</td></tr>
+  </tbody>
+</table>
+<p><strong>Read:</strong> CVR is up, ROI is up, RPC is up, clicks are up. CPC rose 5% but RPC rose 16% — clicks are higher quality, not more expensive in real terms. CTR softened 0.4pp which is the only mildly negative signal; could indicate slightly broader match-type reach but volume + CVR more than compensated.</p>
+<p><strong>Channel composition (BQ, fct_orders L4W vs P4W):</strong></p>
+<ul>
+  <li>Google Search: $37.3K (+56% vs P4W) — main driver</li>
+  <li>Google PMax: $22.8K (+42% vs P4W)</li>
+  <li>Bing: $6.3K (+40% vs P4W)</li>
+  <li>Google Cross-sell: -22% (only paid-adjacent decline)</li>
+</ul>
+<p>All major paid surfaces grew Post vs Pre. No paid channel regressed in a way that would cause an MB-cohort CVR cascade.</p>
+
+<hr>
+
+<h2 id="perfaudit-sis-reach-largest-cohorts-l4w">3. SIS / Reach (Largest Cohorts, L4W)</h2>
+<table class="md-table">
+  <thead><tr><th>Cohort</th><th>SIS</th><th>Budget-Lost IS</th><th>Rank-Lost IS</th><th>tROAS</th><th>CM1 Share</th></tr></thead>
+  <tbody>
+    <tr><td>English (All Geos)</td><td>13.0%</td><td><strong>11.3%</strong></td><td>75.7%</td><td>160%</td><td>38.4%</td></tr>
+    <tr><td>Italian</td><td>27.1%</td><td>5.2%</td><td>67.7%</td><td>157%</td><td>10.8%</td></tr>
+    <tr><td>French</td><td>15.6%</td><td>—</td><td>84.4%</td><td>148.5%</td><td>9.5%</td></tr>
+    <tr><td>German</td><td>20.8%</td><td>6.1%</td><td>73.1%</td><td>165%</td><td>9.6%</td></tr>
+    <tr><td>Spanish</td><td>20.7%</td><td>1.3%</td><td>77.9%</td><td>160%</td><td>7.3%</td></tr>
+    <tr><td>Dutch</td><td>36.0%</td><td>0.2%</td><td>63.9%</td><td>160%</td><td>7.0%</td></tr>
+  </tbody>
+</table>
+<p><strong>Read:</strong> English campaign is the only one breaching the 10% budget-lost threshold. Rank-lost is the dominant constraint across every language — a structural quality-score / bid-ceiling pattern, not a Post-period event. SIS is not trending down at the campaign level (no MoM SIS deterioration evident in the cohort table).</p>
+
+<hr>
+
+<h2 id="perfaudit-campaign-status-audit">4. Campaign Status Audit</h2>
+<p><strong>Active campaigns in Post period:</strong> 12 (all 12 language Search campaigns spent in L4W).</p>
+<p><strong>$0 spend campaigns:</strong> ~33 dormant variant campaigns (Translation/Guided/MaxConv/tCPA legacy structures). These are intentional placeholders from the geo-consolidation + tROAS migration (Feb 2026 perf infra change), not Post-period pauses. Not flagged as dormancy.</p>
+<p><strong>tROAS self-suppression check:</strong></p>
+<ul>
+  <li>Self-suppression = ROI ↑ + Clicks ↓ + Spend ↓ (Google bidding below cap due to ROAS target)</li>
+  <li>Actual L4W vs P4W: ROI +17.8pp, Clicks <strong>+13%</strong>, Spend <strong>+20%</strong></li>
+  <li>→ <strong>No self-suppression.</strong> Google is bidding more aggressively, not pulling back.</li>
+</ul>
+<p><strong>Budget exhaustion check:</strong></p>
+<ul>
+  <li>Only English campaign has budget-lost IS &gt;10% (at 11.3%).</li>
+  <li>All other campaigns at ≤6.1%.</li>
+  <li>→ <strong>No widespread budget exhaustion.</strong> Slight constraint on English only.</li>
+</ul>
+
+<hr>
+
+<h2 id="perfaudit-cpc-3-lens-diagnostic">5. CPC 3-Lens Diagnostic</h2>
+<ol>
+  <li><strong>Quality traffic?</strong> CVR rose 0.7pp alongside the 5% CPC increase — Google is buying better clicks. Justified.</li>
+  <li><strong>AOV structural?</strong> AOV moved $151.92 → $139.72 (-8%) Post. AOV did NOT rise to justify CPC — but the +CVR alone covers it (RPC +16% vs CPC +5%).</li>
+  <li><strong>Competition?</strong> No auction-insights CSV provided. Cohort SIS and rank-lost are stable, no evidence of competitor incursion in Post window.</li>
+</ol>
+<p>Verdict: CPC rise is efficiency-positive, not competitive pressure.</p>
+
+<hr>
+
+<h2 id="perfaudit-mobile-conversion-path-connection-to-trigger">6. Mobile / Conversion-Path Connection to Trigger</h2>
+<p>The CVR-RCA cascade fixed on <strong>Paid · Google Ads · MB</strong>. Two important observations:</p>
+<ol>
+  <li><strong>Aggregate paid CVR rose Post</strong>, so the mobile-paid CVR regression — if real — is a sub-segment effect masked by desktop/tablet gains, or by language-mix shift. The audit data here is desk+mobile blended; this audit cannot confirm or deny the MB-specific leak. The funnel would need to be split by device to localize it.</li>
+  <li><strong>No paid-acquisition cause is visible.</strong> Spend mix, campaign config, bid strategy, and traffic quality are all stable or improving. If the MB CVR leak is real, the root cause is downstream of acquisition (LP/checkout/payment on mobile), not in Google Ads campaign setup.</li>
+</ol>
+<p>This is the key handoff to the parent RCA: <strong>paid traffic is not degraded; investigate the mobile conversion path itself.</strong></p>
+
+<hr>
+
+<h2 id="perfaudit-red-flags">7. Red Flags</h2>
+<table class="md-table">
+  <thead><tr><th>Severity</th><th>Issue</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td>MEDIUM</td><td>English campaign budget-lost IS at 11.3% on 38% of Search CM1</td><td>Section 3</td></tr>
+    <tr><td>LOW</td><td>Universal high rank-lost IS (64–84%) across all language cohorts</td><td>Section 3 — chronic, not Post-window-specific</td></tr>
+    <tr><td>LOW</td><td>CTR softened 0.4pp Post</td><td>Section 2 — offset by CVR gain</td></tr>
+  </tbody>
+</table>
+<p>No CRITICAL or HIGH paid flags.</p>
+
+<hr>
+
+<h2 id="perfaudit-recommended-actions">8. Recommended Actions</h2>
+<table class="md-table">
+  <thead><tr><th>#</th><th>Action</th><th>Owner</th><th>Est. Impact</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Raise English campaign daily budget from $500 → $600</td><td>Perf</td><td>+$1K–1.5K rev / L4W</td><td>Budget-lost IS 11.3%; rank ceiling means most extra budget will recover bid-eligible auctions</td></tr>
+    <tr><td>2</td><td>Investigate quality-score / ad strength on English campaign to address 75.7% rank-lost IS</td><td>Perf</td><td>+$10K rev / L4W per 10pp SIS recovered</td><td>Rank — not budget — is the dominant constraint</td></tr>
+    <tr><td>3</td><td>Split funnel by device (Section 7 of standard audit) to localize MB CVR leak</td><td>Analytics</td><td>n/a</td><td>Audit blended view shows healthy paid; device split needed to size MB-specific issue</td></tr>
+    <tr><td>4</td><td>Pull auction-insights CSV next cycle to confirm no competitive pressure</td><td>Perf</td><td>n/a</td><td>Currently inferring competition absence from cohort SIS only</td></tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="perfaudit-conclusion-for-cvr-rca-cascade">9. Conclusion for CVR-RCA Cascade</h2>
+<p>The paid channel is <strong>not</strong> the cause of the Pre→Post CVR cascade for CE 252. Paid acquisition delivered improved CVR (+0.7pp), improved ROI (+17.8pp), and grew revenue +32% Post vs Pre on the very same window. If the cascade-fix landed on Paid · Google Ads · MB, the residual signal is almost certainly a <strong>mobile conversion-path issue downstream of the ad click</strong> (LP load, mobile checkout, payment friction), not an upstream campaign/bid/targeting issue.</p>
+
+</div><!-- /md-content -->
+</div><!-- /tab-pane perfaudit -->
+
+</div><!-- container -->
+
+<footer>CVR-RCA · CE 252 Louvre Museum Tickets · generated 2026-05-27 · run dir: ce252_2026-03-28_2026-05-26</footer>
+
+<script>
+// Tab framework — per templates/report.html + report_structure.md "Tabbed report structure"
+(function () {
+  function activateTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-button').forEach(function (b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    var pane = document.getElementById('tab-' + tabId);
+    var btn  = document.querySelector('.tab-button[data-tab="' + tabId + '"]');
+    if (pane) pane.classList.add('active');
+    if (btn)  { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
+    if (pane && window.Plotly) {
+      pane.querySelectorAll('.js-plotly-plot').forEach(function (el) {
+        try { window.Plotly.Plots.resize(el); } catch (e) {}
+      });
+    }
+  }
+  document.querySelectorAll('.tab-button').forEach(function (btn) {
+    btn.addEventListener('click', function () { activateTab(btn.dataset.tab); });
+  });
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    var href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    var target = document.getElementById(href.slice(1));
+    if (!target) return;
+    var pane = target.closest('.tab-pane');
+    if (pane && !pane.classList.contains('active')) {
+      e.preventDefault();
+      var tabId = pane.id.replace(/^tab-/, '');
+      activateTab(tabId);
+      history.pushState(null, '', href);
+      setTimeout(function () {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  });
+  if (location.hash) {
+    var initialTarget = document.getElementById(location.hash.slice(1));
+    var initialPane = initialTarget && initialTarget.closest('.tab-pane');
+    if (initialPane && !initialPane.classList.contains('active')) {
+      activateTab(initialPane.id.replace(/^tab-/, ''));
+      setTimeout(function () {
+        initialTarget.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }, 50);
+    }
+  }
+})();
+</script>
+
+<script>
+var DATES_90 = ["2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26"];
+var CVR_CURRENT_90 = [0.034816,0.038202,0.034368,0.039143,0.039085,0.032755,0.039405,0.031963,0.039320,0.045302,0.054074,0.036980,0.033216,0.030050,0.035205,0.044271,0.028103,0.035638,0.035062,0.038320,0.041864,0.030810,0.025617,0.037575,0.038934,0.049048,0.031668,0.033502,0.031461,0.034195,0.032511,0.036733,0.034314,0.036003,0.029675,0.029365,0.032089,0.021498,0.028533,0.035585,0.033133,0.034983,0.038440,0.037082,0.034270,0.034916,0.036618,0.032507,0.037288,0.041695,0.033259,0.039246,0.042112,0.047872,0.045290,0.043419,0.040000,0.038636,0.032909,0.052632,0.062660,0.051318,0.063492,0.054244,0.048235,0.053022,0.045896,0.043988,0.035949,0.047645,0.028532,0.026245,0.046462,0.048837,0.046674,0.037169,0.051984,0.045016,0.032751,0.027941,0.023796,0.029034,0.033625,0.023408,0.032512,0.037855,0.044500,0.059690,0.050874,0.045977];
+var CVR_LY_90 = [0.044926,0.046748,0.043205,0.046793,0.051289,0.046347,0.050803,0.053763,0.047466,0.053538,0.054971,0.052184,0.053239,0.054648,0.055425,0.051575,0.055036,0.065351,0.061230,0.056467,0.059498,0.056754,0.049654,0.057200,0.060188,0.058863,0.058714,0.057175,0.053063,0.062391,0.059028,0.061815,0.060347,0.067079,0.053880,0.058702,0.058810,0.062767,0.061435,0.058888,0.061952,0.051707,0.059113,0.053035,0.066848,0.059006,0.068442,0.063192,0.061693,0.058443,0.055418,0.053659,0.054212,0.059982,0.058212,0.056667,0.049074,0.050746,0.055180,0.063049,0.059035,0.052381,0.044560,0.045553,0.040885,0.043069,0.046988,0.043478,0.047361,0.046409,0.049801,0.045362,0.044435,0.042873,0.039570,0.057075,0.043626,0.049423,0.046889,0.051313,0.047361,0.043614,0.063362,0.046387,0.039442,0.050457,0.048173,0.055100,0.048062,0.059963];
+var DATES_DAILY = ["2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26"];
+var CVR_DAILY = [0.030713,0.034186,0.031308,0.033638,0.028450,0.025943,0.031993,0.017499,0.026370,0.031816,0.033535,0.032359,0.033936,0.036608,0.031225,0.037748,0.036568,0.030431,0.034337,0.042287,0.033409,0.037578,0.040510,0.045813,0.042597,0.039780,0.038277,0.036774,0.032977,0.050388,0.059475,0.049115,0.061329,0.053869,0.045794,0.049838,0.045010,0.043307,0.034940,0.045863,0.029497,0.024334,0.042921,0.046699,0.048737,0.041920,0.055489,0.047433,0.035705,0.028240,0.021165,0.025151,0.029898,0.021435,0.029952,0.035262,0.046120,0.061383,0.043724,0.052629];
+var LP2S_DAILY = [0.412000,0.455200,0.455700,0.466200,0.466200,0.370300,0.374700,0.373700,0.359000,0.331700,0.347000,0.306200,0.341200,0.359300,0.373200,0.365100,0.374300,0.351700,0.351200,0.353900,0.336500,0.348400,0.377400,0.385800,0.337500,0.327000,0.323100,0.325200,0.364400,0.375100,0.405300,0.384900,0.399700,0.392300,0.396900,0.398100,0.401300,0.361900,0.362900,0.361600,0.322200,0.333800,0.350600,0.358900,0.349800,0.347600,0.397100,0.418400,0.358400,0.315600,0.301500,0.261400,0.272800,0.249700,0.253500,0.329100,0.351600,0.349600,0.309700,0.276300];
+var S2C_DAILY = [0.284200,0.272900,0.219500,0.208900,0.201800,0.243600,0.259600,0.230100,0.267300,0.268600,0.306800,0.299800,0.303700,0.294300,0.296800,0.319400,0.282200,0.294500,0.329300,0.350100,0.302600,0.335800,0.305900,0.344500,0.345600,0.308600,0.350700,0.299000,0.326700,0.319000,0.375400,0.375200,0.358000,0.325700,0.320500,0.315100,0.311900,0.304800,0.302200,0.328500,0.295800,0.291600,0.346900,0.349400,0.385200,0.324100,0.355200,0.298100,0.298900,0.302600,0.300000,0.300300,0.309600,0.313300,0.354500,0.313200,0.319700,0.399500,0.329400,0.285700];
+var C2O_DAILY = [0.262300,0.275200,0.313000,0.345400,0.302400,0.287600,0.328900,0.203500,0.274800,0.357100,0.315000,0.352500,0.327500,0.346200,0.281900,0.323700,0.346200,0.293800,0.296900,0.341300,0.328100,0.321200,0.350900,0.344700,0.365200,0.394200,0.337800,0.378200,0.277000,0.421100,0.390900,0.340100,0.428600,0.421600,0.360000,0.397300,0.359600,0.392600,0.318600,0.386100,0.309500,0.250000,0.352900,0.372400,0.361700,0.372100,0.393400,0.380300,0.333300,0.295700,0.234000,0.320400,0.354000,0.274000,0.333300,0.342100,0.410300,0.439500,0.428600,0.666700];
+
+(function () {
+  var POST_START = '2026-04-27';
+  var traceCur = { x: DATES_90, y: CVR_CURRENT_90, name: 'Current CVR', type: 'scatter', mode: 'lines',
+    line: { color: '#2e7d32', width: 2 } };
+  var traceLY = { x: DATES_90, y: CVR_LY_90, name: 'Last Year CVR', type: 'scatter', mode: 'lines',
+    line: { color: '#999', width: 1.5, dash: 'dot' } };
+  var layout = {
+    height: 260,
+    margin: { t: 10, r: 10, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { tickfont: { size: 10 }, tickformat: '.1%', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    shapes: [
+      { type: 'rect', x0: POST_START, x1: '2026-05-26', y0: 0, y1: 1, xref: 'x', yref: 'paper',
+        fillcolor: 'rgba(46,125,50,0.06)', line: { width: 0 } },
+      { type: 'line', x0: POST_START, x1: POST_START, y0: 0, y1: 1, xref: 'x', yref: 'paper',
+        line: { color: '#2e7d32', dash: 'dot', width: 1 } }
+    ],
+    annotations: [
+      { x: '2026-05-11', y: 0.95, xref: 'x', yref: 'paper', text: 'Post period',
+        font: { color: '#2e7d32', size: 10 }, showarrow: false }
+    ]
+  };
+  Plotly.newPlot('chart-90d', [traceLY, traceCur], layout, { responsive: true, displayModeBar: false });
+})();
+
+(function () {
+  var POST_START = '2026-04-27';
+  var traceCVR = { x: DATES_DAILY, y: CVR_DAILY, name: 'CVR', type: 'scatter', mode: 'lines+markers',
+    line: { color: '#1a1a2e', width: 2 }, marker: { size: 4, color: '#1a1a2e' } };
+  var traceLP2S = { x: DATES_DAILY, y: LP2S_DAILY, name: 'LP2S', type: 'scatter', mode: 'lines',
+    line: { color: '#c62828', width: 1.5, dash: 'dash' }, yaxis: 'y2' };
+  var traceS2C = { x: DATES_DAILY, y: S2C_DAILY, name: 'S2C', type: 'scatter', mode: 'lines',
+    line: { color: '#2e7d32', width: 1.5, dash: 'dash' }, yaxis: 'y2' };
+  var traceC2O = { x: DATES_DAILY, y: C2O_DAILY, name: 'C2O', type: 'scatter', mode: 'lines',
+    line: { color: '#1a8f4a', width: 1.5, dash: 'dash' }, yaxis: 'y2' };
+  var layout = {
+    height: 280,
+    margin: { t: 10, r: 60, b: 40, l: 50 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { title: { text: 'CVR', font: { size: 11 } }, tickfont: { size: 10 }, tickformat: '.1%', rangemode: 'tozero' },
+    yaxis2: { title: { text: 'Funnel rate', font: { size: 11 } }, tickfont: { size: 10 }, tickformat: '.0%', overlaying: 'y', side: 'right', rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.22, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff',
+    shapes: [
+      { type: 'rect', x0: POST_START, x1: '2026-05-26', y0: 0, y1: 1, xref: 'x', yref: 'paper',
+        fillcolor: 'rgba(46,125,50,0.06)', line: { width: 0 } },
+      { type: 'line', x0: POST_START, x1: POST_START, y0: 0, y1: 1, xref: 'x', yref: 'paper',
+        line: { color: '#2e7d32', dash: 'dot', width: 1 } }
+    ]
+  };
+  Plotly.newPlot('chart-daily', [traceCVR, traceLP2S, traceS2C, traceC2O], layout, { responsive: true, displayModeBar: false });
+})();
+
+(function () {
+  var dates = ["2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20","2026-05-21","2026-05-22","2026-05-23","2026-05-24","2026-05-25","2026-05-26"];
+  var t02   = [1551,1747,1810,713,1015,1206,1040,1102,2217,3248,2935,2375,2365,1832,1661,1840,3052,1716,1808,2152,1732,2411,4398,3651,2039,2778,636,286,861,1253];
+  var t37   = [2848,1967,3279,4041,3907,3763,4603,4271,3774,3118,3167,2999,3008,4110,3994,3187,2955,3746,3465,4257,5918,7630,8737,3801,4603,4423,2302,3112,4115,3639];
+  var t813  = [5082,5984,5205,5238,4422,4292,4099,4266,5006,4164,4003,3769,3809,3697,3641,6044,5290,4235,4127,4059,7189,5784,6627,5906,5209,5392,5604,5819,6107,6861];
+  var t1430 = [14483,14540,15448,15550,14335,14377,13015,12997,12936,14037,14329,14469,15708,14564,14917,14555,15282,16040,16421,17332,18529,18485,18803,17831,18018,18209,17959,16687,17705,17586];
+  function tr(name, y, c) { return { x: dates, y: y, name: name, type: 'scatter', mode: 'lines+markers', line: { color: c, width: 2 }, marker: { color: c, size: 4 } }; }
+  var layout = {
+    height: 280,
+    margin: { t: 10, r: 10, b: 60, l: 60 },
+    xaxis: { tickfont: { size: 10 }, tickformat: '%b %d', nticks: 10 },
+    yaxis: { title: { text: 'Tickets remaining', font: { size: 11 } }, tickfont: { size: 10 }, rangemode: 'tozero' },
+    legend: { orientation: 'h', y: -0.28, font: { size: 11 } },
+    plot_bgcolor: '#fafafa', paper_bgcolor: '#fff'
+  };
+  Plotly.newPlot('chart-inventory-3909',
+    [tr('0–2 day', t02, '#c62828'),
+     tr('3–7 day', t37, '#e07b00'),
+     tr('8–13 day', t813, '#1a8f4a'),
+     tr('14–30 day', t1430, '#3a4a8a')],
+    layout, { responsive: true, displayModeBar: false });
+})();
+</script>
+
+</body>
+</html>

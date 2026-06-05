@@ -1,0 +1,37 @@
+{
+  "version": "v1.14",
+  "runs": [
+    {
+      "id": "ce252_2026-03-28_2026-05-26",
+      "ce_id": "252",
+      "ce_name": "Louvre Museum Tickets",
+      "pre_start": "2026-03-28",
+      "post_end": "2026-05-26",
+      "run_date": "2026-05-27",
+      "eval_score": 26,
+      "eval_max": 35,
+      "root_cause": "CVR improved +0.72pp (3.46%→4.19%, +1.69pp structural). S2C and C2O lifted on dominant TGID 3909 — same/next-day availability improved (days_to_first 1→0). France domestic traffic surged +61% on seasonal spring ramp. Organic MB collapsed −35%, lifting paid share via mix. LP2S fell −3.26pp as headwind from paid-traffic dilution. First tabbed report (CVR-RCA + Paid Performance Audit tabs).",
+      "files": {
+        "report": "runs/v1.14/ce252_2026-03-28_2026-05-26/report.html",
+        "transcript": "runs/v1.14/ce252_2026-03-28_2026-05-26/transcript.md",
+        "evaluation": "runs/v1.14/ce252_2026-03-28_2026-05-26/evaluation.md"
+      }
+    },
+    {
+      "id": "ce243_2026-03-29_2026-05-27",
+      "ce_id": "243",
+      "ce_name": "Eiffel Tower Tickets",
+      "pre_start": "2026-03-29",
+      "post_end": "2026-05-27",
+      "run_date": "2026-05-28",
+      "eval_score": 30,
+      "eval_max": 35,
+      "root_cause": "CVR declined −0.18pp (3.07%→2.89%, −0.32pp structural). S2C fell −1.45pp on MB · Paid · Google Ads (69% Shapley share), concentrated on Desktop visitors browsing dominant TGID 23604 (Eiffel Tower Guided Tour). Non-Geo Desktop S2C −3.6pp, Geo Desktop −8.9pp; all mobile cells flat. Gradual onset from ~May 14. Upstream signals (supply, pricing, catalogue) all healthy — mechanism is a Desktop select-page abandonment pattern not yet explained by available data.",
+      "files": {
+        "report": "runs/v1.14/ce243_2026-03-29_2026-05-27/report.html",
+        "transcript": "runs/v1.14/ce243_2026-03-29_2026-05-27/transcript.md",
+        "evaluation": "runs/v1.14/ce243_2026-03-29_2026-05-27/evaluation.md"
+      }
+    }
+  ]
+}

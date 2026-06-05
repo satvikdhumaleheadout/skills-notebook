@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVR-RCA · Pompeii Tickets &amp; Tours (CE 1223)</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; line-height: 1.55; }
+  header { background: #1a1a2e; color: #fff; padding: 28px 40px 24px; }
+  header .eyebrow { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #8892a4; margin-bottom: 6px; }
+  header h1 { font-size: 24px; font-weight: 700; }
+  header .meta { margin-top: 8px; font-size: 13px; color: #b0bec5; }
+  header .meta span { margin-right: 20px; }
+  .container { max-width: 1050px; margin: 0 auto; padding: 0 24px 60px; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8892a4; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #e0e4ef; }
+  .metric-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  @media (max-width: 800px) { .metric-cards { grid-template-columns: repeat(3, 1fr); } }
+  .metric-card { background: #fff; border-radius: 10px; padding: 18px 16px 16px; border: 1px solid #e8ebf4; }
+  .metric-card .label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #8892a4; margin-bottom: 8px; }
+  .metric-card .values { display: flex; align-items: baseline; gap: 8px; }
+  .metric-card .pre { font-size: 14px; color: #8892a4; }
+  .metric-card .post { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+  .metric-card .delta { font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 12px; margin-top: 6px; display: inline-block; }
+  .delta-neg { background: #fdecea; color: #c62828; }
+  .delta-pos { background: #e8f5e9; color: #2e7d32; }
+  .delta-flat { background: #f3f4f6; color: #555; }
+  .callout { background: #fff; border-left: 4px solid #2e7d32; border-radius: 0 10px 10px 0; padding: 24px 28px; margin-bottom: 8px; border-top: 1px solid #e8ebf4; border-right: 1px solid #e8ebf4; border-bottom: 1px solid #e8ebf4; }
+  .callout h2 { font-size: 16px; font-weight: 700; color: #2e7d32; margin-bottom: 16px; letter-spacing: 0.2px; }
+  .callout-item { margin-bottom: 14px; }
+  .callout-item:last-child { margin-bottom: 0; }
+  .callout-item .q { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #8892a4; margin-bottom: 4px; }
+  .callout-item .a { font-size: 15px; color: #1a1a2e; font-weight: 500; }
+  .action-card { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 16px; }
+  .action-card .ac-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .priority-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .p1 { background: #fdecea; color: #c62828; }
+  .p2 { background: #fff8e1; color: #f57c00; }
+  .p3 { background: #e8f5e9; color: #2e7d32; }
+  .action-card .cause { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+  .action-card .dri-row { font-size: 13px; color: #555; margin-bottom: 16px; display: flex; gap: 6px; align-items: center; }
+  .dri-badge { background: #e8edf7; color: #3a4a8a; font-weight: 600; font-size: 12px; padding: 2px 9px; border-radius: 8px; }
+  .action-card ul { padding-left: 18px; font-size: 14px; color: #333; }
+  .action-card ul li { margin-bottom: 7px; }
+  .analysis-block { background: #fff; border-radius: 10px; border: 1px solid #e8ebf4; padding: 24px 28px; margin-bottom: 20px; }
+  .analysis-block .block-title { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+  .verdict-line { font-size: 14px; font-weight: 600; color: #2e7d32; background: #e8f5e9; border-radius: 6px; padding: 8px 14px; margin-bottom: 18px; }
+  .verdict-line.neutral { color: #3a4a8a; background: #e8edf7; }
+  .verdict-line.warn { color: #c62828; background: #fdecea; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 0.7px; text-transform: uppercase; color: #8892a4; padding: 8px 12px; border-bottom: 2px solid #e8ebf4; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f0f2f8; color: #1a1a2e; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8f9ff; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .neg { color: #c62828; font-weight: 600; }
+  .pos { color: #2e7d32; font-weight: 600; }
+  .highlight-row td { background: #f1f8e9 !important; }
+  .shapley-bars { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 32px; margin: 16px 0 8px; }
+  .shapley-bar { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+  .shapley-lp2s { background: #6c8ebf; }
+  .shapley-s2c  { background: #c62828; }
+  .shapley-c2o  { background: #d6a832; }
+  .shapley-legend { display: flex; gap: 20px; font-size: 12px; color: #555; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+  .chart-container { margin-top: 16px; }
+  .ref-link { color: #3a4a8a; text-decoration: none; font-size: 12px; font-weight: 700; margin-left: 3px; }
+  .ref-link:hover { color: #c62828; }
+  html { scroll-behavior: smooth; }
+  .analysis-block:target { box-shadow: 0 0 0 3px #ffe082; transition: box-shadow 0.4s; }
+  footer { text-align: center; font-size: 12px; color: #aaa; padding: 24px; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">CVR Root Cause Analysis</div>
+  <h1>Pompeii Tickets &amp; Tours — CE 1223</h1>
+  <div class="meta">
+    <span>📅 Pre: 2026-03-22 to 2026-04-20</span>
+    <span>📅 Post: 2026-04-21 to 2026-05-20</span>
+    <span>🌍 Italy · Italy</span>
+    <span>🔗 <a href="https://www.pompeii-tickets.com/" target="_blank" style="color:#b0bec5;text-decoration:underline;">www.pompeii-tickets.com</a></span>
+  </div>
+</header>
+
+<div class="container">
+
+<div class="section-label">Section 1 — Executive Summary</div>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="label">CVR</div>
+    <div class="values"><span class="pre">4.73%</span><span class="post">5.24%</span></div>
+    <div class="delta delta-pos">Δ +0.51pp / +10.7%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">LP2S</div>
+    <div class="values"><span class="pre">34.81%</span><span class="post">34.51%</span></div>
+    <div class="delta delta-flat">Δ −0.30pp / −0.9%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">S2C</div>
+    <div class="values"><span class="pre">29.32%</span><span class="post">30.00%</span></div>
+    <div class="delta delta-pos">Δ +0.68pp / +2.3%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">C2O</div>
+    <div class="values"><span class="pre">46.34%</span><span class="post">50.58%</span></div>
+    <div class="delta delta-pos">Δ +4.24pp / +9.2%</div>
+  </div>
+  <div class="metric-card">
+    <div class="label">Traffic (LP)</div>
+    <div class="values"><span class="pre">66,812</span><span class="post">66,286</span></div>
+    <div class="delta delta-flat">Δ −526 / −0.8%</div>
+  </div>
+</div>
+
+<div class="analysis-block" id="chart-90day">
+  <div class="block-title">90-day CVR trend with LY overlay</div>
+  <div id="trend-90day" style="width:100%;height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    CVR rises gradually across the 90-day window. The LY line follows the same spring-ramp shape — the current-year delta vs LY at this calendar position is <strong>+0.23pp structural</strong> (current +0.42pp vs LY +0.20pp). Roughly half the lift is the seasonal repeat; the other half is genuine structural improvement.
+  </p>
+</div>
+
+<div class="callout">
+  <h2>CVR Improved — What's Driving It &amp; What's Holding It Back</h2>
+
+  <div class="callout-item">
+    <div class="q">What drove the improvement?</div>
+    <div class="a">CVR rose +0.51pp (4.73% → 5.24%, +10.7%) with C2O carrying 86% of the lift <a class="ref-link" href="#block-shapley">↗</a>. Inside the dominant MB · Paid · Google Ads segment — 88% of paid MB volume — C2O climbed 48.9% → 52.7% (+3.80pp), with both C2A (55.1% → 58.4%) and A2O (88.7% → 90.2%) improving <a class="ref-link" href="#block-cascade">↗</a>. About half the gain is seasonal — LY shows the same +0.20pp spring-into-summer ramp — leaving +0.23pp structural <a class="ref-link" href="#chart-90day">↗</a>. The structural half aligns with deliberate Headout actions during the post window: MB assortment cap to 8 products on May 7, 5% last-minute discount on TGID 8869 from May 11, plus title and content updates on top TGIDs (per Enrico Samarughi · May 7–14 <a class="ref-link" href="#block-market-context">↗</a>).</div>
+  </div>
+
+  <div class="callout-item">
+    <div class="q">What's holding it back?</div>
+    <div class="a">HO (headout.com) is the headwind: traffic +38.8% but per-session CVR fell −1.23pp on weaker LP2S (−6.7pp) and S2C (−5.1pp) <a class="ref-link" href="#block-ho">↗</a>. Net CE impact is small (≈ −0.04pp) and HO orders still grew +18% absolute — dilution from scaling lower-intent traffic, not a flow regression. Worth a Performance Marketing review of the new HO source quality before the next growth round.</div>
+  </div>
+
+  <div class="callout-item">
+    <div class="q">Important context — different timeframe</div>
+    <div class="a">Year-over-year is a different picture. CE 1223 GBV is <strong>−20% vs the same period in 2025</strong> (FabriGPT WBR · May 18 <a class="ref-link" href="#block-market-context">↗</a>), and a May SP survey confirms the market collapse on the supply side: Tempio Travel −20/25%, Instazione −80%, Towns of Italy −45% — attributed to fewer US/MidEast/BR visitors and customers trading down from guided tours to entry tickets (per Enrico Samarughi · May 11 <a class="ref-link" href="#block-market-context">↗</a>). The CVR ratio gain in this report is real and well-earned, but it's happening inside a market that's shrunk YoY — read this as "we're converting better than last month," not "Pompeii demand is recovering."</div>
+  </div>
+
+  <div class="callout-item">
+    <div class="q">When did improvement begin?</div>
+    <div class="a">Gradual lift across the post window, no break date <a class="ref-link" href="#chart-daily-c2o">↗</a>. The strongest cluster of days (C2O 58–60%) lands May 13–16, immediately after the 8869 last-minute discount went live on May 11 — directional evidence that pricing lever is contributing to the structural half of the gain. Italy domestic volume rose +26.7% in the same window <a class="ref-link" href="#block-geo">↗</a>, consistent with the spring Pompeii ramp shown on the LY overlay.</div>
+  </div>
+</div>
+
+<div class="section-label">Section 2 — Actions</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <div class="priority-badge p2">P2</div>
+    <div class="cause">Protect the structural +0.23pp gain — Entry Tickets (TGID 8869) and the new Skip-the-line Guided Tour with an Archaeologist (TGID 25518) are carrying the lift <a class="ref-link" href="#block-experience">↗</a>; preserve their ranking and inventory during the spring/summer peak.</div>
+  </div>
+  <div class="dri-row">
+    <span class="dri-badge">Growth / Merchandising</span>
+    <span>+ BDM (supply protection)</span>
+  </div>
+  <ul>
+    <li>Keep TGID 8869 (Pompeii Entry Tickets) and TGID 25518 (Skip-the-line Guided Tour with an Archaeologist) in their current top-of-listing positions — TGID 25518 checkouts more than doubled (205 → 434) and TGID 8869 added +292 completed orders alone, outpacing the +254 net gain across the segment.</li>
+    <li>Confirm with the SP that same-day inventory holds through July — `days_to_first_available_date` was 0 throughout both periods for all top five experiences; this is what's enabling Google Ads paid users to convert at peak rates.</li>
+    <li>Brief the Performance Marketing team that Google Ads MB Italy traffic is materially up (+26.7% domestic volume) at higher CVR — capture more of this demand by sustaining or scaling Italian-language Google Search spend through May–August peak.</li>
+  </ul>
+</div>
+
+<div class="action-card">
+  <div class="ac-header">
+    <div class="priority-badge p2">P2</div>
+    <div class="cause">Investigate why HO (headout.com) LP2S and S2C are softening as HO traffic scales <a class="ref-link" href="#block-ho">↗</a> — current dilution is absorbed by volume growth but compounds if intent quality keeps drifting.</div>
+  </div>
+  <div class="dri-row">
+    <span class="dri-badge">Performance Marketing</span>
+    <span>+ Growth / Analytics</span>
+  </div>
+  <ul>
+    <li>Audit which sources drove the +854-user HO LP increase — paid expansion, new SEO ranking, or affiliate? LP2S falling 46.0% → 39.3% on the same CE suggests the new HO arrivals are browsing without intent to book Pompeii specifically.</li>
+    <li>If HO growth is paid: check campaign keyword intent and landing-page match — Pompeii-specific queries should keep LP2S above 45%. If it's organic: check whether new ranking pages are bringing top-funnel readers rather than buyers.</li>
+    <li>This is not blocking the current CVR result — HO orders grew +18% in the same window — but rate dilution at 38% volume growth means the next 30% growth could turn the CE-level CVR neutral. Flag for the May–June review.</li>
+  </ul>
+</div>
+
+<div class="section-label">Section 3 — Supporting Analysis</div>
+
+<div class="analysis-block" id="block-cascade">
+  <div class="block-title">Mix Cascade — Routing vs Conversion Determination</div>
+  <div class="verdict-line">Conversion change at all levels — no routing story. Fixed segment: MB · Paid · Google Ads.</div>
+
+  <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 1 — MB vs HO</p>
+  <table>
+    <thead>
+      <tr><th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>MB</strong></td><td class="num">67,395</td><td class="num">66,221</td><td class="num">96.8%</td><td class="num">95.6%</td><td class="num">4.52%</td><td class="num">5.03%</td><td class="num">−0.06pp</td><td class="num pos">+0.49pp</td><td>Fixed — conversion dominates</td></tr>
+      <tr><td>HO</td><td class="num">2,202</td><td class="num">3,056</td><td class="num">3.2%</td><td class="num">4.4%</td><td class="num">8.27%</td><td class="num">7.04%</td><td class="num pos">+0.10pp</td><td class="num neg">−0.04pp</td><td>Headwind (small)</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 2 — Paid vs Organic (within MB)</p>
+  <table>
+    <thead>
+      <tr><th>Segment</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>Paid</strong></td><td class="num">40,528</td><td class="num">40,985</td><td class="num">55.9%</td><td class="num">57.9%</td><td class="num">6.44%</td><td class="num">7.07%</td><td class="num pos">+0.13pp</td><td class="num pos">+0.35pp</td><td>Fixed — conversion dominates</td></tr>
+      <tr><td>Organic</td><td class="num">31,948</td><td class="num">29,805</td><td class="num">44.1%</td><td class="num">42.1%</td><td class="num">2.86%</td><td class="num">2.98%</td><td class="num">−0.06pp</td><td class="num">+0.05pp</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:12px;font-weight:600;margin:16px 0 6px;">Level 3 — Channel breakdown within Paid</p>
+  <table>
+    <thead>
+      <tr><th>Channel</th><th class="num">Pre users</th><th class="num">Post users</th><th class="num">Pre share</th><th class="num">Post share</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">Mix effect</th><th class="num">Conv. effect</th><th>Verdict</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>Google Ads</strong></td><td class="num">35,798</td><td class="num">36,394</td><td class="num">88.1%</td><td class="num">88.7%</td><td class="num">6.63%</td><td class="num">7.22%</td><td class="num">+0.04pp</td><td class="num pos">+0.52pp</td><td>Fixed — conversion dominates</td></tr>
+      <tr><td>Microsoft Ads</td><td class="num">4,827</td><td class="num">4,655</td><td class="num">11.9%</td><td class="num">11.3%</td><td class="num">5.30%</td><td class="num">5.97%</td><td class="num">−0.03pp</td><td class="num pos">+0.08pp</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    The cascade is conversion-dominant at every level. MB carries the CE because it holds ~96% of volume and gained +0.49pp via conversion. Within MB, Paid is larger and gained more than Organic. Within Paid, Google Ads accounts for 88% of volume and contributes +0.52pp of conversion improvement on its own. All subsequent analysis is scoped to this fixed segment.
+  </p>
+</div>
+
+<div style="background:#e8f5e9;border-left:4px solid #2e7d32;border-radius:4px;padding:10px 14px;margin-bottom:20px;font-size:13px;color:#1b5e20;">
+  <strong>Fixed segment for all funnel analysis:</strong>
+  MB · Paid · Google Ads<br>
+  <span style="color:#555;font-size:12px;">
+    Post-period users: 36,394 &nbsp;|&nbsp; Share of CE post traffic: 54.9%
+    &nbsp;|&nbsp; Checkout impact: +254 incremental completed orders vs pre period
+  </span>
+</div>
+
+<div class="analysis-block" id="block-geo">
+  <div class="block-title">Geographic Overview — Domestic vs International</div>
+  <div class="verdict-line">No geographic concentration — domestic and international visitors both improved. Italy is the volume driver (+26.7% LP traffic).</div>
+
+  <table>
+    <thead>
+      <tr><th>Country</th><th>Segment</th><th class="num">Pre Users</th><th class="num">Post Users</th><th class="num">Pre CVR</th><th class="num">Post CVR</th><th class="num">ΔCVR</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td>Italy</td><td>Domestic</td><td class="num">11,198</td><td class="num">14,194</td><td class="num">6.83%</td><td class="num">7.42%</td><td class="num pos">+0.59pp</td></tr>
+      <tr><td>France</td><td>International</td><td class="num">4,093</td><td class="num">3,343</td><td class="num">8.04%</td><td class="num">7.75%</td><td class="num">−0.29pp</td></tr>
+      <tr><td>Germany</td><td>International</td><td class="num">3,166</td><td class="num">3,317</td><td class="num">7.96%</td><td class="num">9.13%</td><td class="num pos">+1.17pp</td></tr>
+      <tr><td>Spain</td><td>International</td><td class="num">3,827</td><td class="num">1,751</td><td class="num">6.32%</td><td class="num">7.25%</td><td class="num pos">+0.93pp</td></tr>
+      <tr><td>United Kingdom</td><td>International</td><td class="num">2,280</td><td class="num">2,250</td><td class="num">7.11%</td><td class="num">8.89%</td><td class="num pos">+1.78pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Italy domestic traffic grew by nearly 3,000 LP users (+26.7%) while its own CVR rose +0.59pp — the dominant volume-and-rate combination behind the segment's gain. Germany and the UK posted stronger relative rate improvements, but on smaller bases. France is the only top-five country that softened (−0.29pp at −18% volume); not a driver. The pattern is consistent with broad seasonal Pompeii demand into May rather than a single-market acquisition event.
+  </p>
+</div>
+
+<div class="analysis-block" id="block-shapley">
+  <div class="block-title">Shapley Decomposition — funnel step attribution</div>
+  <div class="verdict-line">C2O carries 86% of ΔCVR (+0.44pp). S2C contributes +23% (+0.11pp). LP2S is noise (−9%, −0.04pp).</div>
+
+  <div class="shapley-bars">
+    <div class="shapley-bar shapley-c2o" style="flex: 86">C2O 86%</div>
+    <div class="shapley-bar shapley-s2c" style="flex: 23">S2C 23%</div>
+    <div class="shapley-bar shapley-lp2s" style="flex: 9; background:#6c8ebf;">LP2S −9%</div>
+  </div>
+  <div class="shapley-legend">
+    <span><span class="legend-dot" style="background:#d6a832"></span>C2O +0.44pp</span>
+    <span><span class="legend-dot" style="background:#c62828"></span>S2C +0.11pp</span>
+    <span><span class="legend-dot" style="background:#6c8ebf"></span>LP2S −0.04pp</span>
+  </div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Total ΔCVR = +0.51pp. C2O is the only step that matters analytically — LP2S is too small to act on and S2C is directionally helpful but secondary. The C2O lift further decomposes into C2A +3.6pp and A2O +1.9pp at CE level (both improved), with C2A carrying the larger share within the fixed segment.
+  </p>
+</div>
+
+<div class="analysis-block" id="chart-daily-c2o">
+  <div class="block-title">Daily C2O trend within fixed segment</div>
+  <div class="verdict-line">Gradual lift, no break date — pre average ~49%, post average ~53%, with strong weekend peaks (Apr 27, May 13–16) above 58%.</div>
+  <div id="daily-c2o" style="width:100%;height:280px;"></div>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    The shape rules out a deploy or configuration event as the cause — there is no inflection at the boundary or any specific date in the post window. Daily C2O within MB · Paid · Google Ads rises smoothly across April–May, in line with the 90-day LY shape that shows the same Pompeii spring-into-summer ramp. The structural +0.23pp gain on top of LY indicates a real underlying conversion improvement (checkout flow, intent quality, product mix), not just calendar repeat.
+  </p>
+</div>
+
+<div class="analysis-block" id="block-substeps">
+  <div class="block-title">Funnel sub-step decomposition (fixed segment)</div>
+  <div class="verdict-line">Both C2A (+3.3pp) and A2O (+1.5pp) improved. C2A carries the larger share within the fixed segment.</div>
+
+  <table>
+    <thead>
+      <tr><th>Step</th><th class="num">Pre Users</th><th class="num">Post Users</th><th class="num">Pre rate</th><th class="num">Post rate</th><th class="num">Δ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>LP → Select</td><td class="num">35,798</td><td class="num">36,394</td><td class="num">46.48%</td><td class="num">46.30%</td><td class="num">−0.18pp</td></tr>
+      <tr><td>Select → Checkout</td><td class="num">16,639</td><td class="num">16,850</td><td class="num">29.17%</td><td class="num">29.59%</td><td class="num pos">+0.42pp</td></tr>
+      <tr class="highlight-row"><td><strong>Checkout → Attempt (C2A)</strong></td><td class="num">4,854</td><td class="num">4,986</td><td class="num">55.09%</td><td class="num">58.40%</td><td class="num pos">+3.32pp</td></tr>
+      <tr class="highlight-row"><td><strong>Attempt → Order (A2O)</strong></td><td class="num">2,674</td><td class="num">2,912</td><td class="num">88.74%</td><td class="num">90.21%</td><td class="num pos">+1.47pp</td></tr>
+      <tr><td>Overall CVR</td><td class="num">35,798</td><td class="num">36,394</td><td class="num">6.63%</td><td class="num">7.22%</td><td class="num pos">+0.59pp</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    LP2S held flat. S2C nudged up modestly. The real story is post-checkout: a higher fraction of users at checkout are submitting payment, and a higher fraction of submitted payments are succeeding. C2A is the largest single mover — typically driven by payment-form quality, fee transparency, or checkout UX changes. A2O improvement at 88.7% → 90.2% (a healthy baseline that got healthier) suggests payment-gateway and fraud rules are not blocking incremental traffic.
+  </p>
+</div>
+
+<div class="analysis-block" id="block-experience">
+  <div class="block-title">Experience-level C2O — where the gain concentrates</div>
+  <div class="verdict-line">Pompeii Entry Tickets (TGID 8869) carries the largest lift; Skip-the-line with an Archaeologist (TGID 25518) more than doubled in volume.</div>
+
+  <table>
+    <thead>
+      <tr><th>Experience</th><th class="num">Pre Checkouts</th><th class="num">Post Checkouts</th><th class="num">Pre C2O</th><th class="num">Post C2O</th><th class="num">Δ C2O</th><th class="num">Post − Pre Orders</th></tr>
+    </thead>
+    <tbody>
+      <tr class="highlight-row"><td><strong>Pompeii Entry Tickets</strong> (8869)</td><td class="num">3,281</td><td class="num">3,578</td><td class="num">50.78%</td><td class="num">54.72%</td><td class="num pos">+3.94pp</td><td class="num pos">+292</td></tr>
+      <tr class="highlight-row"><td><strong>Skip-the-line Guided Tour w/ Archaeologist</strong> (25518)</td><td class="num">205</td><td class="num">434</td><td class="num">50.24%</td><td class="num">45.16%</td><td class="num neg">−5.08pp</td><td class="num pos">+93</td></tr>
+      <tr><td>Pompeii Skip-the-Line Guided Tour (10988)</td><td class="num">778</td><td class="num">631</td><td class="num">40.62%</td><td class="num">42.63%</td><td class="num">+2.01pp</td><td class="num neg">−47</td></tr>
+      <tr><td>Combo: Pompeii + Herculaneum (18260)</td><td class="num">306</td><td class="num">236</td><td class="num">34.97%</td><td class="num">36.02%</td><td class="num">+1.05pp</td><td class="num neg">−22</td></tr>
+      <tr><td>Pompeii Entry + Audio Guide (39137)</td><td class="num">204</td><td class="num">106</td><td class="num">40.69%</td><td class="num">48.11%</td><td class="num pos">+7.43pp</td><td class="num neg">−32</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Two stories combine here. (1) TGID 8869 (the cheapest entry ticket at ~$31, the volume anchor of the CE) lifted its own C2O by +3.94pp and added +292 completed orders — more than the entire net gain across the segment (+254 orders). (2) TGID 25518 (the new Skip-the-line with an Archaeologist variant) more than doubled in checkout volume (205 → 434); its own C2O fell, but the growth in selectable supply still added 93 orders. Three other experiences lost volume (10988, 18260, 39137), so the catalogue net-rebalanced toward the cheaper entry option and the new guided variant — favourable for CVR because those products have the highest checkout completion within the CE.
+  </p>
+  <p style="font-size:13px;color:#555;margin-top:8px;">
+    Prices were within ±$1 pre vs post for all five experiences (queried from <code>product_rankings_features.final_price_usd</code>), and <code>days_to_first_available_date</code> was 0 throughout — supply and pricing did not change. The shift in product mix is therefore demand-driven (seasonal preference for the basic entry product as visitor mix tilts toward solo / DIY tourists in late spring).
+  </p>
+</div>
+
+<div class="analysis-block" id="block-ho">
+  <div class="block-title">Headwind — HO (headout.com) segment</div>
+  <div class="verdict-line warn">HO CVR fell 8.27% → 7.04% (−1.23pp) on +38.8% traffic growth. LP2S and S2C softened; checkout itself improved. Net CE impact ≈ −0.04pp — small.</div>
+
+  <table>
+    <thead>
+      <tr><th>Metric</th><th class="num">Pre Users</th><th class="num">Post Users</th><th class="num">Pre rate</th><th class="num">Post rate</th><th class="num">Δ</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>LP traffic</td><td class="num">2,202</td><td class="num">3,056</td><td class="num">—</td><td class="num">—</td><td class="num pos">+38.8%</td></tr>
+      <tr class="highlight-row"><td><strong>LP2S</strong></td><td class="num">2,202</td><td class="num">3,056</td><td class="num">46.05%</td><td class="num">39.30%</td><td class="num neg">−6.75pp</td></tr>
+      <tr class="highlight-row"><td><strong>S2C</strong></td><td class="num">1,014</td><td class="num">1,201</td><td class="num">45.66%</td><td class="num">40.63%</td><td class="num neg">−5.03pp</td></tr>
+      <tr><td>C2A</td><td class="num">463</td><td class="num">488</td><td class="num">48.60%</td><td class="num">49.80%</td><td class="num pos">+1.20pp</td></tr>
+      <tr><td>A2O</td><td class="num">225</td><td class="num">243</td><td class="num">80.89%</td><td class="num">88.48%</td><td class="num pos">+7.59pp</td></tr>
+      <tr><td>C2O</td><td class="num">463</td><td class="num">488</td><td class="num">39.31%</td><td class="num">44.06%</td><td class="num pos">+4.75pp</td></tr>
+      <tr><td>Orders completed</td><td class="num">2,202</td><td class="num">3,056</td><td class="num">—</td><td class="num">—</td><td class="num pos">+18% (182 → 215)</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    HO is a dilution story, not a regression. The +854-user influx onto headout.com Pompeii pages is converting less well at the top of the funnel (LP2S, S2C) — typical of broader-intent traffic that browses without a clear intent to book. But the post-checkout flow (C2A and A2O) actually improved on HO, mirroring the broader CE pattern. Net effect on CE CVR: mix tailwind from HO share growth (+0.10pp) cancels most of the conversion drag (−0.04pp). Absolute orders on HO are up +18% even with the rate drop, so this is profitable scaling. Flag it for Performance Marketing to confirm the new HO source quality stabilises before the next 30% growth round.
+  </p>
+</div>
+
+<div class="analysis-block" id="block-market-context">
+  <div class="block-title">Market context &amp; operational signals</div>
+  <div class="verdict-line neutral">Pompeii market is in a confirmed YoY downturn (−20% GBV WoW). The structural +0.23pp CVR gain aligns with deliberate Headout changes made during the post period — MB assortment cap, last-minute discount on TGID 8869, content updates. Catalogue mix shift toward Entry Tickets is corroborated externally as a market-wide customer-trading-down pattern.</div>
+
+  <table>
+    <thead>
+      <tr><th>Signal</th><th>What it confirms in this report</th><th style="width:140px;">Source</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Pompeii GBV −20% YoY, Italy-wide CvR 4.4% (−5% WoW); RR vs plan 64%</td><td>The CVR ratio improvement is real, but absolute orders are below LY plan. Frames the report as "converting better within a smaller pool," not "demand recovering."</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1779092112138519" target="_blank" style="color:#3a4a8a;font-size:12px;">FabriGPT · May 18</a></td></tr>
+      <tr><td>SP-confirmed market collapse: Opera Lab −10/15%, Tempio −20/25%, Instazione −80%, Towns of Italy −45%; US/MidEast/BR visitors in decline; customers trading down from guided to entry tickets</td><td>Externally corroborates the catalogue mix shift in our experience-level table (Entry Tickets 8869 gaining +292 orders while guided variants 10988, 18260, 39137 lost share). The trade-down is market behaviour, not catalogue-merchandising luck.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778519029728709" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 11</a></td></tr>
+      <tr><td>MB assortment capped to 8 products on May 7 (8869, 10988, 18260, 25707, 25499, 8952, 36844, 8950)</td><td>Structural intervention mid-post — concentrates traffic onto highest-CVR TGIDs. A direct lever on the +0.23pp structural CVR gain.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778163566182779" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 7</a></td></tr>
+      <tr><td>5% discount applied for &lt;72 hour bookings on TGID 8869 TID 15975 from May 11</td><td>Direct C2O lever on the report's #1 contributor experience. Daily C2O on the fixed segment hits its highest values of the window (54–60%) on May 13, 14, 15, 16 — immediately after the discount went live.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778519249512509" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 11</a></td></tr>
+      <tr><td>MB assortment update May 14 — remove TGIDs 41814, 41834 (no reviews); add 37495, 36844, 15599, 25473; raise MB limit to 10</td><td>Second-wave catalogue intervention. Together with the May 7 cap, these are the explicit "product restructuring" Shubhra referenced.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778742900374609" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 14</a></td></tr>
+      <tr><td>Content / title updates on TGIDs 8869, 24919, 32457, 28733, 41814 during post period</td><td>Plausible contributors to C2A +3.3pp lift in the fixed segment — the largest unexplained sub-step mover. Content hygiene specifically called out on the volume-anchor TGID 8869.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778513630172789" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 11</a></td></tr>
+      <tr><td>API migration for VID 1932 (Travel Etc, 1way2italy → Bokun) and TID mapping updates on CIDs 3664 / 5314 during May 6</td><td>Supply-side integration churn on adjacent transfer CEs (Naples → Pompeii, Sorrento → Pompeii). Does not directly hit CE 1223 funnel rates but worth flagging to Ops.</td><td><a href="https://headout.slack.com/archives/C045L2WQ79P/p1778074373122609" target="_blank" style="color:#3a4a8a;font-size:12px;">Enrico · May 6</a></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px;color:#555;margin-top:12px;">
+    Two CE 1223 bug threads were also flagged in the post window — TGID 39136 "From Rome / From Naples" dropdown mis-mapping (May 7) and TGID 17324 multilingual availability visibility (May 6, on adjacent CE 3664). Neither is in the fixed segment's top contributors, so they do not directly move this report's headline.
+  </p>
+</div>
+
+<div class="analysis-block" id="block-ruled-out">
+  <div class="block-title">Dimensions Checked — ruled out as independent drivers</div>
+  <p style="font-size:13px;color:#555;margin-bottom:12px;">
+    These were checked and do not add independent signal beyond what the C2O improvement story already explains.
+  </p>
+  <ul style="font-size:14px;color:#333;padding-left:18px;">
+    <li style="margin-bottom:8px;"><strong>Price:</strong> Average <code>final_price_usd</code> within ±$1 pre vs post for all top five experiences (8869: $31.15 → $30.89; 10988: $34.33 → $34.54; 18260: $49.81 → $49.40; 25518: $31.42 → $31.62; 39137: $34.69 → $30.89). No pricing change.</li>
+    <li style="margin-bottom:8px;"><strong>Availability:</strong> <code>days_to_first_available_date</code> ≈ 0 across all top experiences in both periods — same-day inventory was healthy throughout. Not a supply story.</li>
+    <li style="margin-bottom:8px;"><strong>LP2S:</strong> CE-level −0.30pp on 66k users is noise (−9% Shapley share, signed negative). LP2S within the fixed segment was flat (46.5% → 46.3%).</li>
+    <li style="margin-bottom:8px;"><strong>S2C (CE-level):</strong> +0.68pp contributed +23% of Shapley — directionally helpful but secondary to C2O. Within the fixed segment S2C rose +0.42pp; no independent mechanism to investigate beyond the same product-mix shift that helped C2O.</li>
+    <li style="margin-bottom:0;"><strong>Weekday composition:</strong> Pre period had Easter (Apr 3–6) plus 4 standard weekends; post period had 4 weekends and no major holiday. Composition comparable — does not inflate or deflate the finding.</li>
+  </ul>
+</div>
+
+<div class="analysis-block">
+  <div class="block-title">Hypotheses Explored</div>
+  <p style="font-size:13px;color:#555;margin-bottom:14px;">
+    Every hypothesis generated during this investigation — confirmed, ruled out, and open.
+  </p>
+  <table>
+    <thead>
+      <tr><th>Hypothesis</th><th>Test run</th><th class="num" style="width:120px;">Outcome</th><th>What this means</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Mix shift between MB and HO is driving the lift</td><td>L1 cascade — share decomp + conv vs mix effect <a class="ref-link" href="#block-cascade">↗</a></td><td class="num">❌ Ruled out</td><td>Conversion effect (+0.49pp on MB) dominates mix effect — story is funnel quality, not routing.</td></tr>
+      <tr><td>C2O improvement is concentrated in Google Ads paid</td><td>L3 cascade — Google Ads C2O 48.9% → 52.7% vs Microsoft Ads <a class="ref-link" href="#block-cascade">↗</a></td><td class="num">✅ Confirmed</td><td>Google Ads accounts for 88% of paid MB volume and +0.52pp of conversion lift — the fixed segment for the analysis.</td></tr>
+      <tr><td>Both C2A and A2O improved (full checkout flow getting healthier)</td><td>Fixed-segment C2A 55.1% → 58.4%, A2O 88.7% → 90.2% <a class="ref-link" href="#block-substeps">↗</a></td><td class="num">✅ Confirmed</td><td>Each contributed independently. C2A is the larger lever inside the fixed segment, A2O within an already-healthy band.</td></tr>
+      <tr><td>The improvement is largely seasonal — LY shows the same shape</td><td>trend_context: ly_delta +0.20pp vs current_delta +0.42pp; structural +0.23pp <a class="ref-link" href="#chart-90day">↗</a></td><td class="num">✅ Confirmed (partial)</td><td>About half the lift is the spring-into-summer Pompeii ramp; the other half is genuine structural improvement.</td></tr>
+      <tr><td>Italy domestic surge is volume-driven, not rate-driven</td><td>Geo cut: Italy users 11,198 → 14,194 (+26.7%), CVR +0.59pp <a class="ref-link" href="#block-geo">↗</a></td><td class="num">✅ Confirmed</td><td>Both volume and rate moved in the right direction in the home market — strongest single contributor.</td></tr>
+      <tr><td>Catalogue product mix shifted toward the cheapest entry product (8869)</td><td>Experience-level checkout share — 8869 grew 3,281 → 3,578 while 10988, 18260, 39137 declined <a class="ref-link" href="#block-experience">↗</a>. Externally corroborated by SP survey (customers trading down from guided to entry tickets, per Enrico · May 11 <a class="ref-link" href="#block-market-context">↗</a>).</td><td class="num">✅ Confirmed</td><td>Net rebalance toward the higher-C2O Entry Tickets product is part of why CE-level C2O lifted, and it tracks a market-wide demand shift, not a Headout merchandising win alone.</td></tr>
+      <tr><td>A price drop drove the LP2S story</td><td>product_rankings_features.final_price_usd pre vs post for top 5 experiences <a class="ref-link" href="#block-ruled-out">↗</a></td><td class="num">❌ Ruled out</td><td>Listing prices were within ±$1 in both periods — but a 5% &lt;72h discount on TGID 8869 went live May 11 (per Enrico · May 11 <a class="ref-link" href="#block-market-context">↗</a>), which is a different lever (checkout-stage, not listing-stage).</td></tr>
+      <tr><td>Improved inventory unlocked checkout volume</td><td>product_rankings_features.days_to_first_available_date for top 5 experiences <a class="ref-link" href="#block-ruled-out">↗</a></td><td class="num">❌ Ruled out</td><td>Same-day inventory (≈0 days to first available) was healthy throughout both periods.</td></tr>
+      <tr><td>HO segment decline is a real flow regression</td><td>HO funnel breakdown — LP2S −6.7pp, S2C −5.1pp; C2A and A2O improved; orders +18% <a class="ref-link" href="#block-ho">↗</a></td><td class="num">❌ Ruled out</td><td>Top-funnel rate drops are dilution from +38.8% lower-intent traffic growth, not a flow break. Post-checkout flow on HO actually improved.</td></tr>
+      <tr><td>A specific deploy or config change caused the lift on a single date</td><td>Daily C2O trend within fixed segment <a class="ref-link" href="#chart-daily-c2o">↗</a></td><td class="num">❌ Ruled out</td><td>No single break date. The C2O 58–60% cluster on May 13–16 follows the 8869 last-minute discount that went live May 11 — directional rather than discrete.</td></tr>
+      <tr><td>MB assortment cap (May 7) concentrated traffic onto highest-CVR TGIDs</td><td>MB cap to 8 products called out in Slack mid-post (per Enrico · May 7 <a class="ref-link" href="#block-market-context">↗</a>); no inflection in daily C2O on May 7 specifically, but consistent with the gradual lift through the second half of the post window.</td><td class="num">🔄 Consistent with, not directly tested</td><td>A direct test would track per-TGID traffic share before and after May 7. Listed as a Layer-C structural action contributing to the +0.23pp.</td></tr>
+      <tr><td>The new variant TGID 25518 launched and cannibalised guided-tour volume</td><td>TGID 25518 checkouts 205 → 434; TGIDs 10988, 39137 declined <a class="ref-link" href="#block-experience">↗</a></td><td class="num">🔄 Consistent with, not directly tested</td><td>Volume pattern is consistent with cannibalisation. A direct test would compare launch-date timing of 25518 vs the C2O lift inflection, plus session-level cross-shopping data — not available in this baseline.</td></tr>
+      <tr><td>C2A improvement traces to a specific checkout-page change (form, fees, autofill)</td><td>Not directly tested — no checkout-event breakdown queried. Title/content updates on top TGIDs during post window (per Enrico · May 7–14 <a class="ref-link" href="#block-market-context">↗</a>) are a candidate mechanism.</td><td class="num">⚠️ Data gap</td><td>To close: pull checkout-form event data for May vs March via the Product/Engineering team to identify which checkout step changed. The +3.3pp C2A lift is broad enough that a structural change is plausible.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<footer>Generated 2026-05-21 · CVR-RCA · CE 1223 Pompeii Tickets &amp; Tours</footer>
+
+<script>
+const currentDates = ["2026-02-20","2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28","2026-03-01","2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08","2026-03-09","2026-03-10","2026-03-11","2026-03-12","2026-03-13","2026-03-14","2026-03-15","2026-03-16","2026-03-17","2026-03-18","2026-03-19","2026-03-20","2026-03-21","2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20"];
+const currentCvr = [0.033484,0.036091,0.023674,0.035484,0.036333,0.041219,0.041872,0.039687,0.036304,0.04595,0.038229,0.034729,0.038795,0.039814,0.043633,0.033955,0.047359,0.042972,0.051208,0.043929,0.042094,0.04966,0.041301,0.049488,0.049011,0.044902,0.044383,0.04665,0.042705,0.047474,0.043991,0.044683,0.043304,0.054126,0.046133,0.04936,0.043353,0.048503,0.045146,0.046463,0.055234,0.0469,0.047306,0.047691,0.049315,0.054468,0.059399,0.06228,0.051827,0.048059,0.048344,0.057366,0.055514,0.062258,0.062957,0.050902,0.056225,0.052557,0.047234,0.056163,0.04747,0.060368,0.052075,0.04967,0.057193,0.053849,0.060461,0.058155,0.054264,0.053726,0.057294,0.04523,0.052856,0.059024,0.060362,0.061153,0.054801,0.058144,0.06698,0.055273,0.052781,0.050195,0.061201,0.060345,0.060066,0.068232,0.048149,0.050483,0.05221,0.041652];
+const lyCvr = [0.050652,0.061163,0.057245,0.054074,0.0448,0.043509,0.037083,0.037353,0.040519,0.049931,0.053311,0.061976,0.055274,0.057864,0.057467,0.064132,0.06064,0.06015,0.065856,0.061197,0.059807,0.064677,0.066929,0.069626,0.065632,0.061587,0.06272,0.055132,0.068561,0.068913,0.068731,0.063384,0.071261,0.055833,0.061728,0.06049,0.074524,0.071186,0.079805,0.073779,0.075305,0.077324,0.071772,0.073357,0.0771,0.089341,0.07332,0.084431,0.071641,0.071795,0.084264,0.088453,0.085684,0.0788,0.083013,0.077578,0.081401,0.081648,0.074698,0.082406,0.082185,0.078441,0.070585,0.064474,0.090279,0.083278,0.076292,0.081887,0.079812,0.088716,0.074737,0.075006,0.069717,0.07944,0.073526,0.067213,0.076495,0.06866,0.07517,0.074262,0.08022,0.072653,0.077628,0.072898,0.089862,0.076052,0.079382,0.076793,0.081308,0.086018];
+const hasLyData = lyCvr.some(v => v !== null && v !== undefined && v > 0);
+
+const POST_START = "2026-04-21";
+const POST_END = "2026-05-20";
+const postDates = currentDates.filter(d => d >= POST_START && d <= POST_END);
+
+const traces90d = [
+  {type:'scatter', mode:'lines', name:'CVR 2026', x: currentDates, y: currentCvr, line:{color:'#6c8ebf', width:2}}
+];
+if (hasLyData) {
+  traces90d.push({type:'scatter', mode:'lines', name:'CVR 2025 (LY)', x: currentDates, y: lyCvr, line:{color:'#9e9e9e', dash:'dash', width:1.5}});
+}
+const postShadeColor = 'rgba(46,125,50,0.05)';
+const postLineColor = '#2e7d32';
+const midPostDate = postDates[Math.floor(postDates.length / 2)];
+
+Plotly.newPlot('trend-90day', traces90d, {
+  height: 280,
+  yaxis: {tickformat:'.1%', title:'CVR'},
+  xaxis: {tickformat:'%d %b', dtick: 7 * 86400000, title:''},
+  plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+  font: {family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e', size:11},
+  legend: {orientation:'h', y:-0.2},
+  margin: {l:55, r:20, t:30, b:60},
+  shapes: [
+    {type:'rect', x0:POST_START, x1:POST_END, y0:0, y1:1, xref:'x', yref:'paper', fillcolor: postShadeColor, line:{width:0}},
+    {type:'line', x0:POST_START, x1:POST_START, y0:0, y1:1, xref:'x', yref:'paper', line:{color: postLineColor, dash:'dot', width:1}}
+  ],
+  annotations: [{x: midPostDate, y: 0.92, xref:'x', yref:'paper', text:'Post period', font:{color: postLineColor, size:10}, showarrow:false}]
+}, {responsive:true});
+
+// Daily C2O within fixed segment
+const c2oDates = ["2026-03-22","2026-03-23","2026-03-24","2026-03-25","2026-03-26","2026-03-27","2026-03-28","2026-03-29","2026-03-30","2026-03-31","2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05","2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12","2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19","2026-04-20","2026-04-21","2026-04-22","2026-04-23","2026-04-24","2026-04-25","2026-04-26","2026-04-27","2026-04-28","2026-04-29","2026-04-30","2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-05-07","2026-05-08","2026-05-09","2026-05-10","2026-05-11","2026-05-12","2026-05-13","2026-05-14","2026-05-15","2026-05-16","2026-05-17","2026-05-18","2026-05-19","2026-05-20"];
+const c2oVals = [0.4811,0.4423,0.3969,0.5473,0.4752,0.5333,0.4368,0.4883,0.4667,0.4602,0.5043,0.4972,0.4950,0.5500,0.5147,0.4978,0.4900,0.5536,0.5179,0.5036,0.4817,0.4661,0.4717,0.5046,0.5300,0.5390,0.5338,0.4620,0.5069,0.5100,0.4830,0.5073,0.4974,0.4834,0.5517,0.5351,0.5326,0.5152,0.4620,0.4607,0.5340,0.4967,0.5525,0.5650,0.5392,0.5402,0.4881,0.5450,0.5872,0.5570,0.5446,0.5030,0.5960,0.5586,0.5814,0.6050,0.5208,0.5540,0.5229,0.5529];
+const preIdx = c2oDates.findIndex(d => d >= POST_START);
+const preDatesC2O = c2oDates.slice(0, preIdx);
+const preVals = c2oVals.slice(0, preIdx);
+const postDatesC2O = c2oDates.slice(preIdx);
+const postVals = c2oVals.slice(preIdx);
+const preMean = preVals.reduce((a,b)=>a+b,0)/preVals.length;
+const postMean = postVals.reduce((a,b)=>a+b,0)/postVals.length;
+
+Plotly.newPlot('daily-c2o', [
+  {type:'scatter', mode:'lines+markers', name:'Pre period', x: preDatesC2O, y: preVals, line:{color:'#6c8ebf', width:2.5}, marker:{size:4, color:'#6c8ebf'}},
+  {type:'scatter', mode:'lines+markers', name:'Post period', x: postDatesC2O, y: postVals, line:{color:'#2e7d32', width:2.5}, marker:{size:4, color:'#2e7d32'}}
+], {
+  height: 280,
+  yaxis:{tickformat:'.1%', title:'C2O rate'},
+  xaxis:{title:'Date', tickformat:'%d %b'},
+  plot_bgcolor:'#fff', paper_bgcolor:'#fff',
+  font:{family:'-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', color:'#1a1a2e'},
+  legend:{orientation:'h', y:-0.3},
+  margin:{l:55, r:20, t:30, b:50},
+  shapes:[
+    {type:'line', x0:preDatesC2O[0], x1:preDatesC2O[preDatesC2O.length-1], y0:preMean, y1:preMean, line:{color:'#6c8ebf', dash:'dot', width:1.5}},
+    {type:'line', x0:postDatesC2O[0], x1:postDatesC2O[postDatesC2O.length-1], y0:postMean, y1:postMean, line:{color:'#2e7d32', dash:'dot', width:1.5}}
+  ],
+  annotations:[
+    {x:preDatesC2O[Math.floor(preDatesC2O.length/2)], y:preMean, text:'Pre avg ' + (preMean*100).toFixed(1) + '%', font:{color:'#6c8ebf', size:11}, showarrow:false, yshift:-14},
+    {x:postDatesC2O[Math.floor(postDatesC2O.length/2)], y:postMean, text:'Post avg ' + (postMean*100).toFixed(1) + '%', font:{color:'#2e7d32', size:11}, showarrow:false, yshift:14}
+  ]
+}, {responsive:true});
+</script>
+
+</body>
+</html>

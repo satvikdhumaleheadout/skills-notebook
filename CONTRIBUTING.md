@@ -1,0 +1,173 @@
+# Contributing to Skills Notebook
+
+This repo is the source of truth for the Skills Notebook app. The app auto-renders everything from the files below — no UI code changes needed for routine content updates.
+
+---
+
+## Adding a new test run (most common task)
+
+### 1. Create the run folder and files
+
+```
+runs/{version}/{ce_id}_{pre_start}_{post_end}/
+  report.html        ← required
+  transcript.md      ← required
+  evaluation.md      ← required
+  findings.md        ← optional (shown in Findings tab if present)
+```
+
+**Naming convention:** `ce{id}_{YYYY-MM-DD}_{YYYY-MM-DD}` — pre period start → post period end.
+
+Example: `runs/v1.17/ce252_2026-03-28_2026-05-26/`
+
+### 2. Add an entry to the version's `manifest.json`
+
+File: `runs/{version}/manifest.json`
+
+```json
+{
+  "id": "ce252_2026-03-28_2026-05-26",
+  "ce_id": "252",
+  "ce_name": "Louvre Museum Tickets",
+  "pre_start": "2026-03-28",
+  "post_end": "2026-05-26",
+  "run_date": "2026-05-27",
+  "eval_score": 26,
+  "eval_max": 35,
+  "root_cause": "One-sentence summary of the root cause finding.",
+  "files": {
+    "report":     "runs/v1.17/ce252_2026-03-28_2026-05-26/report.html",
+    "transcript": "runs/v1.17/ce252_2026-03-28_2026-05-26/transcript.md",
+    "evaluation": "runs/v1.17/ce252_2026-03-28_2026-05-26/evaluation.md"
+  }
+}
+```
+
+Add this object to the `"runs"` array. The UI reads `eval_score / eval_max` for the score badge (green ≥85%, yellow 70–84%, red <70%).
+
+### 3. Push to GitHub → Replit/Vercel picks it up automatically
+
+---
+
+## Adding a new skill version (e.g. v1.18)
+
+### 1. Create the version folder
+
+```
+runs/v1.18/
+  manifest.json      ← { "version": "v1.18", "runs": [] }
+```
+
+Minimal `manifest.json`:
+
+```json
+{
+  "version": "v1.18",
+  "runs": []
+}
+```
+
+### 2. Register the version in `runs/index.json`
+
+```json
+{
+  "version": "v1.18",
+  "version_date": "2026-06-10",
+  "version_summary": "Short description of what changed in this version",
+  "manifest": "runs/v1.18/manifest.json"
+}
+```
+
+Add to the `"versions"` array. The version dropdown in the Test Runs tab is built from this file.
+
+---
+
+## Adding a new skill
+
+Edit `skills/index.json` — add an entry to the `"skills"` array:
+
+```json
+{
+  "id": "my-skill",
+  "name": "My Skill",
+  "category": "Conversion",
+  "icon": "🔬",
+  "color": "#6366F1",
+  "description": "One-line description shown on the home hub card.",
+  "longDescription": "Longer description shown on the skill overview tab.",
+  "hasDecisionTree": false,
+  "hasEvents": false,
+  "runsPath": "runs",
+  "changelogPath": "changelog/my-skill-CHANGELOG.md",
+  "eventsPath": null,
+  "status": "active",
+  "latestVersion": "v1.0",
+  "trigger": "/my-skill",
+  "inputs": ["Input 1", "Input 2"],
+  "outputs": ["Output 1", "Output 2"]
+}
+```
+
+**Key fields:**
+- `status`: `"active"` shows the full skill page; `"coming-soon"` shows a placeholder card.
+- `hasDecisionTree`: `true` adds the Decision Tree tab (reads from `skills/{id}/tree.js`).
+- `hasEvents`: `true` adds the Funnel Events tab (reads from `eventsPath`).
+- `runsPath`: path prefix for run files (usually `"runs"` for CVR-RCA-style skills, `null` for no runs).
+- `changelogPath`: path to a markdown file rendered in the Changelog tab.
+
+To add skill connections shown in the graph and Overview tab, add to the `"connections"` array:
+
+```json
+{ "from": "ce-health", "to": "my-skill", "label": "feeds into" }
+```
+
+---
+
+## Updating the CVR-RCA decision tree
+
+The decision tree data lives at `skills/cvr-rca/tree.js` (served as `/part2.js` by the server for backwards compatibility).
+
+The file exports plain JS globals (no `module.exports`) that are loaded before the React app:
+
+| Global | Type | Purpose |
+|---|---|---|
+| `NODES` | Array | All tree nodes — `{ id, type, label, sublabel, x, y, phase, inputs, outputs, condition, description }` |
+| `EDGES` | Array | All edges — `{ from, to, type }` where type is `'always'`, `'conditional'`, or `'consults'` |
+| `TYPE_META` | Object | Node type display config — `{ label, color, cssVar }` |
+| `SECTION_LABELS` | Array | Vertical section labels drawn on the canvas |
+| `FILE_CONTENTS` | Object | Reference file markdown shown in the node side panel |
+
+Node coordinates (`x`, `y`) are in a 2100×5400px canvas. Nodes are grouped by `phase` — keep the vertical ordering consistent when adding new nodes.
+
+---
+
+## File structure reference
+
+```
+skills-notebook/
+  public/
+    index.html          ← HTML shell + complete CSS design system
+    js/main.js          ← All React components (Babel JSX, no build step)
+  server.js             ← Express server: static files + comments API
+  skills/
+    index.json          ← Skills registry (5 skills + connections)
+    cvr-rca/
+      tree.js           ← CVR-RCA decision tree data (NODES, EDGES, etc.)
+  runs/
+    index.json          ← Version registry for CVR-RCA
+    v1.17/
+      manifest.json     ← Run list for v1.17
+      ce252_.../        ← One test run
+        report.html
+        transcript.md
+        findings.md
+        evaluation.md
+  changelog/
+    CHANGELOG.md        ← CVR-RCA changelog (markdown)
+  events/
+    events-reference.html ← Funnel events reference (iframe)
+  scripts/
+    post-merge.sh       ← Runs `npm install` after every Replit task merge
+  vercel.json           ← Vercel deployment config
+  DEPLOY.md             ← Vercel + Supabase deployment guide
+```

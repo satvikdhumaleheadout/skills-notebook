@@ -1,0 +1,37 @@
+{
+  "version": "v1.12",
+  "runs": [
+    {
+      "id": "ce1223_2026-03-22_2026-05-20",
+      "ce_id": "1223",
+      "ce_name": "Pompeii Tickets & Tours",
+      "pre_start": "2026-03-22",
+      "post_end": "2026-05-20",
+      "run_date": "2026-05-21",
+      "eval_score": 26,
+      "eval_max": 35,
+      "root_cause": "CVR improved +0.51pp (4.73%→5.24%) — C2O explains 86% of ΔCVR, driven by broad-based checkout improvement in MB · Paid · Google Ads (C2A +3.3pp, A2O +1.5pp) and a favourable catalogue mix shift toward lower-friction experiences. Italy domestic traffic surged +26.7% on seasonal ramp. About half the lift is seasonal (LY repeated same shape); structural_delta_cvr +0.23pp. HO segment diluted from scaling (+38.8% traffic) but absolute HO orders still grew +18%.",
+      "files": {
+        "report": "runs/v1.12/ce1223_2026-03-22_2026-05-20/report.html",
+        "transcript": "runs/v1.12/ce1223_2026-03-22_2026-05-20/transcript.md",
+        "evaluation": "runs/v1.12/ce1223_2026-03-22_2026-05-20/evaluation.md"
+      }
+    },
+    {
+      "id": "ce3593_2026-03-22_2026-05-20",
+      "ce_id": "3593",
+      "ce_name": "Antelope Canyon",
+      "pre_start": "2026-03-22",
+      "post_end": "2026-05-20",
+      "run_date": "2026-05-21",
+      "eval_score": 32,
+      "eval_max": 35,
+      "root_cause": "Headline CVR flat (−0.08pp) masking −12.6% order shortfall (1,941→1,696). Google Ads campaign serving the kens-tours.antelope-canyon-tours.com subdomain was paused on May 7, 2026 — daily traffic collapsed from 200–260 users/day to effectively zero in two days. The subdomain carried ~11% CVR; its removal cost ~294 forgone orders. Data-derived finding matched the documented mitigation cause (Ken's Tours legal Cease & Desist) to the day. C2O independently improved on the remaining catalogue, masking the volume loss in the headline CVR.",
+      "files": {
+        "report": "runs/v1.12/ce3593_2026-03-22_2026-05-20/report.html",
+        "transcript": "runs/v1.12/ce3593_2026-03-22_2026-05-20/transcript.md",
+        "evaluation": "runs/v1.12/ce3593_2026-03-22_2026-05-20/evaluation.md"
+      }
+    }
+  ]
+}
