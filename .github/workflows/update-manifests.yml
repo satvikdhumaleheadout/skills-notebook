@@ -1,0 +1,41 @@
+name: Update run manifests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'runs/**'
+
+permissions:
+  contents: write
+
+jobs:
+  update-manifests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate manifests
+        run: node scripts/update-manifests.js
+
+      - name: Commit updated manifests
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add runs/*/*/manifest.json
+          if git diff --cached --quiet; then
+            echo "No manifest changes — nothing to commit."
+          else
+            git commit -m "chore: auto-regenerate manifests from run-meta.json [skip ci]"
+            git push
+          fi
