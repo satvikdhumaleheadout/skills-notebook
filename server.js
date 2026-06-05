@@ -15,13 +15,36 @@ app.use(express.json());
 // New app (public/) served at root
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Data directories
-app.use('/runs',      express.static(path.join(__dirname, 'runs')));
-app.use('/skills',    express.static(path.join(__dirname, 'skills')));
-app.use('/changelog', express.static(path.join(__dirname, 'changelog')));
-app.use('/events',    express.static(path.join(__dirname, 'events')));
+// ── GitHub data proxy ─────────────────────────────────────────────────────────
+// All dynamic data (skills, runs, changelog, events) is served from GitHub.
+// This keeps Replit and Vercel in sync automatically — no filesystem dependency.
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/satvikdhumaleheadout/skills-notebook/main';
 
-// Legacy tree data files served for decision tree
+const MIME_TYPES = {
+  html: 'text/html; charset=utf-8',
+  json: 'application/json; charset=utf-8',
+  md:   'text/plain; charset=utf-8',
+  js:   'application/javascript; charset=utf-8',
+  css:  'text/css; charset=utf-8',
+  txt:  'text/plain; charset=utf-8',
+};
+
+app.get('/github/*', async (req, res) => {
+  const filePath = req.params[0];
+  try {
+    const ghRes = await fetch(`${GITHUB_RAW_BASE}/${filePath}`);
+    if (!ghRes.ok) return res.status(ghRes.status).end();
+    const ext = filePath.split('.').pop().toLowerCase();
+    res.set('Content-Type', MIME_TYPES[ext] || 'text/plain; charset=utf-8');
+    res.set('Cache-Control', 'public, max-age=30');
+    res.send(await ghRes.text());
+  } catch (err) {
+    console.error('GitHub proxy error:', err.message);
+    res.status(502).send('GitHub proxy error');
+  }
+});
+
+// Decision tree data (URL kept as /part2.js for frontend compatibility)
 app.get('/part2.js', (req, res) => res.sendFile(path.join(__dirname, 'skills', 'cvr-rca', 'tree.js')));
 
 // ── Comments API ───────────────────────────────────────────────────────────────

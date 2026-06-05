@@ -1,6 +1,10 @@
 // ── Bootstrap ─────────────────────────────────────────────────────────────────
 const { useState, useEffect, useCallback, useMemo, useRef } = React;
 
+// All data is fetched from GitHub via the server proxy so Replit and Vercel
+// always show the same live content. /github/* → raw.githubusercontent.com
+const GH = '/github';
+
 // ── Routing ───────────────────────────────────────────────────────────────────
 function navigate(path) {
   window.location.hash = '#' + (path.startsWith('/') ? path : '/' + path);
@@ -380,7 +384,7 @@ function ChangelogTab({ skill }) {
   if (!skill.changelogPath) {
     return <div className="empty-state"><div className="empty-state-icon">📋</div><div className="empty-state-title">No changelog yet</div></div>;
   }
-  return <MarkdownViewer src={`/${skill.changelogPath}`} />;
+  return <MarkdownViewer src={`${GH}/${skill.changelogPath}`} />;
 }
 
 // ── Events Tab ────────────────────────────────────────────────────────────────
@@ -388,7 +392,7 @@ function EventsTab({ skill }) {
   if (!skill.eventsPath) {
     return <div className="empty-state"><div className="empty-state-icon">⚡</div><div className="empty-state-title">No events reference</div></div>;
   }
-  return <iframe src={`/${skill.eventsPath}`} style={{ width: '100%', height: '100%', border: 'none' }} title="Funnel Events" />;
+  return <iframe src={`${GH}/${skill.eventsPath}`} style={{ width: '100%', height: '100%', border: 'none' }} title="Funnel Events" />;
 }
 
 // ── Decision Tree View ────────────────────────────────────────────────────────
@@ -992,10 +996,10 @@ function RunViewer({ run, skillId, version }) {
       </div>
 
       <div className="viewer-body">
-        {tab === 'report'     && <iframe className="viewer-iframe" src={`/${run.files.report}`} title="Report" />}
-        {tab === 'transcript' && <div className="viewer-markdown"><MarkdownViewer src={`/${run.files.transcript}`} /></div>}
-        {tab === 'findings'   && <div className="viewer-markdown"><MarkdownViewer src={`/${findingsPath}`} /></div>}
-        {tab === 'evaluation' && <div className="viewer-markdown"><MarkdownViewer src={`/${run.files.evaluation}`} /></div>}
+        {tab === 'report'     && <iframe className="viewer-iframe" src={`${GH}/${run.files.report}`} title="Report" />}
+        {tab === 'transcript' && <div className="viewer-markdown"><MarkdownViewer src={`${GH}/${run.files.transcript}`} /></div>}
+        {tab === 'findings'   && <div className="viewer-markdown"><MarkdownViewer src={`${GH}/${findingsPath}`} /></div>}
+        {tab === 'evaluation' && <div className="viewer-markdown"><MarkdownViewer src={`${GH}/${run.files.evaluation}`} /></div>}
       </div>
 
       <Comments runKey={runKey} />
@@ -1020,7 +1024,7 @@ function TestRuns({ skill, route }) {
   useEffect(() => {
     if (!skill.runsPath) return;
     setLoadingV(true);
-    fetch(`/${skill.runsPath}/index.json`)
+    fetch(`${GH}/${skill.runsPath}/index.json`)
       .then(r => r.json())
       .then(d => { setVersions([...d.versions].reverse()); setLoadingV(false); })
       .catch(() => setLoadingV(false));
@@ -1034,7 +1038,7 @@ function TestRuns({ skill, route }) {
   useEffect(() => {
     if (!activeVersion || !skill.runsPath) return;
     setLoadingR(true);
-    fetch(`/${skill.runsPath}/${activeVersion}/manifest.json`)
+    fetch(`${GH}/${skill.runsPath}/${activeVersion}/manifest.json`)
       .then(r => r.json())
       .then(d => { setRunsData(d.runs || []); setLoadingR(false); })
       .catch(() => { setRunsData([]); setLoadingR(false); });
@@ -1182,7 +1186,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetch('/skills/index.json')
+    fetch(`${GH}/skills/index.json`)
       .then(r => r.json())
       .then(d => { setSkills(d.skills); setConnections(d.connections); setLoading(false); })
       .catch(() => setLoading(false));
